@@ -35,6 +35,7 @@ $Id$
 #include "ArtAlgorithm.h"
 #include "SirtAlgorithm.h"
 #include "SartAlgorithm.h"
+#include "PSartAlgorithm.h"
 #include "ForwardProjectionAlgorithm.h"
 #include "BackProjectionAlgorithm.h"
 #include "FilteredBackProjectionAlgorithm.h"
@@ -66,6 +67,7 @@ using namespace astra;
 typedef TYPELIST_25(
 			CArtAlgorithm,
 			CSartAlgorithm,
+			CPSartAlgorithm,
 			CSirtAlgorithm,
 			CCglsAlgorithm,
 			CBackProjectionAlgorithm,
@@ -96,6 +98,7 @@ typedef TYPELIST_25(
 typedef TYPELIST_7(
 			CArtAlgorithm,
 			CSartAlgorithm,
+			CPSartAlgorithm,
 			CSirtAlgorithm,
 			CCglsAlgorithm,
 			CBackProjectionAlgorithm,

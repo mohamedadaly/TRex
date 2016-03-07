@@ -319,10 +319,12 @@ class SIRTBPPolicy {
 	CFloat32ProjectionData2D* m_pTotalRayLength;
 	CFloat32VolumeData2D* m_pTotalPixelWeight;
 
+	float32 m_fAlpha;
+
 public:
 
 	FORCEINLINE SIRTBPPolicy();
-	FORCEINLINE SIRTBPPolicy(CFloat32VolumeData2D* _pReconstruction, CFloat32ProjectionData2D* _pSinogram, CFloat32VolumeData2D* _pTotalPixelWeight, CFloat32ProjectionData2D* _pTotalRayLength); 
+	FORCEINLINE SIRTBPPolicy(CFloat32VolumeData2D* _pReconstruction, CFloat32ProjectionData2D* _pSinogram, CFloat32VolumeData2D* _pTotalPixelWeight, CFloat32ProjectionData2D* _pTotalRayLength, float32 _fAlhpa = 1.0f); 
 	FORCEINLINE ~SIRTBPPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);
