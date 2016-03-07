@@ -30,6 +30,6 @@
 /build/linux/src/*
 /build/linux/matlab/*
 
-/lib
+lib/*
 *.opensdf
-/bin
+bin/*
