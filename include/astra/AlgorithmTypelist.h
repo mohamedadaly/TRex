@@ -36,6 +36,7 @@ $Id$
 #include "SirtAlgorithm.h"
 #include "SartAlgorithm.h"
 #include "PSartAlgorithm.h"
+#include "BicavAlgorithm.h"
 #include "ForwardProjectionAlgorithm.h"
 #include "BackProjectionAlgorithm.h"
 #include "FilteredBackProjectionAlgorithm.h"
@@ -68,6 +69,7 @@ typedef TYPELIST_25(
 			CArtAlgorithm,
 			CSartAlgorithm,
 			CPSartAlgorithm,
+			CBicavAlgorithm,
 			CSirtAlgorithm,
 			CCglsAlgorithm,
 			CBackProjectionAlgorithm,
@@ -95,8 +97,9 @@ typedef TYPELIST_25(
 	AlgorithmTypeList;
 #else
 
-typedef TYPELIST_7(
+typedef TYPELIST_9(
 			CArtAlgorithm,
+			CBicavAlgorithm,
 			CSartAlgorithm,
 			CPSartAlgorithm,
 			CSirtAlgorithm,

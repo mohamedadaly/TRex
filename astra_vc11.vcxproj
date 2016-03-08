@@ -379,6 +379,7 @@
     <ClCompile Include="src\AstraObjectManager.cpp" />
     <ClCompile Include="src\AsyncAlgorithm.cpp" />
     <ClCompile Include="src\BackProjectionAlgorithm.cpp" />
+    <ClCompile Include="src\BicavAlgorithm.cpp" />
     <ClCompile Include="src\CglsAlgorithm.cpp" />
     <ClCompile Include="src\CompositeGeometryManager.cpp" />
     <ClCompile Include="src\ConeProjectionGeometry3D.cpp" />
@@ -597,6 +598,7 @@
     <ClInclude Include="include\astra\AstraObjectManager.h" />
     <ClInclude Include="include\astra\AsyncAlgorithm.h" />
     <ClInclude Include="include\astra\BackProjectionAlgorithm.h" />
+    <ClInclude Include="include\astra\BicavAlgorithm.h" />
     <ClInclude Include="include\astra\CglsAlgorithm.h" />
     <ClInclude Include="include\astra\CompositeGeometryManager.h" />
     <ClInclude Include="include\astra\ConeProjectionGeometry3D.h" />

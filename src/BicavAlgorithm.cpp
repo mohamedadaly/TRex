@@ -26,7 +26,7 @@ along with the ASTRA Toolbox. If not, see <http://www.gnu.org/licenses/>.
 $Id$
 */
 
-#include "astra/SartAlgorithm.h"
+#include "astra/BicavAlgorithm.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -40,12 +40,12 @@ namespace astra {
 #include "astra/Projector2DImpl.inl"
 
 // type of the algorithm, needed to register with CAlgorithmFactory
-std::string CSartAlgorithm::type = "SART";
+std::string CBicavAlgorithm::type = "BICAV";
 
 
 //---------------------------------------------------------------------------------------
 // Clear - Constructors
-void CSartAlgorithm::_clear()
+void CBicavAlgorithm::_clear()
 {
 	CReconstructionAlgorithm2D::_clear();
 	m_piProjectionOrder = NULL;
@@ -57,7 +57,7 @@ void CSartAlgorithm::_clear()
 
 //---------------------------------------------------------------------------------------
 // Clear - Public
-void CSartAlgorithm::clear()
+void CBicavAlgorithm::clear()
 {
 	CReconstructionAlgorithm2D::clear();
 	if (m_piProjectionOrder) {
@@ -72,14 +72,14 @@ void CSartAlgorithm::clear()
 
 //----------------------------------------------------------------------------------------
 // Constructor
-CSartAlgorithm::CSartAlgorithm() 
+CBicavAlgorithm::CBicavAlgorithm() 
 {
 	_clear();
 }
 
 //----------------------------------------------------------------------------------------
 // Constructor
-CSartAlgorithm::CSartAlgorithm(CProjector2D* _pProjector, 
+CBicavAlgorithm::CBicavAlgorithm(CProjector2D* _pProjector, 
 							   CFloat32ProjectionData2D* _pSinogram, 
 							   CFloat32VolumeData2D* _pReconstruction) 
 {
@@ -89,7 +89,7 @@ CSartAlgorithm::CSartAlgorithm(CProjector2D* _pProjector,
 
 //----------------------------------------------------------------------------------------
 // Constructor
-CSartAlgorithm::CSartAlgorithm(CProjector2D* _pProjector, 
+CBicavAlgorithm::CBicavAlgorithm(CProjector2D* _pProjector, 
 							   CFloat32ProjectionData2D* _pSinogram, 
 							   CFloat32VolumeData2D* _pReconstruction,
 							   int* _piProjectionOrder, 
@@ -101,14 +101,14 @@ CSartAlgorithm::CSartAlgorithm(CProjector2D* _pProjector,
 
 //----------------------------------------------------------------------------------------
 // Destructor
-CSartAlgorithm::~CSartAlgorithm() 
+CBicavAlgorithm::~CBicavAlgorithm() 
 {
 	clear();
 }
 
 //---------------------------------------------------------------------------------------
 // Initialize - Config
-bool CSartAlgorithm::initialize(const Config& _cfg)
+bool CBicavAlgorithm::initialize(const Config& _cfg)
 {
 	assert(_cfg.self);
 	ConfigStackCheck<CAlgorithm> CC("SartAlgorithm", this, _cfg);
@@ -168,7 +168,7 @@ bool CSartAlgorithm::initialize(const Config& _cfg)
 
 //---------------------------------------------------------------------------------------
 // Initialize - C++
-bool CSartAlgorithm::initialize(CProjector2D* _pProjector, 
+bool CBicavAlgorithm::initialize(CProjector2D* _pProjector, 
 								CFloat32ProjectionData2D* _pSinogram, 
 								CFloat32VolumeData2D* _pReconstruction)
 {
@@ -202,7 +202,7 @@ bool CSartAlgorithm::initialize(CProjector2D* _pProjector,
 
 //---------------------------------------------------------------------------------------
 // Initialize - C++
-bool CSartAlgorithm::initialize(CProjector2D* _pProjector, 
+bool CBicavAlgorithm::initialize(CProjector2D* _pProjector, 
 								CFloat32ProjectionData2D* _pSinogram, 
 								CFloat32VolumeData2D* _pReconstruction,
 								int* _piProjectionOrder, 
@@ -232,7 +232,7 @@ bool CSartAlgorithm::initialize(CProjector2D* _pProjector,
 }
 
 //----------------------------------------------------------------------------------------
-bool CSartAlgorithm::_check()
+bool CBicavAlgorithm::_check()
 {
 	// check base class
 	ASTRA_CONFIG_CHECK(CReconstructionAlgorithm2D::_check(), "SART", "Error in ReconstructionAlgorithm2D initialization");
@@ -247,7 +247,7 @@ bool CSartAlgorithm::_check()
 
 //---------------------------------------------------------------------------------------
 // Information - All
-map<string,boost::any> CSartAlgorithm::getInformation() 
+map<string,boost::any> CBicavAlgorithm::getInformation() 
 {
 	map<string, boost::any> res;
 	res["ProjectionOrder"] = getInformation("ProjectionOrder");
@@ -256,7 +256,7 @@ map<string,boost::any> CSartAlgorithm::getInformation()
 
 //---------------------------------------------------------------------------------------
 // Information - Specific
-boost::any CSartAlgorithm::getInformation(std::string _sIdentifier) 
+boost::any CBicavAlgorithm::getInformation(std::string _sIdentifier) 
 {
 	if (_sIdentifier == "ProjectionOrder") {
 		vector<float32> res;
@@ -270,7 +270,7 @@ boost::any CSartAlgorithm::getInformation(std::string _sIdentifier)
 
 //----------------------------------------------------------------------------------------
 // Iterate
-void CSartAlgorithm::run(int _iNrIterations)
+void CBicavAlgorithm::run(int _iNrIterations)
 {
 	// check initialized
 	ASTRA_ASSERT(m_bIsInitialized);
@@ -304,8 +304,8 @@ void CSartAlgorithm::run(int _iNrIterations)
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 			Combine3Policy<DiffFPPolicy, TotalPixelWeightPolicy, TotalRayLengthPolicy>(					// 3 basic operations
 				DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, m_pSinogram),								// forward projection with difference calculation
-				TotalPixelWeightPolicy(m_pTotalPixelWeight),												// calculate the total pixel weights
-				TotalRayLengthPolicy(m_pTotalRayLength)),													// calculate the total ray lengths
+				TotalPixelWeightPolicy(m_pTotalPixelWeight, true),												// calculate the total pixel weights
+				TotalRayLengthPolicy(m_pTotalRayLength, true)),													// calculate the total ray lengths
 			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
 		);
 

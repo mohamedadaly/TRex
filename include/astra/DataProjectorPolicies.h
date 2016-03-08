@@ -166,11 +166,15 @@ public:
 class TotalPixelWeightPolicy {
 
 	CFloat32VolumeData2D* m_pPixelWeight;
+	// Accumulate ones for non-zero weights (instead of the weights)? defaults to false.
+	// Used by BICAV.
+	bool m_bBinary;
 
 public:
 
 	FORCEINLINE TotalPixelWeightPolicy();
-	FORCEINLINE TotalPixelWeightPolicy(CFloat32VolumeData2D* _pPixelWeight);
+	FORCEINLINE TotalPixelWeightPolicy(CFloat32VolumeData2D* _pPixelWeight,
+		bool _bBinary = false);
 	FORCEINLINE ~TotalPixelWeightPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);
@@ -186,11 +190,15 @@ public:
 class TotalRayLengthPolicy {
 
 	CFloat32ProjectionData2D* m_pRayLength;
+	// Accumulate the weights squared instead? defaults to false.
+	// This is used by BICAV.
+	bool m_bSquare;
 
 public:
 
 	FORCEINLINE TotalRayLengthPolicy();
-	FORCEINLINE TotalRayLengthPolicy(CFloat32ProjectionData2D* _pRayLength);
+	FORCEINLINE TotalRayLengthPolicy(CFloat32ProjectionData2D* _pRayLength, 
+		bool bSquare = false);
 	FORCEINLINE ~TotalRayLengthPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);

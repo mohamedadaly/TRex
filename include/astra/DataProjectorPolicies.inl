@@ -294,9 +294,11 @@ TotalPixelWeightPolicy::TotalPixelWeightPolicy()
 
 }
 //----------------------------------------------------------------------------------------
-TotalPixelWeightPolicy::TotalPixelWeightPolicy(CFloat32VolumeData2D* _pPixelWeight) 
+TotalPixelWeightPolicy::TotalPixelWeightPolicy(CFloat32VolumeData2D* _pPixelWeight,
+											   bool _bBinary) 
 {
 	m_pPixelWeight = _pPixelWeight;
+	m_bBinary = _bBinary;
 }
 //----------------------------------------------------------------------------------------	
 TotalPixelWeightPolicy::~TotalPixelWeightPolicy() 
@@ -316,7 +318,8 @@ bool TotalPixelWeightPolicy::pixelPrior(int _iVolumeIndex)
 //----------------------------------------------------------------------------------------	
 void TotalPixelWeightPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
 {
-	m_pPixelWeight->getData()[_iVolumeIndex] += _fWeight;
+	m_pPixelWeight->getData()[_iVolumeIndex] += m_bBinary ? 
+		static_cast<float32>(_fWeight > 1e-12) : _fWeight;
 }
 //----------------------------------------------------------------------------------------
 void TotalPixelWeightPolicy::rayPosterior(int _iRayIndex) 
@@ -341,9 +344,11 @@ TotalRayLengthPolicy::TotalRayLengthPolicy()
 
 }
 //----------------------------------------------------------------------------------------
-TotalRayLengthPolicy::TotalRayLengthPolicy(CFloat32ProjectionData2D* _pRayLength) 
+TotalRayLengthPolicy::TotalRayLengthPolicy(CFloat32ProjectionData2D* _pRayLength,
+										   bool _bSquare) 
 {
 	m_pRayLength = _pRayLength;
+	m_bSquare = _bSquare;
 }
 //----------------------------------------------------------------------------------------	
 TotalRayLengthPolicy::~TotalRayLengthPolicy() 
@@ -363,7 +368,7 @@ bool TotalRayLengthPolicy::pixelPrior(int _iVolumeIndex)
 //----------------------------------------------------------------------------------------	
 void TotalRayLengthPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
 {
-	m_pRayLength->getData()[_iRayIndex] += _fWeight; 
+	m_pRayLength->getData()[_iRayIndex] += m_bSquare ? _fWeight * _fWeight : _fWeight; 
 }
 //----------------------------------------------------------------------------------------
 void TotalRayLengthPolicy::rayPosterior(int _iRayIndex) 
@@ -376,9 +381,6 @@ void TotalRayLengthPolicy::pixelPosterior(int _iVolumeIndex)
 	// nothing
 }
 //----------------------------------------------------------------------------------------
-
-
-
 
 
 //----------------------------------------------------------------------------------------

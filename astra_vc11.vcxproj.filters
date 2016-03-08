@@ -324,6 +324,9 @@
     <ClCompile Include="src\PSartAlgorithm.cpp">
       <Filter>Algorithms\source</Filter>
     </ClCompile>
+    <ClCompile Include="src\BicavAlgorithm.cpp">
+      <Filter>Algorithms\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\astra\Algorithm.h">
@@ -675,6 +678,9 @@
       <Filter>CUDA\cuda headers</Filter>
     </ClInclude>
     <ClInclude Include="include\astra\PSartAlgorithm.h">
+      <Filter>Algorithms\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\astra\BicavAlgorithm.h">
       <Filter>Algorithms\headers</Filter>
     </ClInclude>
   </ItemGroup>
