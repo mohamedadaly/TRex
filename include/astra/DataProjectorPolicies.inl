@@ -30,7 +30,6 @@ $Id$
 #define _INC_ASTRA_DATAPROJECTORPOLICIES_INLINE
 
 
-
 //----------------------------------------------------------------------------------------
 // DEFAULT FORWARD PROJECTION (Ray Driven)
 //----------------------------------------------------------------------------------------
@@ -757,6 +756,91 @@ void SIRTBPPolicy::pixelPosterior(int _iVolumeIndex)
 //----------------------------------------------------------------------------------------
 
 
+
+//----------------------------------------------------------------------------------------
+// PSART BACKPROJECTION  (Ray+Pixel Driven)
+//----------------------------------------------------------------------------------------
+PSARTBPPolicy::PSARTBPPolicy() 
+{
+
+}
+//----------------------------------------------------------------------------------------
+PSARTBPPolicy::PSARTBPPolicy(CFloat32VolumeData2D* _pReconstruction, 
+						   CFloat32ProjectionData2D* _pSinogram, 
+						   CFloat32VolumeData2D* _pTotalPixelWeight, 
+						   CFloat32ProjectionData2D* _pTotalRayLength,
+						   CFloat32ProjectionData2D* _pY, 
+						   float32 _fAlhpa, float32 _fSqrt2Lambda) 
+{
+	m_pReconstruction = _pReconstruction;
+	m_pSinogram = _pSinogram;
+	m_pTotalPixelWeight = _pTotalPixelWeight;
+	m_pTotalRayLength = _pTotalRayLength;
+	m_pY = _pY;
+	m_fAlpha = _fAlhpa;
+	m_fSqrt2Lambda = _fSqrt2Lambda;
+
+	// init C as a copy from Y
+	m_pC = m_pY;
+	
+}
+//----------------------------------------------------------------------------------------	
+PSARTBPPolicy::~PSARTBPPolicy() 
+{
+
+}
+//----------------------------------------------------------------------------------------	
+bool PSARTBPPolicy::rayPrior(int _iRayIndex) 
+{
+	// denominator
+	float32 fGammaBeta = m_fSqrt2Lambda * m_pTotalRayLength->getData()[_iRayIndex] + 1.f;
+	// check zero
+	if (fabsf(fGammaBeta) >= 1e-10f) {
+		// Update: alpha * C_i
+		m_pC->getData()[_iRayIndex] = m_fAlpha * (m_fSqrt2Lambda * 
+			  m_pSinogram->getData()[_iRayIndex] - m_pY->getData()[_iRayIndex]) 
+			/ fGammaBeta;
+	} else {
+		m_pC->getData()[_iRayIndex] = 0.f;
+	}
+
+	//ASTRA_INFO("RayPrior ray=%d val=%f len=%f", _iRayIndex, 
+	//	m_pC->getData()[_iRayIndex], m_pTotalRayLength->getData()[_iRayIndex]);
+	return true;
+}
+//----------------------------------------------------------------------------------------
+bool PSARTBPPolicy::pixelPrior(int _iVolumeIndex) 
+{
+	return true;
+}
+//----------------------------------------------------------------------------------------	
+void PSARTBPPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
+{  
+	// denominator: (PixelWeight) 
+	float32 fGammaBeta = m_pTotalPixelWeight->getData()[_iVolumeIndex];
+	// check zero
+	if (fabsf(fGammaBeta) >= 1e-10f) {
+		// Update: c_i * weight * sqrt2lambda / pixelweight
+		m_pReconstruction->getData()[_iVolumeIndex] += _fWeight * 
+			m_pC->getData()[_iRayIndex] / fGammaBeta;
+	}
+	//ASTRA_INFO("AddWeight ray=%d voxel=%d weight=%f val=%f", 
+	//	_iRayIndex, _iVolumeIndex, _fWeight, m_pReconstruction->getData()[_iVolumeIndex]);
+
+}
+//----------------------------------------------------------------------------------------
+void PSARTBPPolicy::rayPosterior(int _iRayIndex) 
+{
+	// Update the Y auxiliary structure after the ray is processed
+	m_pY->getData()[_iRayIndex] += m_pC->getData()[_iRayIndex];
+	//ASTRA_INFO("RayPosterior ray=%d val=%f", _iRayIndex, m_pY->getData()[_iRayIndex]);
+}
+//----------------------------------------------------------------------------------------
+void PSARTBPPolicy::pixelPosterior(int _iVolumeIndex) 
+{
+	// nothing
+}
+//----------------------------------------------------------------------------------------
 
 
 

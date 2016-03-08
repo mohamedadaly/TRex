@@ -32,6 +32,8 @@ $Id$
 
 #include "astra/AstraObjectManager.h"
 #include "astra/DataProjectorPolicies.h"
+#include "astra/Logging.h"
+
 
 using namespace std;
 
@@ -170,6 +172,7 @@ bool CPSartAlgorithm::initialize(const Config& _cfg)
 	m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 	m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
 	m_pDiffSinogram = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
+	m_pY = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 
 	// success
 	m_bIsInitialized = _check();
@@ -296,13 +299,36 @@ void CPSartAlgorithm::run(int _iNrIterations)
 	m_pTotalRayLength->setData(0.0f);
 	m_pTotalPixelWeight->setData(0.0f);
 
+	// Init Y = 0
+	m_pY->setData(0.f);
+	// Init Reconstruction = ProxInput
+	m_pReconstruction->copyData(m_pProxInput->getData());
+	m_pReconstruction->updateStatistics();
+	//ASTRA_INFO("Initialized from ProxInput: max=%f min=%f id=%d", 
+	//	m_pReconstruction->getGlobalMax(), m_pReconstruction->getGlobalMin(),
+	//	CData2DManager::getSingleton().getIndex(m_pReconstruction));
+	//for (int i=0; i < m_pReconstruction->getSize(); ++i) {
+	//	ASTRA_INFO("voxel=%d val=%f", i, m_pReconstruction->getData()[i]);
+	//}	
+
+	// constant
+	float32 fSqrt2Lambda = sqrtf(m_fLambda * 2.f);
+	//ASTRA_INFO("Sqrt2Lambda = %f", fSqrt2Lambda);
+	//ASTRA_INFO("Alpha = %f", m_fAlpha);
+
+	//ASTRA_INFO("UseMinConst=%d MinVal=%f", m_bUseMinConstraint, m_fMinValue);
+	//ASTRA_INFO("UseMaxConst=%d MaxVal=%f", m_bUseMaxConstraint, m_fMaxValue);
+	// Scale projections by sqrt(2 * lambda)
+	// m_pSinogram->operator*=(fSqrt_2_lambda);
+
 	// backprojection data projector
 	pBackProjector = dispatchDataProjector(
 			m_pProjector, 
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			SIRTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
-						 m_pTotalPixelWeight, m_pTotalRayLength, m_fAlpha),	// SIRT backprojection
+			PSARTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
+						 m_pTotalPixelWeight, m_pTotalRayLength, 
+						 m_pY, m_fAlpha, fSqrt2Lambda),			// PSART backprojection
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 
 
@@ -318,8 +344,6 @@ void CPSartAlgorithm::run(int _iNrIterations)
 				TotalRayLengthPolicy(m_pTotalRayLength)),													// calculate the total ray lengths
 			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
 		);
-
-
 
 	// iteration loop
 	for (; iIteration < _iNrIterations && !m_bShouldAbort; ++iIteration) {
@@ -344,7 +368,9 @@ void CPSartAlgorithm::run(int _iNrIterations)
 	ASTRA_DELETE(pForwardProjector);
 	ASTRA_DELETE(pBackProjector);
 
-
+	//for (int i=0; i < m_pReconstruction->getSize(); ++i) {
+	//	ASTRA_INFO("voxel=%d val=%f", i, m_pReconstruction->getData()[i]);
+	//}
 
 
 

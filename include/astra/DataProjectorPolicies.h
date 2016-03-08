@@ -32,6 +32,9 @@ $Id$
 #include "Globals.h"
 #include "Config.h"
 
+#include "astra/Logging.h"
+
+
 #include <list>
 
 #include "Float32ProjectionData2D.h"
@@ -334,6 +337,40 @@ public:
 	FORCEINLINE void pixelPosterior(int _iVolumeIndex);
 };
 
+//----------------------------------------------------------------------------------------
+/** Policy For ProxiSART PSART Backprojection
+ */
+class PSARTBPPolicy {
+
+	CFloat32ProjectionData2D* m_pSinogram;
+	CFloat32VolumeData2D* m_pReconstruction;
+
+	CFloat32ProjectionData2D* m_pTotalRayLength;
+	CFloat32VolumeData2D* m_pTotalPixelWeight;
+
+	// Y object
+	CFloat32ProjectionData2D* m_pY;
+	// C updates
+	CFloat32ProjectionData2D* m_pC;
+
+	// parameters
+	float32 m_fAlpha;
+	float32 m_fSqrt2Lambda;
+
+public:
+
+	FORCEINLINE PSARTBPPolicy();
+	FORCEINLINE PSARTBPPolicy(CFloat32VolumeData2D* _pReconstruction, CFloat32ProjectionData2D* _pSinogram, 
+		CFloat32VolumeData2D* _pTotalPixelWeight, CFloat32ProjectionData2D* _pTotalRayLength, 
+		CFloat32ProjectionData2D* _pY, float32 _fAlhpa = 1.0f, float32 _fSqrt2Lambda = 1.0f); 
+	FORCEINLINE ~PSARTBPPolicy();
+
+	FORCEINLINE bool rayPrior(int _iRayIndex);
+	FORCEINLINE bool pixelPrior(int _iVolumeIndex);
+	FORCEINLINE void addWeight(int _iRayIndex, int _iVolumeIndex, float32 weight);
+	FORCEINLINE void rayPosterior(int _iRayIndex);
+	FORCEINLINE void pixelPosterior(int _iVolumeIndex);
+};
 
 //----------------------------------------------------------------------------------------
 /** Policy For Sinogram Mask

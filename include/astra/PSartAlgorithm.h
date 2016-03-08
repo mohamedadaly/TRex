@@ -102,6 +102,7 @@ protected:
 	CFloat32ProjectionData2D* m_pTotalRayLength;
 	CFloat32VolumeData2D* m_pTotalPixelWeight;
 	CFloat32ProjectionData2D* m_pDiffSinogram;
+	CFloat32ProjectionData2D* m_pY;
 
 	// Proximal operator parameter
 	float32 m_fLambda;
