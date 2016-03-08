@@ -103,6 +103,9 @@ protected:
 	CFloat32VolumeData2D* m_pTotalPixelWeight;
 	CFloat32ProjectionData2D* m_pDiffSinogram;
 
+	// over/under-relaxation parameter in SART
+	float32 m_fAlpha;
+
 	int m_iIterationCount;
 
 public:

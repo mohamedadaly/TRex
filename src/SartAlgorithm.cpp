@@ -153,6 +153,9 @@ bool CSartAlgorithm::initialize(const Config& _cfg)
 		CC.markOptionParsed("ProjectionOrderList");
 	}
 
+	// Alpha
+	m_fAlpha = _cfg.self.getOptionNumerical("alpha", 1.0f);
+
 	// create data objects
 	m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 	m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
@@ -288,7 +291,8 @@ void CSartAlgorithm::run(int _iNrIterations)
 			m_pProjector, 
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			SIRTBPPolicy(m_pReconstruction, m_pDiffSinogram, m_pTotalPixelWeight, m_pTotalRayLength),	// SIRT backprojection
+			SIRTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
+			m_pTotalPixelWeight, m_pTotalRayLength, m_fAlpha),	// SIRT backprojection
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 
 
