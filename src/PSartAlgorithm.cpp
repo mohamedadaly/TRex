@@ -302,9 +302,8 @@ void CPSartAlgorithm::run(int _iNrIterations)
 	// data projectors
 	CDataProjectorInterface* pForwardProjector;
 	CDataProjectorInterface* pBackProjector;
+	CDataProjectorInterface* pFirstForwardProjector;
 
-	m_pTotalRayLength->setData(0.0f);
-	m_pTotalPixelWeight->setData(0.0f);
 
 	// Init Y = 0
 	m_pY->setData(0.f);
@@ -345,12 +344,26 @@ void CPSartAlgorithm::run(int _iNrIterations)
 			m_pProjector, 
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			Combine3Policy<DiffFPPolicy, TotalPixelWeightPolicy, TotalRayLengthPolicy>(					// 3 basic operations
+			CombinePolicy<DiffFPPolicy, TotalPixelWeightPolicy>(					// 3 basic operations
 				DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, m_pSinogram),								// forward projection with difference calculation
-				TotalPixelWeightPolicy(m_pTotalPixelWeight),												// calculate the total pixel weights
-				TotalRayLengthPolicy(m_pTotalRayLength)),													// calculate the total ray lengths
+				TotalPixelWeightPolicy(m_pTotalPixelWeight)),												// calculate the total pixel weights
 			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
 		);
+
+	// first time forward projection data projector,
+	// computes total ray length
+	pFirstForwardProjector = dispatchDataProjector(
+			m_pProjector, 
+			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+			TotalRayLengthPolicy(m_pTotalRayLength),													// calculate the total ray lengths
+			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
+		);
+
+	// Perform the first forward projection to compute ray lengths
+	m_pTotalRayLength->setData(0.0f);
+	m_pTotalPixelWeight->setData(0.0f);
+	pFirstForwardProjector->project();
 
 	// iteration loop, each iteration loops over all available projections
 	for (int iIteration = 0; iIteration < _iNrIterations && !m_bShouldAbort; ++iIteration) {
@@ -359,9 +372,9 @@ void CPSartAlgorithm::run(int _iNrIterations)
 		// RayLength is correct, because updating RayLength with the forward projection
 		// again will multiply the RayLength when processing the same ray in the next
 		// iteration.
-		if (m_bClearRayLength) {
-			m_pTotalRayLength->setData(0.f);
-		}
+		//if (m_bClearRayLength) {
+		//	m_pTotalRayLength->setData(0.f);
+		//}
 
 		// loop over projections
 		for (int iP = 0; iP < m_iProjectionCount; ++iP) {
@@ -387,125 +400,11 @@ void CPSartAlgorithm::run(int _iNrIterations)
 
 	ASTRA_DELETE(pForwardProjector);
 	ASTRA_DELETE(pBackProjector);
+	ASTRA_DELETE(pFirstForwardProjector);
 
 	//for (int i=0; i < m_pReconstruction->getSize(); ++i) {
 	//	ASTRA_INFO("voxel=%d val=%f", i, m_pReconstruction->getData()[i]);
 	//}
-
-
-
-
-
-
-
-
-
-
-
-
-	//// check initialized
- // 	ASTRA_ASSERT(m_bIsInitialized);
-
-	//// variables
-	//int iIteration, iDetector;
-	//int baseIndex, iPixel;
-	//float32* pfGamma = new float32[m_pReconstruction->getSize()];
-	//float32* pfBeta = new float32[m_pProjector->getProjectionGeometry()->getDetectorCount()];
-	//float32* pfProjectionDiff = new float32[m_pProjector->getProjectionGeometry()->getDetectorCount()];
-
-	//// ITERATE
-	//for (iIteration = _iNrIterations-1; iIteration >= 0; --iIteration) {
-	//
-	//	// reset gamma	
-	//	memset(pfGamma, 0, sizeof(float32) * m_pReconstruction->getSize());
-	//	memset(pfBeta, 0, sizeof(float32) * m_pProjector->getProjectionGeometry()->getDetectorCount());
-	//
-	//	// get current projection angle
-	//	int iProjection = m_piProjectionOrder[m_iCurrentProjection];
-	//	m_iCurrentProjection = (m_iCurrentProjection + 1) % m_iProjectionCount;
-	//	int iProjectionWeightCount = m_pProjector->getProjectionWeightsCount(iProjection);
-	//
-	//	// allocate memory for the pixel buffer
-	//	SPixelWeight* pPixels = new SPixelWeight[m_pProjector->getProjectionWeightsCount(iProjection) * m_pProjector->getProjectionGeometry()->getDetectorCount()];
-	//	int* piRayStoredPixelCount = new int[m_pProjector->getProjectionGeometry()->getDetectorCount()];
-
-	//	// compute weights for this projection
-	//	m_pProjector->computeProjectionRayWeights(iProjection, pPixels, piRayStoredPixelCount);
-	//
-	//	// calculate projection difference in each detector
-	//	for (iDetector = m_pProjector->getProjectionGeometry()->getDetectorCount()-1; iDetector >= 0; --iDetector) {
-
-	//		if (m_bUseSinogramMask && m_pSinogramMask->getData2D()[iProjection][iDetector] == 0) continue;	
-
-	//		// index base of the pixel in question
-	//		baseIndex = iDetector * iProjectionWeightCount;
-	//
-	//		// set the initial projection difference to the sinogram value
-	//		pfProjectionDiff[iDetector] = m_pSinogram->getData2DConst()[iProjection][iDetector];
-	//
-	//		// update projection difference, beta and gamma
-	//		for (iPixel = piRayStoredPixelCount[iDetector]-1; iPixel >= 0; --iPixel) {
-
-	//			// pixel must be loose
-	//			if (m_bUseReconstructionMask && m_pReconstructionMask->getData()[pPixels[baseIndex+iPixel].m_iIndex] == 0) continue;
-
-	//			// subtract projection value from projection difference 
-	//			pfProjectionDiff[iDetector] -= 
-	//				pPixels[baseIndex+iPixel].m_fWeight * m_pReconstruction->getDataConst()[pPixels[baseIndex+iPixel].m_iIndex];
-	//				
-	//			// update beta and gamma if this pixel lies inside a loose part
-	//			pfBeta[iDetector] += pPixels[baseIndex+iPixel].m_fWeight;
-	//			pfGamma[pPixels[baseIndex+iPixel].m_iIndex] += pPixels[baseIndex+iPixel].m_fWeight;
-	//		}
-	//
-	//	}
-	//
-	//	// back projection
-	//	for (iDetector = m_pProjector->getProjectionGeometry()->getDetectorCount()-1; iDetector >= 0; --iDetector) {
-	//		
-	//		if (m_bUseSinogramMask && m_pSinogramMask->getData2D()[iProjection][iDetector] == 0) continue;	
-
-	//		// index base of the pixel in question
-	//		baseIndex = iDetector * iProjectionWeightCount;
-
-	//		// update pixel values
-	//		for (iPixel = piRayStoredPixelCount[iDetector]-1; iPixel >= 0; --iPixel) {
-
-	//
-	//			// pixel must be loose
-	//			if (m_bUseReconstructionMask && m_pReconstructionMask->getData()[pPixels[baseIndex+iPixel].m_iIndex] == 0) continue;
-
-	//			
-
-	//			// update reconstruction volume
-	//			float32 fGammaBeta = pfGamma[pPixels[baseIndex+iPixel].m_iIndex] * pfBeta[iDetector];
-	//			if ((fGammaBeta > 0.01f) || (fGammaBeta < -0.01f)) {	
-	//				m_pReconstruction->getData()[pPixels[baseIndex+iPixel].m_iIndex] += 
-	//					pPixels[baseIndex+iPixel].m_fWeight * pfProjectionDiff[iDetector] / fGammaBeta;
-	//			}
-
-	//			// constraints
-	//			if (m_bUseMinConstraint && m_pReconstruction->getData()[pPixels[baseIndex+iPixel].m_iIndex] < m_fMinValue) {
-	//				m_pReconstruction->getData()[pPixels[baseIndex+iPixel].m_iIndex] = m_fMinValue;
-	//			}
-	//			if (m_bUseMaxConstraint && m_pReconstruction->getData()[pPixels[baseIndex+iPixel].m_iIndex] > m_fMaxValue) {
-	//				m_pReconstruction->getData()[pPixels[baseIndex+iPixel].m_iIndex] = m_fMaxValue;
-	//			}
-	//		}
-	//	}
-	//
-	//	// garbage disposal
-	//	delete[] pPixels;
-	//	delete[] piRayStoredPixelCount;
-	//}
-
-	//// garbage disposal
-	//delete[] pfGamma;
-	//delete[] pfBeta;
-	//delete[] pfProjectionDiff;
-
-	//// update statistics
-	//m_pReconstruction->updateStatistics();
 }
 //----------------------------------------------------------------------------------------
 

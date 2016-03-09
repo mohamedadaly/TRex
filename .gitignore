@@ -33,3 +33,4 @@
 lib/*
 *.opensdf
 bin/*
+*.sdf
