@@ -156,10 +156,12 @@ bool CSartAlgorithm::initialize(const Config& _cfg)
 	}
 
 	// Alpha
-	m_fAlpha = _cfg.self.getOptionNumerical("Alpha", 1.0f);
+	m_fAlpha = _cfg.self.getOptionNumerical("Alpha", m_fAlpha);
+	CC.markOptionParsed("Alpha");
 
 	// Clear RaySum after each sweep. Defaults to true.
-	m_bClearRayLength = _cfg.self.getOptionBool("ClearRayLength", true);
+	m_bClearRayLength = _cfg.self.getOptionBool("ClearRayLength", m_bClearRayLength);
+	CC.markOptionParsed("ClearRayLength");
 
 	// create data objects
 	m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
@@ -289,6 +291,9 @@ void CSartAlgorithm::run(int _iNrIterations)
 	m_pTotalRayLength->setData(0.0f);
 	m_pTotalPixelWeight->setData(0.0f);
 
+	// Initialize m_pReconstruction to zero.
+	m_pReconstruction->setData(0.f);
+
 	// backprojection data projector
 	pBackProjector = dispatchDataProjector(
 			m_pProjector, 
@@ -344,7 +349,6 @@ void CSartAlgorithm::run(int _iNrIterations)
 				m_pReconstruction->clampMax(m_fMaxValue);
 		}
 	}
-
 
 	ASTRA_DELETE(pForwardProjector);
 	ASTRA_DELETE(pBackProjector);

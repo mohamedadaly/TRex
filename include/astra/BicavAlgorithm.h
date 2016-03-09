@@ -106,6 +106,9 @@ protected:
 	// over/under-relaxation parameter in SART
 	float32 m_fAlpha;
 
+	// Clear TotalRayLength after each sweep. Defaults to true.
+	bool m_bClearRayLength;
+
 	int m_iIterationCount;
 
 public:

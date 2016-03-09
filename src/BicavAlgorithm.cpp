@@ -53,6 +53,8 @@ void CBicavAlgorithm::_clear()
 	m_iCurrentProjection = 0;
 	m_bIsInitialized = false;
 	m_iIterationCount = 0;
+	m_fAlpha = 1.0f;
+	m_bClearRayLength = true;
 }
 
 //---------------------------------------------------------------------------------------
@@ -154,7 +156,12 @@ bool CBicavAlgorithm::initialize(const Config& _cfg)
 	}
 
 	// Alpha
-	m_fAlpha = _cfg.self.getOptionNumerical("alpha", 1.0f);
+	m_fAlpha = _cfg.self.getOptionNumerical("Alpha", m_fAlpha);
+	CC.markOptionParsed("Alpha");
+
+	// Clear RaySum after each sweep. Defaults to true.
+	m_bClearRayLength = _cfg.self.getOptionBool("ClearRayLength", m_bClearRayLength);
+	CC.markOptionParsed("ClearRayLength");
 
 	// create data objects
 	m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
@@ -277,14 +284,15 @@ void CBicavAlgorithm::run(int _iNrIterations)
 
 	m_bShouldAbort = false;
 
-	int iIteration = 0;
-
 	// data projectors
 	CDataProjectorInterface* pForwardProjector;
 	CDataProjectorInterface* pBackProjector;
 
 	m_pTotalRayLength->setData(0.0f);
 	m_pTotalPixelWeight->setData(0.0f);
+
+	// Initialize m_pReconstruction to zero.
+	m_pReconstruction->setData(0.f);
 
 	// backprojection data projector
 	pBackProjector = dispatchDataProjector(
@@ -309,23 +317,37 @@ void CBicavAlgorithm::run(int _iNrIterations)
 			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
 		);
 
-	// iteration loop
-	for (; iIteration < _iNrIterations && !m_bShouldAbort; ++iIteration) {
+	// iteration loop, each iteration loops over all available projections
+	for (int iIteration = 0; iIteration < _iNrIterations && !m_bShouldAbort; ++iIteration) {
+		//ASTRA_INFO("Iteration %d", iIteration);
+		// Clear RayLength before another loop over projections. This is needed so that
+		// RayLength is correct, because updating RayLength with the forward projection
+		// again will multiply the RayLength when processing the same ray in the next
+		// iteration.
+		if (m_bClearRayLength) {
+			m_pTotalRayLength->setData(0.f);
+		}
 
-		int iProjection = m_piProjectionOrder[m_iIterationCount % m_iProjectionCount];
-	
-		// forward projection and difference calculation
-		m_pTotalPixelWeight->setData(0.0f);
-		pForwardProjector->projectSingleProjection(iProjection);
-		// backprojection
-		pBackProjector->projectSingleProjection(iProjection);
-		// update iteration count
-		m_iIterationCount++;
+		// loop over projections
+		for (int iP = 0; iP < m_iProjectionCount; ++iP) {
+			// projection id
+			// int iProjection = m_piProjectionOrder[m_iIterationCount % m_iProjectionCount];
+			int iProjection = m_piProjectionOrder[iP % m_iProjectionCount];
+			//ASTRA_INFO(" Projection %d", iProjection);
 
-		if (m_bUseMinConstraint)
-			m_pReconstruction->clampMin(m_fMinValue);
-		if (m_bUseMaxConstraint)
-			m_pReconstruction->clampMax(m_fMaxValue);
+			// forward projection and difference calculation
+			m_pTotalPixelWeight->setData(0.0f);
+			pForwardProjector->projectSingleProjection(iProjection);
+			// backprojection
+			pBackProjector->projectSingleProjection(iProjection);
+			// update iteration count
+			m_iIterationCount++;
+
+			if (m_bUseMinConstraint)
+				m_pReconstruction->clampMin(m_fMinValue);
+			if (m_bUseMaxConstraint)
+				m_pReconstruction->clampMax(m_fMaxValue);
+		}
 	}
 
 

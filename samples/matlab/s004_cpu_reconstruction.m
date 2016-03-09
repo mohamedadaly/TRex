@@ -12,7 +12,7 @@ addpath bin/x64/Release/
 colormap gray
 
 vol_geom = astra_create_vol_geom(256, 256);
-proj_geom = astra_create_proj_geom('parallel', 1.0, 384, linspace2(0,pi,90));
+proj_geom = astra_create_proj_geom('parallel', 1.0, 384, linspace2(0,pi,30));
 % vol_geom = astra_create_vol_geom(4,4);
 % proj_geom = astra_create_proj_geom('parallel', 1.0, 10, linspace2(0,pi,4));
 
@@ -48,7 +48,7 @@ prox_in_id = astra_mex_data2d('create', '-vol', vol_geom, prox_in);
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('SART');
+cfg = astra_struct('BICAV');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
@@ -71,7 +71,7 @@ alg_id = astra_mex_algorithm('create', cfg);
 % This will have a runtime in the order of 10 seconds.
 tic;
 % astra_mex_algorithm('iterate', alg_id, 30*30);
-astra_mex_algorithm('iterate', alg_id, 20*90);
+astra_mex_algorithm('iterate', alg_id, 20);
 toc;
 
 % Get the result

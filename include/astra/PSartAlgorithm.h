@@ -109,6 +109,9 @@ protected:
 	// over/under-relaxation parameter in SART
 	float32 m_fAlpha;
 
+	// Clear TotalRayLength after each sweep. Defaults to true.
+	bool m_bClearRayLength;
+
 	// Proximal input volume
 	CFloat32VolumeData2D* m_pProxInput;
 
