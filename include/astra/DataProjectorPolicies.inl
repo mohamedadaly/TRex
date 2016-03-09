@@ -320,6 +320,8 @@ void TotalPixelWeightPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float3
 {
 	m_pPixelWeight->getData()[_iVolumeIndex] += m_bBinary ? 
 		static_cast<float32>(_fWeight > 1e-12) : _fWeight;
+	//ASTRA_INFO("PixelWeight ray=%d voxel=%d wt=%f val=%f", _iRayIndex, _iVolumeIndex, _fWeight,
+	//	m_pPixelWeight->getData()[_iVolumeIndex]);
 }
 //----------------------------------------------------------------------------------------
 void TotalPixelWeightPolicy::rayPosterior(int _iRayIndex) 
@@ -369,6 +371,9 @@ bool TotalRayLengthPolicy::pixelPrior(int _iVolumeIndex)
 void TotalRayLengthPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
 {
 	m_pRayLength->getData()[_iRayIndex] += m_bSquare ? _fWeight * _fWeight : _fWeight; 
+	//ASTRA_INFO("RayLength ray=%d voxel=%d wt=%f val=%f", _iRayIndex, _iVolumeIndex, _fWeight, 
+	//	m_pRayLength->getData()[_iRayIndex]);
+
 }
 //----------------------------------------------------------------------------------------
 void TotalRayLengthPolicy::rayPosterior(int _iRayIndex) 

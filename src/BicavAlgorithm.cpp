@@ -111,7 +111,7 @@ CBicavAlgorithm::~CBicavAlgorithm()
 bool CBicavAlgorithm::initialize(const Config& _cfg)
 {
 	assert(_cfg.self);
-	ConfigStackCheck<CAlgorithm> CC("SartAlgorithm", this, _cfg);
+	ConfigStackCheck<CAlgorithm> CC("BicavAlgorithm", this, _cfg);
 	
 	// if already initialized, clear first
 	if (m_bIsInitialized) {
@@ -235,11 +235,11 @@ bool CBicavAlgorithm::initialize(CProjector2D* _pProjector,
 bool CBicavAlgorithm::_check()
 {
 	// check base class
-	ASTRA_CONFIG_CHECK(CReconstructionAlgorithm2D::_check(), "SART", "Error in ReconstructionAlgorithm2D initialization");
+	ASTRA_CONFIG_CHECK(CReconstructionAlgorithm2D::_check(), "BICAV", "Error in ReconstructionAlgorithm2D initialization");
 
 	// check projection order all within range
 	for (int i = 0; i < m_iProjectionCount; ++i) {
-		ASTRA_CONFIG_CHECK(0 <= m_piProjectionOrder[i] && m_piProjectionOrder[i] < m_pProjector->getProjectionGeometry()->getProjectionAngleCount(), "SART", "Projection Order out of range.");
+		ASTRA_CONFIG_CHECK(0 <= m_piProjectionOrder[i] && m_piProjectionOrder[i] < m_pProjector->getProjectionGeometry()->getProjectionAngleCount(), "BICAV", "Projection Order out of range.");
 	}
 
 	return true;

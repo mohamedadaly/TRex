@@ -30,7 +30,7 @@ figure(2); imshow(sinogram, []); axis image; axis off;
 
 % add sinogram noise
 rng(123);
-sinogram = sinogram + randn(size(sinogram)) * 0.5;
+% sinogram = sinogram + randn(size(sinogram)) * 0.5;
 
 astra_mex_data2d('delete', sinogram_id);
 
@@ -57,8 +57,9 @@ cfg.option.UseMinConstraint = 1;
 cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 1;
 cfg.option.MaxConstraintValue = 1;
-cfg.option.alpha = 1.;
-cfg.option.lambda = 1e5;
+cfg.option.ClearRayLength = 1;
+cfg.option.Alpha = 2;
+cfg.option.Lambda = 1e8;
 
 % Available algorithms:
 % ART, SART, SIRT, CGLS, FBP
@@ -69,7 +70,8 @@ alg_id = astra_mex_algorithm('create', cfg);
 % Run 20 iterations of the algorithm
 % This will have a runtime in the order of 10 seconds.
 tic;
-astra_mex_algorithm('iterate', alg_id, 15*30);
+% astra_mex_algorithm('iterate', alg_id, 30*30);
+astra_mex_algorithm('iterate', alg_id, 20*90);
 toc;
 
 % Get the result

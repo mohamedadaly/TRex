@@ -103,8 +103,11 @@ protected:
 	CFloat32VolumeData2D* m_pTotalPixelWeight;
 	CFloat32ProjectionData2D* m_pDiffSinogram;
 
-	// over/under-relaxation parameter in SART
+	// over/under-relaxation parameter in SART. Defaults to 1.
 	float32 m_fAlpha;
+
+	// Clear TotalRayLength after each sweep. Defaults to true.
+	bool m_bClearRayLength;
 
 	int m_iIterationCount;
 
