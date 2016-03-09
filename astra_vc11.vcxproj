@@ -375,6 +375,7 @@
   <ItemGroup>
     <ClCompile Include="src\Algorithm.cpp" />
     <ClCompile Include="src\ArtAlgorithm.cpp" />
+    <ClCompile Include="src\ArtBaseAlgorithm.cpp" />
     <ClCompile Include="src\AstraObjectFactory.cpp" />
     <ClCompile Include="src\AstraObjectManager.cpp" />
     <ClCompile Include="src\AsyncAlgorithm.cpp" />
@@ -594,6 +595,7 @@
     <ClInclude Include="include\astra\Algorithm.h" />
     <ClInclude Include="include\astra\AlgorithmTypelist.h" />
     <ClInclude Include="include\astra\ArtAlgorithm.h" />
+    <ClInclude Include="include\astra\ArtBaseAlgorithm.h" />
     <ClInclude Include="include\astra\AstraObjectFactory.h" />
     <ClInclude Include="include\astra\AstraObjectManager.h" />
     <ClInclude Include="include\astra\AsyncAlgorithm.h" />

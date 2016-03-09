@@ -130,7 +130,10 @@ protected:
 
 	/** Temporary data object for storing volume data
 	*/
-	CFloat32VolumeData2D* m_pTmpVolume;
+	//CFloat32VolumeData2D* m_pTmpVolume;
+
+	// over/under-relaxation parameter in SART. Defaults to 1.
+	float32 m_fAlpha;
 
 	/** The number of performed iterations
 	 */

@@ -43,9 +43,11 @@ $Id$
 
 namespace astra {
 
+
 /**
  * \brief
  * This is a base class for ART-based algorithms e.g. ART, SART, SIRT, ... etc.
+ * TODO: Need to fix all descendent calsses to inherit from this base class and simplify code.
  *
  * The update step of pixel \f$v_j\f$ for projection \f$phi\f$ and iteration \f$k\f$ is given by:
  * \f[

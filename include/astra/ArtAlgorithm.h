@@ -39,6 +39,8 @@ $Id$
 #include "Float32ProjectionData2D.h"
 #include "Float32VolumeData2D.h"
 
+#include "DataProjector.h"
+
 namespace astra {
 
 /**
@@ -97,6 +99,14 @@ protected:
 	 * - the ray order list only contains valid values
 	 */
 	virtual bool _check();
+
+	// temporary data objects
+	CFloat32ProjectionData2D* m_pTotalRayLength;
+	CFloat32VolumeData2D* m_pTotalPixelWeight;
+	CFloat32ProjectionData2D* m_pDiffSinogram;
+
+	// over/under-relaxation parameter in SART. Defaults to 1.
+	float32 m_fAlpha;
 
 public:
 	
@@ -172,10 +182,6 @@ public:
 	virtual std::string description() const;
 
 protected:
-
-	//< Relaxation Factor
-	float32 m_fLambda;
-	
 	//< Order of the rays, the projections.
 	int* m_piProjectionOrder;
 	//< Order of the rays, the detectors.

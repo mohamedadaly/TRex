@@ -74,7 +74,6 @@ CArtBaseAlgorithm::CArtBaseAlgorithm(CProjector2D* _pProjector,
 							   CFloat32VolumeData2D* _pReconstruction) 
 {
 	_clear();
-	initialize(_pProjector, _pSinogram, _pReconstruction);
 }
 
 //----------------------------------------------------------------------------------------
@@ -86,7 +85,6 @@ CArtBaseAlgorithm::CArtBaseAlgorithm(CProjector2D* _pProjector,
 							   int _iProjectionCount)
 {
 	_clear();
-	initialize(_pProjector, _pSinogram, _pReconstruction, _piProjectionOrder, _iProjectionCount);
 }
 
 //----------------------------------------------------------------------------------------

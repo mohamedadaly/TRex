@@ -31,10 +31,14 @@ $Id$
 #include <boost/lexical_cast.hpp>
 
 #include "astra/AstraObjectManager.h"
+#include "astra/DataProjectorPolicies.h"
+
 
 using namespace std;
 
 namespace astra {
+
+#include "astra/Projector2DImpl.inl"
 
 // type of the algorithm, needed to register with CAlgorithmFactory
 std::string CArtAlgorithm::type = "ART";
@@ -44,7 +48,7 @@ std::string CArtAlgorithm::type = "ART";
 CArtAlgorithm::CArtAlgorithm() 
  : CReconstructionAlgorithm2D()
 {
-	m_fLambda = 1.0f;
+	m_fAlpha = 1.0f;
 	m_iRayCount = 0;
 	m_iCurrentRay = 0;
 	m_piProjectionOrder = NULL;
@@ -87,7 +91,7 @@ void CArtAlgorithm::clear()
 		delete[] m_piProjectionOrder;
 		m_piProjectionOrder = NULL;
 	}
-	m_fLambda = 1.0f;
+	m_fAlpha = 1.0f;
 	m_iRayCount = 0;
 	m_iCurrentRay = 0;
 	m_bIsInitialized = false;
@@ -158,8 +162,14 @@ bool CArtAlgorithm::initialize(const Config& _cfg)
 		return false;
 	}
 
-	m_fLambda = _cfg.self.getOptionNumerical("Lambda", 1.0f);
-	CC.markOptionParsed("Lambda");
+	// Alpha
+	m_fAlpha = _cfg.self.getOptionNumerical("Alpha", m_fAlpha);
+	CC.markOptionParsed("Alpha");
+
+	// create data objects
+	m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
+	m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
+	m_pDiffSinogram = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 
 	// success
 	m_bIsInitialized = _check();
@@ -202,7 +212,7 @@ bool CArtAlgorithm::initialize(CProjector2D* _pProjector,
 // Set the relaxation factor.
 void CArtAlgorithm::setLambda(float32 _fLambda)
 {
-	m_fLambda = _fLambda;
+	m_fAlpha = _fLambda;
 }
 
 //----------------------------------------------------------------------------------------
@@ -242,7 +252,7 @@ map<string,boost::any> CArtAlgorithm::getInformation()
 // Information - Specific
 boost::any CArtAlgorithm::getInformation(std::string _sIdentifier) 
 {
-	if (_sIdentifier == "Lambda")	{ return m_fLambda; }
+	if (_sIdentifier == "Lambda")	{ return m_fAlpha; }
 	if (_sIdentifier == "RayOrder") {
 		vector<float32> res;
 		for (int i = 0; i < m_iRayCount; i++) {
@@ -261,68 +271,142 @@ boost::any CArtAlgorithm::getInformation(std::string _sIdentifier)
 void CArtAlgorithm::run(int _iNrIterations)
 {
 	// check initialized
-	assert(m_bIsInitialized);
-	
-	// variables
-	int iIteration, iPixel;
-	int iUsedPixels, iProjection, iDetector;
-	float32 fRayForwardProj, fSumSquaredWeights;
-	float32 fProjectionDifference, fBackProjectionFactor;
+	ASTRA_ASSERT(m_bIsInitialized);
 
-	// create a pixel buffer
-	int iPixelBufferSize = m_pProjector->getProjectionWeightsCount(0);
-	SPixelWeight* pPixels = new SPixelWeight[iPixelBufferSize];
+	m_bShouldAbort = false;
 
-	// start iterations
-	for (iIteration = _iNrIterations-1; iIteration >= 0; --iIteration) {
+	// data projectors
+	CDataProjectorInterface* pForwardProjector;
+	CDataProjectorInterface* pBackProjector;
+	CDataProjectorInterface* pFirstForwardProjector;
 
-		// step0: compute single weight rays
-		iProjection = m_piProjectionOrder[m_iCurrentRay];
-		iDetector = m_piDetectorOrder[m_iCurrentRay];
-		m_iCurrentRay = (m_iCurrentRay + 1) % m_iRayCount;
+	m_pTotalRayLength->setData(0.0f);
+	m_pTotalPixelWeight->setData(1.0f);
 
-		if (m_bUseSinogramMask && m_pSinogramMask->getData2D()[iProjection][iDetector] == 0) continue;	
+	// Initialize m_pReconstruction to zero.
+	m_pReconstruction->setData(0.f);
 
-		m_pProjector->computeSingleRayWeights(iProjection, iDetector, pPixels, iPixelBufferSize, iUsedPixels);
+	// forward projection data projector
+	pForwardProjector = dispatchDataProjector(
+		m_pProjector, 
+			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+			DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, m_pSinogram),								// forward projection with difference calculation
+			m_bUseSinogramMask, m_bUseReconstructionMask, true											// options on/off
+		); 
 
-		// step1: forward projections
-		fRayForwardProj = 0.0f;
-		fSumSquaredWeights = 0.0f;
-		for (iPixel = iUsedPixels-1; iPixel >= 0; --iPixel) {
-			if (m_bUseReconstructionMask && m_pReconstructionMask->getDataConst()[pPixels[iPixel].m_iIndex] == 0) continue;
+	// backprojection data projector
+	pBackProjector = dispatchDataProjector(
+			m_pProjector, 
+			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+			SIRTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
+			m_pTotalPixelWeight, m_pTotalRayLength, m_fAlpha),  // SIRT backprojection
+			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
+		); 
 
-			fRayForwardProj += pPixels[iPixel].m_fWeight * m_pReconstruction->getDataConst()[pPixels[iPixel].m_iIndex];
-			fSumSquaredWeights += pPixels[iPixel].m_fWeight * pPixels[iPixel].m_fWeight;
+	// first time forward projection data projector,
+	// also computes total pixel weight and total ray length
+	pFirstForwardProjector = dispatchDataProjector(
+			m_pProjector, 
+			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+			TotalRayLengthPolicy(m_pTotalRayLength, true),											    // calculate the total ray lengths squared
+			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
+		);
+
+	// Perform the first forward projection to compute ray lengths and pixel weights
+	pFirstForwardProjector->project();
+
+	// iteration loop, each iteration loops over all available rays
+	for (int iIteration = 0; iIteration < _iNrIterations && !m_bShouldAbort; ++iIteration) {
+		// loop over rays
+		for (int iR = 0; iR < m_iRayCount; ++iR) {
+			// ray id
+			int iProjection = m_piProjectionOrder[iR];
+			int iDetector = m_piDetectorOrder[iR];
+			//m_iCurrentRay = (m_iCurrentRay + 1) % m_iRayCount;
+			//ASTRA_INFO(" Projection %d", iProjection);
+
+			// forward projection and difference calculation
+			pForwardProjector->projectSingleRay(iProjection, iDetector);
+			// backprojection
+			pBackProjector->projectSingleRay(iProjection, iDetector);
+
+			if (m_bUseMinConstraint)
+				m_pReconstruction->clampMin(m_fMinValue);
+			if (m_bUseMaxConstraint)
+				m_pReconstruction->clampMax(m_fMaxValue);
 		}
-		if (fSumSquaredWeights == 0) continue;
-
-		// step2: difference
-		fProjectionDifference = m_pSinogram->getData2D()[iProjection][iDetector] - fRayForwardProj;
-
-		// step3: back projection
-		fBackProjectionFactor = m_fLambda * fProjectionDifference / fSumSquaredWeights;
-		for (iPixel = iUsedPixels-1; iPixel >= 0; --iPixel) {
-			
-			// pixel must be loose
-			if (m_bUseReconstructionMask && m_pReconstructionMask->getDataConst()[pPixels[iPixel].m_iIndex] == 0) continue;
-
-			// update
-			m_pReconstruction->getData()[pPixels[iPixel].m_iIndex] += fBackProjectionFactor * pPixels[iPixel].m_fWeight;
-			
-			// constraints
-			if (m_bUseMinConstraint && m_pReconstruction->getData()[pPixels[iPixel].m_iIndex] < m_fMinValue) {
-				m_pReconstruction->getData()[pPixels[iPixel].m_iIndex] = m_fMinValue;
-			}
-			if (m_bUseMaxConstraint && m_pReconstruction->getData()[pPixels[iPixel].m_iIndex] > m_fMaxValue) {
-				m_pReconstruction->getData()[pPixels[iPixel].m_iIndex] = m_fMaxValue;
-			}
-		}
-
 	}
-	delete[] pPixels;
 
-	// update statistics
-	m_pReconstruction->updateStatistics();
+	ASTRA_DELETE(pForwardProjector);
+	ASTRA_DELETE(pBackProjector);
+	ASTRA_DELETE(pFirstForwardProjector);
+
+	//// check initialized
+	//assert(m_bIsInitialized);
+	//
+	//// variables
+	//int iIteration, iPixel;
+	//int iUsedPixels, iProjection, iDetector;
+	//float32 fRayForwardProj, fSumSquaredWeights;
+	//float32 fProjectionDifference, fBackProjectionFactor;
+
+	//// create a pixel buffer
+	//int iPixelBufferSize = m_pProjector->getProjectionWeightsCount(0);
+	//SPixelWeight* pPixels = new SPixelWeight[iPixelBufferSize];
+
+	//// start iterations
+	//for (iIteration = _iNrIterations-1; iIteration >= 0; --iIteration) {
+
+	//	// step0: compute single weight rays
+	//	iProjection = m_piProjectionOrder[m_iCurrentRay];
+	//	iDetector = m_piDetectorOrder[m_iCurrentRay];
+	//	m_iCurrentRay = (m_iCurrentRay + 1) % m_iRayCount;
+
+	//	if (m_bUseSinogramMask && m_pSinogramMask->getData2D()[iProjection][iDetector] == 0) continue;	
+
+	//	m_pProjector->computeSingleRayWeights(iProjection, iDetector, pPixels, iPixelBufferSize, iUsedPixels);
+
+	//	// step1: forward projections
+	//	fRayForwardProj = 0.0f;
+	//	fSumSquaredWeights = 0.0f;
+	//	for (iPixel = iUsedPixels-1; iPixel >= 0; --iPixel) {
+	//		if (m_bUseReconstructionMask && m_pReconstructionMask->getDataConst()[pPixels[iPixel].m_iIndex] == 0) continue;
+
+	//		fRayForwardProj += pPixels[iPixel].m_fWeight * m_pReconstruction->getDataConst()[pPixels[iPixel].m_iIndex];
+	//		fSumSquaredWeights += pPixels[iPixel].m_fWeight * pPixels[iPixel].m_fWeight;
+	//	}
+	//	if (fSumSquaredWeights == 0) continue;
+
+	//	// step2: difference
+	//	fProjectionDifference = m_pSinogram->getData2D()[iProjection][iDetector] - fRayForwardProj;
+
+	//	// step3: back projection
+	//	fBackProjectionFactor = m_fAlpha * fProjectionDifference / fSumSquaredWeights;
+	//	for (iPixel = iUsedPixels-1; iPixel >= 0; --iPixel) {
+	//		
+	//		// pixel must be loose
+	//		if (m_bUseReconstructionMask && m_pReconstructionMask->getDataConst()[pPixels[iPixel].m_iIndex] == 0) continue;
+
+	//		// update
+	//		m_pReconstruction->getData()[pPixels[iPixel].m_iIndex] += fBackProjectionFactor * pPixels[iPixel].m_fWeight;
+	//		
+	//		// constraints
+	//		if (m_bUseMinConstraint && m_pReconstruction->getData()[pPixels[iPixel].m_iIndex] < m_fMinValue) {
+	//			m_pReconstruction->getData()[pPixels[iPixel].m_iIndex] = m_fMinValue;
+	//		}
+	//		if (m_bUseMaxConstraint && m_pReconstruction->getData()[pPixels[iPixel].m_iIndex] > m_fMaxValue) {
+	//			m_pReconstruction->getData()[pPixels[iPixel].m_iIndex] = m_fMaxValue;
+	//		}
+	//	}
+
+	//}
+	//delete[] pPixels;
+
+	//// update statistics
+	//m_pReconstruction->updateStatistics();
 }
 
 

@@ -76,9 +76,10 @@ void CSirtAlgorithm::_clear()
 	m_pTotalRayLength = NULL;
 	m_pTotalPixelWeight = NULL;
 	m_pDiffSinogram = NULL;
-	m_pTmpVolume = NULL;
+	//m_pTmpVolume = NULL;
 
 	m_iIterationCount = 0;
+	m_fAlpha = 1.0f;
 }
 
 //---------------------------------------------------------------------------------------
@@ -91,7 +92,7 @@ void CSirtAlgorithm::clear()
 	ASTRA_DELETE(m_pTotalRayLength);
 	ASTRA_DELETE(m_pTotalPixelWeight);
 	ASTRA_DELETE(m_pDiffSinogram);
-	ASTRA_DELETE(m_pTmpVolume);
+	//ASTRA_DELETE(m_pTmpVolume);
 
 	m_iIterationCount = 0;
 }
@@ -133,6 +134,10 @@ bool CSirtAlgorithm::initialize(const Config& _cfg)
 	// init data objects and data projectors
 	_init();
 
+	// Alpha
+	m_fAlpha = _cfg.self.getOptionNumerical("Alpha", m_fAlpha);
+	CC.markOptionParsed("Alpha");
+
 	// success
 	m_bIsInitialized = _check();
 	return m_bIsInitialized;
@@ -170,7 +175,7 @@ void CSirtAlgorithm::_init()
 	m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 	m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
 	m_pDiffSinogram = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
-	m_pTmpVolume = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
+	//m_pTmpVolume = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
 }
 
 //---------------------------------------------------------------------------------------
@@ -197,15 +202,13 @@ void CSirtAlgorithm::run(int _iNrIterations)
 
 	m_bShouldAbort = false;
 
-	int iIteration = 0;
-
 	// data projectors
 	CDataProjectorInterface* pForwardProjector;
 	CDataProjectorInterface* pBackProjector;
 	CDataProjectorInterface* pFirstForwardProjector;
 
-	m_pTotalRayLength->setData(0.0f);
-	m_pTotalPixelWeight->setData(0.0f);
+	// Initialize m_pReconstruction to zero.
+	m_pReconstruction->setData(0.f);
 
 	// forward projection data projector
 	pForwardProjector = dispatchDataProjector(
@@ -221,7 +224,8 @@ void CSirtAlgorithm::run(int _iNrIterations)
 			m_pProjector, 
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			DefaultBPPolicy(m_pTmpVolume, m_pDiffSinogram), // backprojection
+			SIRTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
+			m_pTotalPixelWeight, m_pTotalRayLength, m_fAlpha),  // SIRT backprojection
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 
 
@@ -238,83 +242,154 @@ void CSirtAlgorithm::run(int _iNrIterations)
 			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
 		);
 
-
-
-	// forward projection, difference calculation and raylength/pixelweight computation
+	// Perform the first forward projection to compute ray lengths and pixel weights
+	m_pTotalRayLength->setData(0.0f);
+	m_pTotalPixelWeight->setData(0.0f);
 	pFirstForwardProjector->project();
 
-	float32* pfT = m_pTotalPixelWeight->getData();
-	for (int i = 0; i < m_pTotalPixelWeight->getSize(); ++i) {
-		float32 x = pfT[i];
-		if (x < -eps || x > eps)
-			x = 1.0f / x;
-		else
-			x = 0.0f;
-		pfT[i] = x;
-	}
-	pfT = m_pTotalRayLength->getData();
-	for (int i = 0; i < m_pTotalRayLength->getSize(); ++i) {
-		float32 x = pfT[i];
-		if (x < -eps || x > eps)
-			x = 1.0f / x;
-		else
-			x = 0.0f;
-		pfT[i] = x;
-	}
-
-	// divide by line weights
-	(*m_pDiffSinogram) *= (*m_pTotalRayLength);
-
-	// backprojection
-	m_pTmpVolume->setData(0.0f);
-	pBackProjector->project();
-
-	// divide by pixel weights
-	(*m_pTmpVolume) *= (*m_pTotalPixelWeight);
-	(*m_pReconstruction) += (*m_pTmpVolume);
-
-	if (m_bUseMinConstraint)
-		m_pReconstruction->clampMin(m_fMinValue);
-	if (m_bUseMaxConstraint)
-		m_pReconstruction->clampMax(m_fMaxValue);
-
-	// update iteration count
-	m_iIterationCount++;
-	iIteration++;
-
-
-	
-
-	// iteration loop
-	for (; iIteration < _iNrIterations && !m_bShouldAbort; ++iIteration) {
-		// forward projection and difference calculation
-		pForwardProjector->project();
-
-		// divide by line weights
-		(*m_pDiffSinogram) *= (*m_pTotalRayLength);
-
-
+	// iteration loop, each iteration loops over all available projections
+	for (int iIteration = 0; iIteration < _iNrIterations && !m_bShouldAbort; ++iIteration) {
+		// forward projection to compute differences.
+		pForwardProjector->project(); 
 		// backprojection
-		m_pTmpVolume->setData(0.0f);
-		pBackProjector->project();
-
-		// divide by pixel weights
-		(*m_pTmpVolume) *= (*m_pTotalPixelWeight);
-		(*m_pReconstruction) += (*m_pTmpVolume);
+		pBackProjector->project(); 
+		// update iteration count
+		m_iIterationCount++;
 
 		if (m_bUseMinConstraint)
 			m_pReconstruction->clampMin(m_fMinValue);
 		if (m_bUseMaxConstraint)
 			m_pReconstruction->clampMax(m_fMaxValue);
-
-		// update iteration count
-		m_iIterationCount++;
 	}
-
 
 	ASTRA_DELETE(pForwardProjector);
 	ASTRA_DELETE(pBackProjector);
 	ASTRA_DELETE(pFirstForwardProjector);
+
+
+	//// check initialized
+	//ASTRA_ASSERT(m_bIsInitialized);
+
+	//m_bShouldAbort = false;
+
+	//int iIteration = 0;
+
+	//// data projectors
+	//CDataProjectorInterface* pForwardProjector;
+	//CDataProjectorInterface* pBackProjector;
+	//CDataProjectorInterface* pFirstForwardProjector;
+
+	//m_pTotalRayLength->setData(0.0f);
+	//m_pTotalPixelWeight->setData(0.0f);
+
+	//// forward projection data projector
+	//pForwardProjector = dispatchDataProjector(
+	//	m_pProjector, 
+	//		SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+	//		ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+	//		DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, m_pSinogram),								// forward projection with difference calculation
+	//		m_bUseSinogramMask, m_bUseReconstructionMask, true											// options on/off
+	//	); 
+
+	//// backprojection data projector
+	//pBackProjector = dispatchDataProjector(
+	//		m_pProjector, 
+	//		SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+	//		ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+	//		DefaultBPPolicy(m_pTmpVolume, m_pDiffSinogram), // backprojection
+	//		m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
+	//	); 
+
+	//// first time forward projection data projector,
+	//// also computes total pixel weight and total ray length
+	//pFirstForwardProjector = dispatchDataProjector(
+	//		m_pProjector, 
+	//		SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+	//		ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+	//		Combine3Policy<DiffFPPolicy, TotalPixelWeightPolicy, TotalRayLengthPolicy>(					// 3 basic operations
+	//			DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, m_pSinogram),								// forward projection with difference calculation
+	//			TotalPixelWeightPolicy(m_pTotalPixelWeight),												// calculate the total pixel weights
+	//			TotalRayLengthPolicy(m_pTotalRayLength)),													// calculate the total ray lengths
+	//		m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
+	//	);
+
+
+
+	//// forward projection, difference calculation and raylength/pixelweight computation
+	//pFirstForwardProjector->project();
+
+	//float32* pfT = m_pTotalPixelWeight->getData();
+	//for (int i = 0; i < m_pTotalPixelWeight->getSize(); ++i) {
+	//	float32 x = pfT[i];
+	//	if (x < -eps || x > eps)
+	//		x = 1.0f / x;
+	//	else
+	//		x = 0.0f;
+	//	pfT[i] = x;
+	//}
+	//pfT = m_pTotalRayLength->getData();
+	//for (int i = 0; i < m_pTotalRayLength->getSize(); ++i) {
+	//	float32 x = pfT[i];
+	//	if (x < -eps || x > eps)
+	//		x = 1.0f / x;
+	//	else
+	//		x = 0.0f;
+	//	pfT[i] = x;
+	//}
+
+	//// divide by line weights
+	//(*m_pDiffSinogram) *= (*m_pTotalRayLength);
+
+	//// backprojection
+	//m_pTmpVolume->setData(0.0f);
+	//pBackProjector->project();
+
+	//// divide by pixel weights
+	//(*m_pTmpVolume) *= (*m_pTotalPixelWeight);
+	//(*m_pReconstruction) += (*m_pTmpVolume);
+
+	//if (m_bUseMinConstraint)
+	//	m_pReconstruction->clampMin(m_fMinValue);
+	//if (m_bUseMaxConstraint)
+	//	m_pReconstruction->clampMax(m_fMaxValue);
+
+	//// update iteration count
+	//m_iIterationCount++;
+	//iIteration++;
+
+
+	//
+
+	//// iteration loop
+	//for (; iIteration < _iNrIterations && !m_bShouldAbort; ++iIteration) {
+	//	// forward projection and difference calculation
+	//	pForwardProjector->project();
+
+	//	// divide by line weights
+	//	(*m_pDiffSinogram) *= (*m_pTotalRayLength);
+
+
+	//	// backprojection
+	//	m_pTmpVolume->setData(0.0f);
+	//	pBackProjector->project();
+
+	//	// divide by pixel weights
+	//	(*m_pTmpVolume) *= (*m_pTotalPixelWeight);
+	//	(*m_pReconstruction) += (*m_pTmpVolume);
+
+	//	if (m_bUseMinConstraint)
+	//		m_pReconstruction->clampMin(m_fMinValue);
+	//	if (m_bUseMaxConstraint)
+	//		m_pReconstruction->clampMax(m_fMaxValue);
+
+	//	// update iteration count
+	//	m_iIterationCount++;
+	//}
+
+
+	//ASTRA_DELETE(pForwardProjector);
+	//ASTRA_DELETE(pBackProjector);
+	//ASTRA_DELETE(pFirstForwardProjector);
 }
 //----------------------------------------------------------------------------------------
 
