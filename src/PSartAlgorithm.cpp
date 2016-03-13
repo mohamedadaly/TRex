@@ -49,30 +49,25 @@ std::string CPSartAlgorithm::type = "PSART";
 // Clear - Constructors
 void CPSartAlgorithm::_clear()
 {
-	CReconstructionAlgorithm2D::_clear();
-	m_piProjectionOrder = NULL;
-	m_iProjectionCount = 0;
-	m_iCurrentProjection = 0;
-	m_bIsInitialized = false;
-	m_iIterationCount = 0;
-	m_fAlpha = 1.0f;
+	//CReconstructionAlgorithm2D::_clear();
+	CSartAlgorithm::_clear();
 	m_fLambda = 1.0f;
-	m_bClearRayLength = true;
 }
 
 //---------------------------------------------------------------------------------------
 // Clear - Public
 void CPSartAlgorithm::clear()
 {
-	CReconstructionAlgorithm2D::clear();
-	if (m_piProjectionOrder) {
-		delete[] m_piProjectionOrder;
-		m_piProjectionOrder = NULL;
-	}
-	m_iProjectionCount = 0;
-	m_iCurrentProjection = 0;
-	m_bIsInitialized = false;
-	m_iIterationCount = 0;
+	//CReconstructionAlgorithm2D::clear();
+	CSartAlgorithm::clear();
+	//if (m_piProjectionOrder) {
+	//	delete[] m_piProjectionOrder;
+	//	m_piProjectionOrder = NULL;
+	//}
+	//m_iProjectionCount = 0;
+	//m_iCurrentProjection = 0;
+	//m_bIsInitialized = false;
+	//m_iIterationCount = 0;
 }
 
 //----------------------------------------------------------------------------------------
@@ -88,8 +83,9 @@ CPSartAlgorithm::CPSartAlgorithm(CProjector2D* _pProjector,
 							   CFloat32ProjectionData2D* _pSinogram, 
 							   CFloat32VolumeData2D* _pReconstruction) 
 {
-	_clear();
-	initialize(_pProjector, _pSinogram, _pReconstruction);
+	CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction);
+	//_clear();
+	//initialize(_pProjector, _pSinogram, _pReconstruction);
 }
 
 //----------------------------------------------------------------------------------------
@@ -100,8 +96,10 @@ CPSartAlgorithm::CPSartAlgorithm(CProjector2D* _pProjector,
 							   int* _piProjectionOrder, 
 							   int _iProjectionCount)
 {
-	_clear();
-	initialize(_pProjector, _pSinogram, _pReconstruction, _piProjectionOrder, _iProjectionCount);
+	CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction, 
+		_piProjectionOrder, _iProjectionCount);
+	//_clear();
+	//initialize(_pProjector, _pSinogram, _pReconstruction, _piProjectionOrder, _iProjectionCount);
 }
 
 //----------------------------------------------------------------------------------------
@@ -124,51 +122,51 @@ bool CPSartAlgorithm::initialize(const Config& _cfg)
 	}
 
 	// initialization of parent class
-	if (!CReconstructionAlgorithm2D::initialize(_cfg)) {
+	if (!CSartAlgorithm::initialize(_cfg)) {
 		return false;
 	}
 
-	// projection order
-	m_iCurrentProjection = 0;
-	m_iProjectionCount = m_pProjector->getProjectionGeometry()->getProjectionAngleCount();
-	string projOrder = _cfg.self.getOption("ProjectionOrder", "sequential");
-	CC.markOptionParsed("ProjectionOrder");
-	if (projOrder == "sequential") {
-		m_piProjectionOrder = new int[m_iProjectionCount];
-		for (int i = 0; i < m_iProjectionCount; i++) {
-			m_piProjectionOrder[i] = i;
-		}
-	} else if (projOrder == "random") {
-		m_piProjectionOrder = new int[m_iProjectionCount];
-		for (int i = 0; i < m_iProjectionCount; i++) {
-			m_piProjectionOrder[i] = i;
-		}
-		for (int i = 0; i < m_iProjectionCount-1; i++) {
-			int k = (rand() % (m_iProjectionCount - i));
-			int t = m_piProjectionOrder[i];
-			m_piProjectionOrder[i] = m_piProjectionOrder[i + k];
-			m_piProjectionOrder[i + k] = t;
-		}
-	} else if (projOrder == "custom") {
-		vector<float32> projOrderList = _cfg.self.getOptionNumericalArray("ProjectionOrderList");
-		m_piProjectionOrder = new int[projOrderList.size()];
-		for (int i = 0; i < m_iProjectionCount; i++) {
-			m_piProjectionOrder[i] = static_cast<int>(projOrderList[i]);
-		}
-		CC.markOptionParsed("ProjectionOrderList");
-	}
+	//// projection order
+	//m_iCurrentProjection = 0;
+	//m_iProjectionCount = m_pProjector->getProjectionGeometry()->getProjectionAngleCount();
+	//string projOrder = _cfg.self.getOption("ProjectionOrder", "sequential");
+	//CC.markOptionParsed("ProjectionOrder");
+	//if (projOrder == "sequential") {
+	//	m_piProjectionOrder = new int[m_iProjectionCount];
+	//	for (int i = 0; i < m_iProjectionCount; i++) {
+	//		m_piProjectionOrder[i] = i;
+	//	}
+	//} else if (projOrder == "random") {
+	//	m_piProjectionOrder = new int[m_iProjectionCount];
+	//	for (int i = 0; i < m_iProjectionCount; i++) {
+	//		m_piProjectionOrder[i] = i;
+	//	}
+	//	for (int i = 0; i < m_iProjectionCount-1; i++) {
+	//		int k = (rand() % (m_iProjectionCount - i));
+	//		int t = m_piProjectionOrder[i];
+	//		m_piProjectionOrder[i] = m_piProjectionOrder[i + k];
+	//		m_piProjectionOrder[i + k] = t;
+	//	}
+	//} else if (projOrder == "custom") {
+	//	vector<float32> projOrderList = _cfg.self.getOptionNumericalArray("ProjectionOrderList");
+	//	m_piProjectionOrder = new int[projOrderList.size()];
+	//	for (int i = 0; i < m_iProjectionCount; i++) {
+	//		m_piProjectionOrder[i] = static_cast<int>(projOrderList[i]);
+	//	}
+	//	CC.markOptionParsed("ProjectionOrderList");
+	//}
 
 	// Lambda
 	m_fLambda = _cfg.self.getOptionNumerical("Lambda", m_fLambda);
 	CC.markOptionParsed("Lambda");
 
-	// Alpha
-	m_fAlpha = _cfg.self.getOptionNumerical("Alpha", m_fAlpha);
-	CC.markOptionParsed("Alpha");
+	//// Alpha
+	//m_fAlpha = _cfg.self.getOptionNumerical("Alpha", m_fAlpha);
+	//CC.markOptionParsed("Alpha");
 
-	// Clear RaySum after each sweep. Defaults to true.
-	m_bClearRayLength = _cfg.self.getOptionBool("ClearRayLength", m_bClearRayLength);
-	CC.markOptionParsed("ClearRayLength");
+	//// Clear RaySum after each sweep. Defaults to true.
+	//m_bClearRayLength = _cfg.self.getOptionBool("ClearRayLength", m_bClearRayLength);
+	//CC.markOptionParsed("ClearRayLength");
 
 	// Input volume
 	XMLNode node = _cfg.self.getSingleNode("ProxInputDataId");
@@ -178,9 +176,9 @@ bool CPSartAlgorithm::initialize(const Config& _cfg)
 	CC.markNodeParsed("ProxInputDataId");
 
 	// create data objects
-	m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
-	m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
-	m_pDiffSinogram = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
+	//m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
+	//m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
+	//m_pDiffSinogram = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 	m_pY = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 
 	// success
@@ -188,70 +186,6 @@ bool CPSartAlgorithm::initialize(const Config& _cfg)
 	return m_bIsInitialized;
 }
 
-//---------------------------------------------------------------------------------------
-// Initialize - C++
-bool CPSartAlgorithm::initialize(CProjector2D* _pProjector, 
-								CFloat32ProjectionData2D* _pSinogram, 
-								CFloat32VolumeData2D* _pReconstruction)
-{
-	// if already initialized, clear first
-	if (m_bIsInitialized) {
-		clear();
-	}
-
-	// required classes
-	m_pProjector = _pProjector;
-	m_pSinogram = _pSinogram;
-	m_pReconstruction = _pReconstruction;
-
-	// ray order
-	m_iCurrentProjection = 0;
-	m_iProjectionCount = _pProjector->getProjectionGeometry()->getProjectionAngleCount();
-	m_piProjectionOrder = new int[m_iProjectionCount];
-	for (int i = 0; i < m_iProjectionCount; i++) {
-		m_piProjectionOrder[i] = i;
-	}
-
-	// create data objects
-	m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
-	m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
-	m_pDiffSinogram = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
-
-	// success
-	m_bIsInitialized = _check();
-	return m_bIsInitialized;
-}
-
-//---------------------------------------------------------------------------------------
-// Initialize - C++
-bool CPSartAlgorithm::initialize(CProjector2D* _pProjector, 
-								CFloat32ProjectionData2D* _pSinogram, 
-								CFloat32VolumeData2D* _pReconstruction,
-								int* _piProjectionOrder, 
-								int _iProjectionCount)
-{
-	// required classes
-	m_pProjector = _pProjector;
-	m_pSinogram = _pSinogram;
-	m_pReconstruction = _pReconstruction;
-
-	// ray order
-	m_iCurrentProjection = 0;
-	m_iProjectionCount = _iProjectionCount;
-	m_piProjectionOrder = new int[m_iProjectionCount];
-	for (int i = 0; i < m_iProjectionCount; i++) {
-		m_piProjectionOrder[i] = _piProjectionOrder[i];
-	}
-
-	// create data objects
-	m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
-	m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
-	m_pDiffSinogram = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
-
-	// success
-	m_bIsInitialized = _check();
-	return m_bIsInitialized;
-}
 
 //----------------------------------------------------------------------------------------
 bool CPSartAlgorithm::_check()
