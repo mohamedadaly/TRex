@@ -7,7 +7,7 @@ xx = ndiv(dx)
 
 vol_geom = astra_create_vol_geom(256, 256);
 proj_geom = astra_create_proj_geom('parallel', 1.0, 384, ...
-  linspace2(0,pi,90));
+  linspace2(0,pi,30));
 % vol_geom = astra_create_vol_geom(4,4);
 % proj_geom = astra_create_proj_geom('parallel', 1.0, 10, linspace2(0,pi,4));
 
@@ -25,7 +25,7 @@ figure(2); imshow(sinogram, []); axis image; axis off;
 
 % add sinogram noise
 rng(123);
-% sinogram = sinogram + randn(size(sinogram)) * 0.5;
+sinogram = sinogram + randn(size(sinogram)) * 0.5;
 
 astra_mex_data2d('delete', sinogram_id);
 
@@ -58,10 +58,11 @@ cfg.option.Alpha = 2;
 cfg.option.Lambda = 1e8;
 
 % CP algorithm parameters
-lambda = 100;
-mu = 1 / (lambda * 0.2);
-lambda * mu * 0.111
-theta = 1;
+lambda = 0.001;
+mu = 100;
+% mu = 1 / (lambda * 0.2);
+% lambda * mu * 0.111
+theta = 0;
 
 % sigma
 sigma = 10;
@@ -72,12 +73,12 @@ xbar = x;
 z = fdiff(x);
 
 % loop
-for it=1:50
+for it=1:20
   % z-step
   z = atv_conj_prox(z + mu * fdiff(xbar), mu, sigma);
   
   % x-step
-  new_x = l2_data_prox(cfg, x - lambda * ndiv(z), lambda, 25);
+  new_x = l2_data_prox(cfg, x - lambda * ndiv(z), lambda, 20);
   
   % xbar
   xbar = new_x + theta * (new_x - x);
