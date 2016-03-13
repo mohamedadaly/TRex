@@ -87,136 +87,136 @@ class _AstraExport CPSartAlgorithm : public CSartAlgorithm {
 
 protected:
 
-	/** Initial clearing. Only to be used by constructors.
-	 */
-	virtual void _clear();
+    /** Initial clearing. Only to be used by constructors.
+     */
+    virtual void _clear();
 
-	/** Check the values of this object.  If everything is ok, the object can be set to the initialized state.
-	 * The following statements are then guaranteed to hold:
-	 * - valid projector
-	 * - valid data objects
-	 * - projection order all within range
-	 */
-	virtual bool _check();
+    /** Check the values of this object.  If everything is ok, the object can be set to the initialized state.
+     * The following statements are then guaranteed to hold:
+     * - valid projector
+     * - valid data objects
+     * - projection order all within range
+     */
+    virtual bool _check();
 
-	// temporary data objects
-	CFloat32ProjectionData2D* m_pY;
+    // temporary data objects
+    CFloat32ProjectionData2D* m_pY;
 
-	// Proximal operator parameter
-	float32 m_fLambda;
+    // Proximal operator parameter
+    float32 m_fLambda;
 
-	// Proximal input volume
-	CFloat32VolumeData2D* m_pProxInput;
+    // Proximal input volume
+    CFloat32VolumeData2D* m_pProxInput;
 
 public:
-	
-	// type of the algorithm, needed to register with CAlgorithmFactory
-	static std::string type;	
-	
-	/** Default constructor, containing no code.
-	 */
-	CPSartAlgorithm();
-	
-	/** Constructor.
-	 *
-	 * @param _pProjector		Projector Object.
-	 * @param _pSinogram		ProjectionData2D object containing the sinogram data.
-	 * @param _pReconstruction	VolumeData2D object for storing the reconstructed volume.
-	 */
-	CPSartAlgorithm(CProjector2D* _pProjector, 
-				   CFloat32ProjectionData2D* _pSinogram, 
-				   CFloat32VolumeData2D* _pReconstruction);
+    
+    // type of the algorithm, needed to register with CAlgorithmFactory
+    static std::string type;	
+    
+    /** Default constructor, containing no code.
+     */
+    CPSartAlgorithm();
+    
+    /** Constructor.
+     *
+     * @param _pProjector		Projector Object.
+     * @param _pSinogram		ProjectionData2D object containing the sinogram data.
+     * @param _pReconstruction	VolumeData2D object for storing the reconstructed volume.
+     */
+    CPSartAlgorithm(CProjector2D* _pProjector, 
+                   CFloat32ProjectionData2D* _pSinogram, 
+                   CFloat32VolumeData2D* _pReconstruction);
 
-	/** Constructor.
-	 *
-	 * @param _pProjector			Projector Object.
-	 * @param _pSinogram			ProjectionData2D object containing the sinogram data.
-	 * @param _pReconstruction		VolumeData2D object for storing the reconstructed volume.
-	 * @param _piProjectionOrder	array containing a projection order.
-	 * @param _iProjectionCount		number of elements in _piProjectionOrder.
-	 */
-	CPSartAlgorithm(CProjector2D* _pProjector, 
-				   CFloat32ProjectionData2D* _pSinogram, 
-				   CFloat32VolumeData2D* _pReconstruction,
-				   int* _piProjectionOrder, 
-				   int _iProjectionCount);
+    /** Constructor.
+     *
+     * @param _pProjector			Projector Object.
+     * @param _pSinogram			ProjectionData2D object containing the sinogram data.
+     * @param _pReconstruction		VolumeData2D object for storing the reconstructed volume.
+     * @param _piProjectionOrder	array containing a projection order.
+     * @param _iProjectionCount		number of elements in _piProjectionOrder.
+     */
+    CPSartAlgorithm(CProjector2D* _pProjector, 
+                   CFloat32ProjectionData2D* _pSinogram, 
+                   CFloat32VolumeData2D* _pReconstruction,
+                   int* _piProjectionOrder, 
+                   int _iProjectionCount);
 
-	/** Destructor.
-	 */
-	virtual ~CPSartAlgorithm();
-	
-	/** Clear this class.
-	 */
-	virtual void clear();
+    /** Destructor.
+     */
+    virtual ~CPSartAlgorithm();
+    
+    /** Clear this class.
+     */
+    virtual void clear();
 
-	/** Initialize the algorithm with a config object.
-	 *
-	 * @param _cfg Configuration Object
-	 * @return initialization successful?
-	 */
-	virtual bool initialize(const Config& _cfg);
+    /** Initialize the algorithm with a config object.
+     *
+     * @param _cfg Configuration Object
+     * @return initialization successful?
+     */
+    virtual bool initialize(const Config& _cfg);
 
-	///** Initialize class, no optionals, use sequential order.
-	// *
-	// * @param _pProjector		Projector Object.
-	// * @param _pSinogram		ProjectionData2D object containing the sinogram data.
-	// * @param _pReconstruction	VolumeData2D object for storing the reconstructed volume.
-	// * @return initialization successful?	 
-	// */
-	//virtual bool initialize(CProjector2D* _pProjector, 
-	//						CFloat32ProjectionData2D* _pSinogram,
-	//						CFloat32VolumeData2D* _pReconstruction);
+    ///** Initialize class, no optionals, use sequential order.
+    // *
+    // * @param _pProjector		Projector Object.
+    // * @param _pSinogram		ProjectionData2D object containing the sinogram data.
+    // * @param _pReconstruction	VolumeData2D object for storing the reconstructed volume.
+    // * @return initialization successful?	 
+    // */
+    //virtual bool initialize(CProjector2D* _pProjector, 
+    //						CFloat32ProjectionData2D* _pSinogram,
+    //						CFloat32VolumeData2D* _pReconstruction);
 
-	///** Initialize class, use custom order.
-	// *
-	// * @param _pProjector			Projector Object.
-	// * @param _pSinogram			ProjectionData2D object containing the sinogram data.
-	// * @param _pReconstruction		VolumeData2D object for storing the reconstructed volume.
-	// * @param _piProjectionOrder	array containing a projection order.
-	// * @param _iProjectionCount		number of elements in _piProjectionOrder.
-	// * @return initialization successful?	 
-	// */
-	//virtual bool initialize(CProjector2D* _pProjector, 
-	//						CFloat32ProjectionData2D* _pSinogram, 
-	//						CFloat32VolumeData2D* _pReconstruction,
-	//						int* _piProjectionOrder, 
-	//						int _iProjectionCount);
+    ///** Initialize class, use custom order.
+    // *
+    // * @param _pProjector			Projector Object.
+    // * @param _pSinogram			ProjectionData2D object containing the sinogram data.
+    // * @param _pReconstruction		VolumeData2D object for storing the reconstructed volume.
+    // * @param _piProjectionOrder	array containing a projection order.
+    // * @param _iProjectionCount		number of elements in _piProjectionOrder.
+    // * @return initialization successful?	 
+    // */
+    //virtual bool initialize(CProjector2D* _pProjector, 
+    //						CFloat32ProjectionData2D* _pSinogram, 
+    //						CFloat32VolumeData2D* _pReconstruction,
+    //						int* _piProjectionOrder, 
+    //						int _iProjectionCount);
 
-	/** Get all information parameters
-	 *
-	 * @return map with all boost::any object
-	 */
-	virtual map<string,boost::any> getInformation();
+    /** Get all information parameters
+     *
+     * @return map with all boost::any object
+     */
+    virtual map<string,boost::any> getInformation();
 
-	/** Get a single piece of information represented as a boost::any
-	 *
-	 * @param _sIdentifier identifier string to specify which piece of information you want
-	 * @return boost::any object
-	 */
-	virtual boost::any getInformation(std::string _sIdentifier);
+    /** Get a single piece of information represented as a boost::any
+     *
+     * @param _sIdentifier identifier string to specify which piece of information you want
+     * @return boost::any object
+     */
+    virtual boost::any getInformation(std::string _sIdentifier);
 
-	/** Perform a number of iterations.  Each iteration is a forward and backprojection of 
-	 * a single projection index.
-	 *
-	 * @param _iNrIterations amount of iterations to perform.
-	 */
-	virtual void run(int _iNrIterations = 1);
+    /** Perform a number of iterations.  Each iteration is a forward and backprojection of 
+     * a single projection index.
+     *
+     * @param _iNrIterations amount of iterations to perform.
+     */
+    virtual void run(int _iNrIterations = 1);
 
-	/** Get a description of the class.
-	 *
-	 * @return description string
-	 */
-	virtual std::string description() const;
+    /** Get a description of the class.
+     *
+     * @return description string
+     */
+    virtual std::string description() const;
 
 protected:
 
 
-	////< Order of the projections.
-	//int* m_piProjectionOrder;
-	////< Number of projections specified in m_piProjectionOrder.
-	//int m_iProjectionCount;
-	////< Current index in the projection order array.
-	//int m_iCurrentProjection;
+    ////< Order of the projections.
+    //int* m_piProjectionOrder;
+    ////< Number of projections specified in m_piProjectionOrder.
+    //int m_iProjectionCount;
+    ////< Current index in the projection order array.
+    //int m_iCurrentProjection;
 
 };
 

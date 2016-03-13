@@ -33,7 +33,8 @@ $Id$
 #include "Config.h"
 
 #include "Algorithm.h"
-#include "ReconstructionAlgorithm2D.h"
+//#include "ReconstructionAlgorithm2D.h"
+#include "SartAlgorithm.h"
 
 #include "Projector2D.h"
 #include "Float32ProjectionData2D.h"
@@ -82,7 +83,7 @@ namespace astra {
  *		astra_mex_algorithm('delete'\, alg_id);\n
  * }
  */
-class _AstraExport CBicavAlgorithm : public CReconstructionAlgorithm2D {
+class _AstraExport CBicavAlgorithm : public CSartAlgorithm {
 
 protected:
 
@@ -97,19 +98,6 @@ protected:
 	 * - projection order all within range
 	 */
 	virtual bool _check();
-
-	// temporary data objects
-	CFloat32ProjectionData2D* m_pTotalRayLength;
-	CFloat32VolumeData2D* m_pTotalPixelWeight;
-	CFloat32ProjectionData2D* m_pDiffSinogram;
-
-	// over/under-relaxation parameter in SART
-	float32 m_fAlpha;
-
-	// Clear TotalRayLength after each sweep. Defaults to true.
-	bool m_bClearRayLength;
-
-	int m_iIterationCount;
 
 public:
 	
@@ -159,32 +147,6 @@ public:
 	 */
 	virtual bool initialize(const Config& _cfg);
 
-	/** Initialize class, no optionals, use sequential order.
-	 *
-	 * @param _pProjector		Projector Object.
-	 * @param _pSinogram		ProjectionData2D object containing the sinogram data.
-	 * @param _pReconstruction	VolumeData2D object for storing the reconstructed volume.
-	 * @return initialization successful?	 
-	 */
-	virtual bool initialize(CProjector2D* _pProjector, 
-							CFloat32ProjectionData2D* _pSinogram, 
-							CFloat32VolumeData2D* _pReconstruction);
-
-	/** Initialize class, use custom order.
-	 *
-	 * @param _pProjector			Projector Object.
-	 * @param _pSinogram			ProjectionData2D object containing the sinogram data.
-	 * @param _pReconstruction		VolumeData2D object for storing the reconstructed volume.
-	 * @param _piProjectionOrder	array containing a projection order.
-	 * @param _iProjectionCount		number of elements in _piProjectionOrder.
-	 * @return initialization successful?	 
-	 */
-	virtual bool initialize(CProjector2D* _pProjector, 
-							CFloat32ProjectionData2D* _pSinogram, 
-							CFloat32VolumeData2D* _pReconstruction,
-							int* _piProjectionOrder, 
-							int _iProjectionCount);
-
 	/** Get all information parameters
 	 *
 	 * @return map with all boost::any object
@@ -212,14 +174,6 @@ public:
 	virtual std::string description() const;
 
 protected:
-
-
-	//< Order of the projections.
-	int* m_piProjectionOrder;
-	//< Number of projections specified in m_piProjectionOrder.
-	int m_iProjectionCount;
-	//< Current index in the projection order array.
-	int m_iCurrentProjection;
 
 };
 

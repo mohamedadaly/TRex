@@ -191,12 +191,7 @@ bool CPSartAlgorithm::initialize(const Config& _cfg)
 bool CPSartAlgorithm::_check()
 {
 	// check base class
-	ASTRA_CONFIG_CHECK(CReconstructionAlgorithm2D::_check(), "PSART", "Error in ReconstructionAlgorithm2D initialization");
-
-	// check projection order all within range
-	for (int i = 0; i < m_iProjectionCount; ++i) {
-		ASTRA_CONFIG_CHECK(0 <= m_piProjectionOrder[i] && m_piProjectionOrder[i] < m_pProjector->getProjectionGeometry()->getProjectionAngleCount(), "PSART", "Projection Order out of range.");
-	}
+	ASTRA_CONFIG_CHECK(CSartAlgorithm::_check(), "PSART", "Error in ReconstructionAlgorithm2D initialization");
 
 	return true;
 }
