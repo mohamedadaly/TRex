@@ -33,7 +33,7 @@ $Id$
 #include "Config.h"
 
 #include "Algorithm.h"
-#include "ReconstructionAlgorithm2D.h"
+#include "SartAlgorithm.h"
 
 #include "Projector2D.h"
 #include "Float32ProjectionData2D.h"
@@ -96,13 +96,13 @@ namespace astra {
  * \par References
  * [1] "Computational Analysis and Improvement of SIRT", J. Gregor, T. Benson, IEEE Transactions on Medical Imaging, Vol. 22, No. 7, July 2008.
  */
-class _AstraExport CSirtAlgorithm : public CReconstructionAlgorithm2D {
+class _AstraExport CSirtAlgorithm : public CSartAlgorithm {
 
 protected:
 
-	/** Init stuff
-	 */
-	virtual void _init();
+	///** Init stuff
+	// */
+	//virtual void _init();
 
 	/** Initial clearing. Only to be used by constructors.
 	 */
@@ -115,29 +115,29 @@ protected:
 	 */
 	virtual bool _check();
 
-	/** Temporary data object for storing the total ray lengths
-	 */
-	CFloat32ProjectionData2D* m_pTotalRayLength;
-	
-	/** Temporary data object for storing the total pixel weigths
-	 */
-	CFloat32VolumeData2D* m_pTotalPixelWeight;
-	
-	/** Temporary data object for storing the difference between the forward projected
-	 * reconstruction, and the measured projection data
-	 */
-	CFloat32ProjectionData2D* m_pDiffSinogram;
+	///** Temporary data object for storing the total ray lengths
+	// */
+	//CFloat32ProjectionData2D* m_pTotalRayLength;
+	//
+	///** Temporary data object for storing the total pixel weigths
+	// */
+	//CFloat32VolumeData2D* m_pTotalPixelWeight;
+	//
+	///** Temporary data object for storing the difference between the forward projected
+	// * reconstruction, and the measured projection data
+	// */
+	//CFloat32ProjectionData2D* m_pDiffSinogram;
 
-	/** Temporary data object for storing volume data
-	*/
-	//CFloat32VolumeData2D* m_pTmpVolume;
+	///** Temporary data object for storing volume data
+	//*/
+	////CFloat32VolumeData2D* m_pTmpVolume;
 
-	// over/under-relaxation parameter in SART. Defaults to 1.
-	float32 m_fAlpha;
+	//// over/under-relaxation parameter in SART. Defaults to 1.
+	//float32 m_fAlpha;
 
-	/** The number of performed iterations
-	 */
-	int m_iIterationCount;
+	///** The number of performed iterations
+	// */
+	//int m_iIterationCount;
 
 public:
 	
@@ -173,16 +173,16 @@ public:
 	 */
 	virtual bool initialize(const Config& _cfg);
 
-	/** Initialize class.
-	 *
-	 * @param _pProjector		Projector Object.
-	 * @param _pSinogram		ProjectionData2D object containing the sinogram data.
-	 * @param _pReconstruction	VolumeData2D object for storing the reconstructed volume.
-	 * @return Initialization successful?
-	 */
-	bool initialize(CProjector2D* _pProjector, 
-					CFloat32ProjectionData2D* _pSinogram, 
-					CFloat32VolumeData2D* _pReconstruction);
+	///** Initialize class.
+	// *
+	// * @param _pProjector		Projector Object.
+	// * @param _pSinogram		ProjectionData2D object containing the sinogram data.
+	// * @param _pReconstruction	VolumeData2D object for storing the reconstructed volume.
+	// * @return Initialization successful?
+	// */
+	//bool initialize(CProjector2D* _pProjector, 
+	//				CFloat32ProjectionData2D* _pSinogram, 
+	//				CFloat32VolumeData2D* _pReconstruction);
 
 	/** Get all information parameters.
 	 *

@@ -49,7 +49,7 @@ prox_in_id = astra_mex_data2d('create', '-vol', vol_geom, prox_in);
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('PSART');
+cfg = astra_struct('SIRT');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;

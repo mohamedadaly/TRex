@@ -55,8 +55,7 @@ CSirtAlgorithm::CSirtAlgorithm(CProjector2D* _pProjector,
 							   CFloat32ProjectionData2D* _pSinogram, 
 							   CFloat32VolumeData2D* _pReconstruction)
 {
-	_clear();
-	initialize(_pProjector, _pSinogram, _pReconstruction);
+	CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction);
 }
 
 //----------------------------------------------------------------------------------------
@@ -70,31 +69,22 @@ CSirtAlgorithm::~CSirtAlgorithm()
 // Clear - Constructors
 void CSirtAlgorithm::_clear()
 {
-	CReconstructionAlgorithm2D::_clear();
-	m_bIsInitialized = false;
-
-	m_pTotalRayLength = NULL;
-	m_pTotalPixelWeight = NULL;
-	m_pDiffSinogram = NULL;
-	//m_pTmpVolume = NULL;
-
-	m_iIterationCount = 0;
-	m_fAlpha = 1.0f;
+	CSartAlgorithm::_clear();
 }
 
 //---------------------------------------------------------------------------------------
 // Clear - Public
 void CSirtAlgorithm::clear()
 {
-	CReconstructionAlgorithm2D::_clear();
-	m_bIsInitialized = false;
+	CSartAlgorithm::_clear();
+	//m_bIsInitialized = false;
 
-	ASTRA_DELETE(m_pTotalRayLength);
-	ASTRA_DELETE(m_pTotalPixelWeight);
-	ASTRA_DELETE(m_pDiffSinogram);
-	//ASTRA_DELETE(m_pTmpVolume);
+	//ASTRA_DELETE(m_pTotalRayLength);
+	//ASTRA_DELETE(m_pTotalPixelWeight);
+	//ASTRA_DELETE(m_pDiffSinogram);
+	////ASTRA_DELETE(m_pTmpVolume);
 
-	m_iIterationCount = 0;
+	//m_iIterationCount = 0;
 }
 
 //----------------------------------------------------------------------------------------
@@ -102,14 +92,14 @@ void CSirtAlgorithm::clear()
 bool CSirtAlgorithm::_check()
 {
 	// check base class
-	ASTRA_CONFIG_CHECK(CReconstructionAlgorithm2D::_check(), "SIRT", "Error in ReconstructionAlgorithm2D initialization");
-
-	ASTRA_CONFIG_CHECK(m_pTotalRayLength, "SIRT", "Invalid TotalRayLength Object");
-	ASTRA_CONFIG_CHECK(m_pTotalRayLength->isInitialized(), "SIRT", "Invalid TotalRayLength Object");
-	ASTRA_CONFIG_CHECK(m_pTotalPixelWeight, "SIRT", "Invalid TotalPixelWeight Object");
-	ASTRA_CONFIG_CHECK(m_pTotalPixelWeight->isInitialized(), "SIRT", "Invalid TotalPixelWeight Object");
-	ASTRA_CONFIG_CHECK(m_pDiffSinogram, "SIRT", "Invalid DiffSinogram Object");
-	ASTRA_CONFIG_CHECK(m_pDiffSinogram->isInitialized(), "SIRT", "Invalid DiffSinogram Object");
+	ASTRA_CONFIG_CHECK(CSartAlgorithm::_check(), "SIRT", "Error in ReconstructionAlgorithm2D initialization");
+	
+	//ASTRA_CONFIG_CHECK(m_pTotalRayLength, "SIRT", "Invalid TotalRayLength Object");
+	//ASTRA_CONFIG_CHECK(m_pTotalRayLength->isInitialized(), "SIRT", "Invalid TotalRayLength Object");
+	//ASTRA_CONFIG_CHECK(m_pTotalPixelWeight, "SIRT", "Invalid TotalPixelWeight Object");
+	//ASTRA_CONFIG_CHECK(m_pTotalPixelWeight->isInitialized(), "SIRT", "Invalid TotalPixelWeight Object");
+	//ASTRA_CONFIG_CHECK(m_pDiffSinogram, "SIRT", "Invalid DiffSinogram Object");
+	//ASTRA_CONFIG_CHECK(m_pDiffSinogram->isInitialized(), "SIRT", "Invalid DiffSinogram Object");
 
 	return true;
 }
@@ -127,40 +117,16 @@ bool CSirtAlgorithm::initialize(const Config& _cfg)
 	}
 
 	// initialization of parent class
-	if (!CReconstructionAlgorithm2D::initialize(_cfg)) {
+	if (!CSartAlgorithm::initialize(_cfg)) {
 		return false;
 	}
 
-	// init data objects and data projectors
-	_init();
+	//// init data objects and data projectors
+	//_init();
 
-	// Alpha
-	m_fAlpha = _cfg.self.getOptionNumerical("Alpha", m_fAlpha);
-	CC.markOptionParsed("Alpha");
-
-	// success
-	m_bIsInitialized = _check();
-	return m_bIsInitialized;
-}
-
-//---------------------------------------------------------------------------------------
-// Initialize - C++
-bool CSirtAlgorithm::initialize(CProjector2D* _pProjector, 
-								CFloat32ProjectionData2D* _pSinogram, 
-								CFloat32VolumeData2D* _pReconstruction)
-{
-	// if already initialized, clear first
-	if (m_bIsInitialized) {
-		clear();
-	}
-
-	// required classes
-	m_pProjector = _pProjector;
-	m_pSinogram = _pSinogram;
-	m_pReconstruction = _pReconstruction;
-
-	// init data objects and data projectors
-	_init();
+	//// Alpha
+	//m_fAlpha = _cfg.self.getOptionNumerical("Alpha", m_fAlpha);
+	//CC.markOptionParsed("Alpha");
 
 	// success
 	m_bIsInitialized = _check();
@@ -169,14 +135,15 @@ bool CSirtAlgorithm::initialize(CProjector2D* _pProjector,
 
 //---------------------------------------------------------------------------------------
 // Initialize Data Projectors - private
-void CSirtAlgorithm::_init()
-{
-	// create data objects
-	m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
-	m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
-	m_pDiffSinogram = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
-	//m_pTmpVolume = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
-}
+//void CSirtAlgorithm::_init()
+//{
+//	CSartAlgorithm::_in
+//	// create data objects
+//	m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
+//	m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
+//	m_pDiffSinogram = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
+//	//m_pTmpVolume = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
+//}
 
 //---------------------------------------------------------------------------------------
 // Information - All
