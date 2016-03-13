@@ -330,12 +330,20 @@ class SIRTBPPolicy {
 	CFloat32ProjectionData2D* m_pTotalRayLength;
 	CFloat32VolumeData2D* m_pTotalPixelWeight;
 
+	// relaxation parameter.
 	float32 m_fAlpha;
+
+	// Clamping parameters. Defaults to off.
+	bool m_bUseMinConstraint, m_bUseMaxConstraint;
+	float32 m_fMinConstraintVal, m_fMaxConstraintVal;
 
 public:
 
 	FORCEINLINE SIRTBPPolicy();
-	FORCEINLINE SIRTBPPolicy(CFloat32VolumeData2D* _pReconstruction, CFloat32ProjectionData2D* _pSinogram, CFloat32VolumeData2D* _pTotalPixelWeight, CFloat32ProjectionData2D* _pTotalRayLength, float32 _fAlhpa = 1.0f); 
+	FORCEINLINE SIRTBPPolicy(CFloat32VolumeData2D* _pReconstruction, CFloat32ProjectionData2D* _pSinogram, 
+		CFloat32VolumeData2D* _pTotalPixelWeight, CFloat32ProjectionData2D* _pTotalRayLength, float32 _fAlhpa = 1.0f,
+		bool _bUseMinConstraint = false, float32 _fMinConstraintVal = 0.0f, 
+		bool _bUseMaxConstraint = false, float32 _fMaxConstraintVal = 0.0f); 
 	FORCEINLINE ~SIRTBPPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);

@@ -719,13 +719,19 @@ SIRTBPPolicy::SIRTBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 						   CFloat32ProjectionData2D* _pSinogram, 
 						   CFloat32VolumeData2D* _pTotalPixelWeight, 
 						   CFloat32ProjectionData2D* _pTotalRayLength,
-						   float32 _fAlhpa) 
+						   float32 _fAlhpa,						   
+						   bool _bUseMinConstraint, float32 _fMinConstraintVal,
+						   bool _bUseMaxConstraint, float32 _fMaxConstraintVal) 
 {
 	m_pReconstruction = _pReconstruction;
 	m_pSinogram = _pSinogram;
 	m_pTotalPixelWeight = _pTotalPixelWeight;
 	m_pTotalRayLength = _pTotalRayLength;
 	m_fAlpha = _fAlhpa;
+	m_bUseMinConstraint = _bUseMinConstraint;
+	m_fMinConstraintVal = _fMinConstraintVal;
+	m_bUseMaxConstraint = _bUseMaxConstraint;
+	m_fMaxConstraintVal = _fMaxConstraintVal;
 }
 //----------------------------------------------------------------------------------------	
 SIRTBPPolicy::~SIRTBPPolicy() 
@@ -745,10 +751,13 @@ bool SIRTBPPolicy::pixelPrior(int _iVolumeIndex)
 //----------------------------------------------------------------------------------------	
 void SIRTBPPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
 {
-	float32 fGammaBeta = m_pTotalPixelWeight->getData()[_iVolumeIndex] * m_pTotalRayLength->getData()[_iRayIndex];
+	float32 fGammaBeta = m_pTotalPixelWeight->getData()[_iVolumeIndex] * 
+		m_pTotalRayLength->getData()[_iRayIndex];
 	if ((fGammaBeta > 0.001f) || (fGammaBeta < -0.001f)) {
-		m_pReconstruction->getData()[_iVolumeIndex] += m_fAlpha * _fWeight * m_pSinogram->getData()[_iRayIndex] / fGammaBeta;
+		m_pReconstruction->getData()[_iVolumeIndex] += m_fAlpha * _fWeight * 
+			m_pSinogram->getData()[_iRayIndex] / fGammaBeta;
 	}
+
 }
 //----------------------------------------------------------------------------------------
 void SIRTBPPolicy::rayPosterior(int _iRayIndex) 
@@ -758,7 +767,17 @@ void SIRTBPPolicy::rayPosterior(int _iRayIndex)
 //----------------------------------------------------------------------------------------
 void SIRTBPPolicy::pixelPosterior(int _iVolumeIndex) 
 {
-	// nothing
+	// Quick check to quit early.
+	if (!m_bUseMaxConstraint && !m_bUseMinConstraint) return;
+
+	float32* pfVoxel = &(m_pReconstruction->getData()[_iVolumeIndex]);
+	// Check limits.
+	if (m_bUseMinConstraint && *pfVoxel < m_fMinConstraintVal) {
+		*pfVoxel = m_fMinConstraintVal;
+	}
+	if (m_bUseMaxConstraint && *pfVoxel > m_fMaxConstraintVal) {
+		*pfVoxel = m_fMaxConstraintVal;
+	}
 }
 //----------------------------------------------------------------------------------------
 

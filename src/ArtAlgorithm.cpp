@@ -281,6 +281,8 @@ void CArtAlgorithm::run(int _iNrIterations)
 	CDataProjectorInterface* pFirstForwardProjector;
 
 	m_pTotalRayLength->setData(0.0f);
+
+	// This is initialized to 1.0 to be able to use the SIRTBPPolicy.
 	m_pTotalPixelWeight->setData(1.0f);
 
 	// Initialize m_pReconstruction to zero.
@@ -301,7 +303,8 @@ void CArtAlgorithm::run(int _iNrIterations)
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 			SIRTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
-			m_pTotalPixelWeight, m_pTotalRayLength, m_fAlpha),  // SIRT backprojection
+				m_pTotalPixelWeight, m_pTotalRayLength, m_fAlpha,
+				m_bUseMinConstraint, m_fMinValue, m_bUseMaxConstraint, m_fMaxValue),  // SIRT backprojection
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 
 
@@ -333,10 +336,10 @@ void CArtAlgorithm::run(int _iNrIterations)
 			// backprojection
 			pBackProjector->projectSingleRay(iProjection, iDetector);
 
-			if (m_bUseMinConstraint)
-				m_pReconstruction->clampMin(m_fMinValue);
-			if (m_bUseMaxConstraint)
-				m_pReconstruction->clampMax(m_fMaxValue);
+			//if (m_bUseMinConstraint)
+			//	m_pReconstruction->clampMin(m_fMinValue);
+			//if (m_bUseMaxConstraint)
+			//	m_pReconstruction->clampMax(m_fMaxValue);
 		}
 	}
 

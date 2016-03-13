@@ -302,7 +302,7 @@ void CSartAlgorithm::run(int _iNrIterations)
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 			SIRTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
-			m_pTotalPixelWeight, m_pTotalRayLength, m_fAlpha),	// SIRT backprojection
+				m_pTotalPixelWeight, m_pTotalRayLength, m_fAlpha),  // SIRT backprojection
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 
 
@@ -358,6 +358,8 @@ void CSartAlgorithm::run(int _iNrIterations)
 			// update iteration count
 			m_iIterationCount++;
 
+			// We need to check here, as checking inside the BP (as in ART)
+			// is not correct.
 			if (m_bUseMinConstraint)
 				m_pReconstruction->clampMin(m_fMinValue);
 			if (m_bUseMaxConstraint)
