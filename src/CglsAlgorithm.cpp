@@ -289,6 +289,11 @@ void CCglsAlgorithm::run(int _iNrIterations)
 		}
 		
 		m_iIteration++;
+
+		// Compute SNR
+		if (m_bComputeIterationMetrics) {
+			ASTRA_INFO("SNR = %f", m_pReconstruction->getSNR(*m_pGTReconstruction));
+		}
 	}
 
 }

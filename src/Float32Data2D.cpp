@@ -591,6 +591,27 @@ std::string CFloat32Data2D::description() const
 }
 
 
+float32 CFloat32Data2D::getSNR(const CFloat32Data2D& _gtData) const
+{
+	ASTRA_ASSERT(m_bInitialized);
+	ASTRA_ASSERT(m_iSize == _gtData.getSize());
+
+	// Compute sum of squares of signal (_data) and noise (difference)
+	//
+	// initialize
+	const float32* pData = _gtData.getDataConst();
+	float64 signal = 0.f;
+	float64 noise = 0.f;
+	// loop
+	for (int i = 0; i < m_iSize; ++i) {
+		signal += static_cast<float64>(pData[i]) * pData[i];
+		float64 n = static_cast<float64>(pData[i]) - m_pfData[i];
+		noise += n*n;
+	}
+
+	// return 10 * log
+	return static_cast<float32>(10 * log10(signal / noise));
+}
 
 
 } // end namespace astra

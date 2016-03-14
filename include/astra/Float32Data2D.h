@@ -457,6 +457,10 @@ public:
 
 	float32& getData(int _index);
 
+	/** 
+	 * Computes the SNR of this volume given the input ground truth data.
+	 */
+	float32 getSNR(const CFloat32Data2D& _gtData) const;
 
 private:
 	CFloat32CustomMemory* m_pCustomMemory;

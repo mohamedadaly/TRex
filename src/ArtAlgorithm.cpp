@@ -341,6 +341,11 @@ void CArtAlgorithm::run(int _iNrIterations)
 			//if (m_bUseMaxConstraint)
 			//	m_pReconstruction->clampMax(m_fMaxValue);
 		}
+
+		// Compute SNR
+		if (m_bComputeIterationMetrics) {
+			ASTRA_INFO("SNR = %f", m_pReconstruction->getSNR(*m_pGTReconstruction));
+		}
 	}
 
 	ASTRA_DELETE(pForwardProjector);

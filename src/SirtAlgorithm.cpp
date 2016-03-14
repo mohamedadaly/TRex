@@ -227,6 +227,11 @@ void CSirtAlgorithm::run(int _iNrIterations)
 			m_pReconstruction->clampMin(m_fMinValue);
 		if (m_bUseMaxConstraint)
 			m_pReconstruction->clampMax(m_fMaxValue);
+
+		// Compute SNR
+		if (m_bComputeIterationMetrics) {
+			ASTRA_INFO("SNR = %f", m_pReconstruction->getSNR(*m_pGTReconstruction));
+		}
 	}
 
 	ASTRA_DELETE(pForwardProjector);

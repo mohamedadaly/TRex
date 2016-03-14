@@ -208,6 +208,11 @@ protected:
 	//< Use the fixed reconstruction mask?
 	bool m_bUseSinogramMask;
 
+	//< Dataobject containing the ground truth reconstruction volume.
+	CFloat32VolumeData2D* m_pGTReconstruction;
+
+	//< Whether to compute SNR at each iteration.
+	bool m_bComputeIterationMetrics;
 
 	//< Specify if initialize/check should check for a valid Projector
 	virtual bool requiresProjector() const { return true; }

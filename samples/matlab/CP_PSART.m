@@ -1,5 +1,5 @@
 function [] = CP_PSART()
-% minimizes ||Ax-b||^2 + sigma TV(x)
+% minimizes ||Ax-b||^2 / sigma + TV(x)
 
 x = [1 2 3; 5 8 12; 15, 21, 30]
 dx = fdiff(x)
@@ -57,38 +57,11 @@ cfg.option.ClearRayLength = 1;
 cfg.option.Alpha = 2;
 cfg.option.Lambda = 1e8;
 
-% CP algorithm parameters
-lambda = 0.001;
-mu = 100;
-% mu = 1 / (lambda * 0.2);
-% lambda * mu * 0.111
-theta = 0;
+% CP
+% CP(cfg, P, sinogram);
 
-% sigma
-sigma = 10;
-
-% init
-x = zeros(size(P));
-xbar = x;
-z = fdiff(x);
-
-% loop
-for it=1:20
-  % z-step
-  z = atv_conj_prox(z + mu * fdiff(xbar), mu, sigma);
-  
-  % x-step
-  new_x = l2_data_prox(cfg, x - lambda * ndiv(z), lambda, 20);
-  
-  % xbar
-  xbar = new_x + theta * (new_x - x);
-  x = new_x;
-  
-  obj = objective(x, sigma, sinogram, cfg);
-  fprintf('it=%d\tobj=%f\tsnr=%f\n', it, obj, snr(P, x-P));
-end;
-
-figure(3), imshow(x, []);
+% ADMM
+ADMM(cfg, P, sinogram);
 
 % cleanup
 astra_mex_projector('delete', proj_id);
@@ -96,6 +69,113 @@ astra_mex_data2d('delete', rec_id);
 astra_mex_data2d('delete', sinogram_id);
 astra_mex_data2d('delete', prox_in_id);
 
+end
+
+function ADMM(cfg, P, sinogram)
+% sigma
+sigma = 1000;
+
+% CP algorithm parameters
+rho = 10; %.001
+
+mu = 1 / (8 * rho)
+% lambda * mu * 8
+theta = 1;
+
+% init
+x = zeros(size(P));
+z = fdiff(x);
+u = z;
+
+% loop
+for it=1:20
+  
+  % x-step
+%   new_x = l2_data_prox(cfg, x - lambda * ndiv(z), lambda, 20);
+  x = l2_data_prox(cfg, x - rho*mu * ndiv(fdiff(x)-z+u), ...
+    mu/sigma, 20);
+
+  % z-step
+  z = atv_prox(fdiff(x) + u, 1/rho, 1);
+%   z = z - (1/rho) * atv_conj_prox((fdiff(x) + u) * rho, rho, 1);
+%   z = atv_conj_prox(z + mu * fdiff(xbar), mu, sigma);
+%   z = itv_conj_prox(z + mu * fdiff(xbar), mu, sigma);
+  
+  % u-step
+  u = u + fdiff(x) - z;
+  
+%   x = new_x;
+  
+  % objective
+  obj = objective(x, sigma, sinogram, cfg);
+    
+  fprintf('it=%d\tobj=%.2f\tsnr=%.2f\t\n', it, obj, snr(P, x-P));
+end;
+
+figure(3), imshow(x, []);
+end
+
+function CP(cfg, P, sinogram)
+% sigma
+sigma = 20;
+
+% CP algorithm parameters
+lambda = 0.01; %.001
+% mu = 10; %100
+mu = 1 / (lambda * 8) % * sigma^2)
+% mu = 0.1
+% lambda * mu * 8
+theta = 1;
+
+% gamma = 0.7 / sigma/2;
+
+% init
+x = zeros(size(P));
+xbar = x;
+z = fdiff(x);
+
+% Power Iteration to estimate spectral norm of first diff matrix
+% xx = randn(size(P));
+% for i=1:1e3
+%   xx = ndiv(fdiff(xx));
+%   xx = xx / sqrt(sum(reshape(xx,[],1).^2));
+% end
+% val = sigma^2 * sum(reshape(fdiff(xx).^2,[],1)) / sum(reshape(xx.^2,[],1))
+% return;
+
+% gt dual variable z 
+gt_z = sign(fdiff(P));
+% gt_z(gt_z == 0) = 1;
+
+% loop
+for it=1:20
+  % z-step
+  z = atv_conj_prox(z + mu * fdiff(xbar), mu, 1);
+%   z = atv_conj_prox(z + mu * fdiff(xbar), mu, sigma);
+%   z = itv_conj_prox(z + mu * fdiff(xbar), mu, sigma);
+  
+  % x-step
+%   new_x = l2_data_prox(cfg, x - lambda * ndiv(z), lambda, 20);
+  new_x = l2_data_prox(cfg, x - lambda * ndiv(z), lambda/sigma, 20);
+  
+%   theta = 1 / sqrt(1 + 2 * gamma * lambda);
+%   lambda = theta * lambda;
+%   mu = mu / theta;
+  
+  % xbar
+  xbar = new_x + theta * (new_x - x);
+  x = new_x;
+  
+  % objective
+  obj = objective(x, sigma, sinogram, cfg);
+  
+  % primal-dual gap
+  pdg = norm(P - x, 'fro')^2 / (2*lambda) + sum(reshape(gt_z - z, [],1).^2) / (2*mu);
+  
+  fprintf('it=%d\tobj=%.2f\tsnr=%.2f\tgap=%.2f\n', it, obj, snr(P, x-P), pdg);
+end;
+
+figure(3), imshow(x, []);
 end
 
 % Computes the objective function
@@ -122,8 +202,8 @@ astra_mex_algorithm('delete', alg_id);
 
 % compute objective
 sino = astra_mex_data2d('get',sino_id);
-val = norm(sino - sinogram, 'fro')^2 + ...
-  sigma * sum(abs(reshape(fdiff(x), [], 1)));
+% val = norm(sino - sinogram, 'fro')^2 + sigma * atv(x);
+val = norm(sino - sinogram, 'fro')^2 / sigma + atv(x);
 
 astra_mex_data2d('delete', volume_id);
 astra_mex_data2d('delete', sino_id);
@@ -199,4 +279,40 @@ assert(length(sz) == 3);
 
 % project on L_inf ball with radius sigma
 zp = max(-sigma, min(sigma, z));
+end
+
+function zp = atv_prox(z, mu, sigma)
+sz = size(z);
+assert(length(sz) == 3);
+
+% Use Moreau decomposition
+zp = z - mu * atv_conj_prox(z / mu, 1/mu, sigma);
+end
+
+% Anisotropic TV objective
+function g = atv(x)
+z = fdiff(x);
+g = sum(abs(z(:)));
+end
+
+% Isotropic TV convex conjugate proximal operator
+% z is a "gradient" object i.e. 3-dim with horizontal diff in first channel
+% and vertical diff in second channel
+function zp = itv_conj_prox(z, mu, sigma)
+sz = size(z);
+assert(length(sz) == 3);
+
+% compute magnitude of gradient at each voxel
+mag = sqrt(sum(z.^2, 3));
+assert(all(size(mag) == sz(1:2)));
+
+% project on L_2 ball with radius sigma
+zp = bsxfun(@rdivide, sigma*z, max(sigma, mag));
+end
+
+% Isotropic TV objective
+function g = itv(x)
+z = fdiff(x);
+mag = sqrt(sum(z.^2, 3));
+g = sum(mag(:));
 end

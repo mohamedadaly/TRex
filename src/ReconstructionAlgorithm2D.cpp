@@ -66,6 +66,8 @@ void CReconstructionAlgorithm2D::_clear()
 	m_bUseSinogramMask = false;
 	m_pSinogramMask = NULL;
 	m_bIsInitialized = false;
+	m_pGTReconstruction = NULL;
+	m_bComputeIterationMetrics = false;
 }
 
 //---------------------------------------------------------------------------------------
@@ -155,6 +157,25 @@ bool CReconstructionAlgorithm2D::initialize(const Config& _cfg)
 			m_fMaxValue = _cfg.self.getOptionNumerical("MaxConstraintValue", 0.0f);
 			CC.markOptionParsed("MaxConstraintValue");
 		}
+	}
+
+	// Ground truth volume.
+	if (_cfg.self.hasOption("GTReconstructionId")) {
+		id = boost::lexical_cast<int>(_cfg.self.getOptionNumerical("GTReconstructionId"));
+		m_pGTReconstruction = dynamic_cast<CFloat32VolumeData2D*>(
+			CData2DManager::getSingleton().get(id));
+		//ASTRA_CONFIG_CHECK(m_pGTReconstruction, "Reconstruction2D", 
+		//	"Invalid GTReconstructionId.");
+		CC.markOptionParsed("GTReconstructionId");
+	}
+
+	// Compute metrics per iteration.
+	if (_cfg.self.hasOption("ComputeIterationMetrics")) {
+		m_bComputeIterationMetrics = _cfg.self.getOptionBool(
+			"ComputeIterationMetrics", false);
+		m_bComputeIterationMetrics = m_bComputeIterationMetrics && 
+			m_pGTReconstruction != NULL;
+		CC.markOptionParsed("ComputeIterationMetrics");
 	}
 
 	// return success
