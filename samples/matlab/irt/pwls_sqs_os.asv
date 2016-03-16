@@ -128,7 +128,6 @@ if arg.mom == 2
   tsum = 1;
   v = x;
   z = x;
-  vsum = v;
    
   % iterate
   for iter=1:arg.niter
@@ -137,28 +136,20 @@ if arg.mom == 2
     relax = relax0 / (1 + relax_rate * (iter-1));
 
     % loop over subsets
-    for iset=1:nblock  
-      % x
-      zup = subset_update(z, iset);
-      x = z + relax * zup;
-      x = min(pixmax, max(pixmin, x));
+    for iset=1:nblock
+      k = (iter-1) * nblock + iset;
       
-      % v
-      vsum = vsum + relax * t * zup;
-      v = min(pixmax, max(pixmin, vsum));      
-
       % update t
       t = 0.5 * (1 + sqrt(1 + 4 * t * t));
       tsum = tsum + t;
       
-      % z
-      z = x + (t / tsum) * (v - x);
+      % x
+      x = z + relax * subset_update(z);
+      x = min(pixmax, max(pixmin, x));
+      
+      % v
+      v = z + relax * 
     end
-    
-    if any(arg.isave == iter)
-      xs(:, arg.isave == iter) = x;
-    end
-    info(iter,:) = arg.userfun(x, arg.userarg{:});    
   end
 
 else
@@ -174,7 +165,6 @@ else
       x = x + relax * subset_update(x, iset);
       x = min(pixmax, max(x,pixmin));		% lower bound
     end
-    
     if any(arg.isave == iter)
       xs(:, arg.isave == iter) = x;
     end
