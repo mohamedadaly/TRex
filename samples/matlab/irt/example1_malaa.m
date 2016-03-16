@@ -471,7 +471,7 @@ sos.R = Reg1(ones(size(dd.P)), 'type_denom', 'matlab', ...
 
 % PCG
 [xos tim.cg] = pwls_pcg1(zeros(size(params.xini(:))), sos.Ab, Gdiag(wi), dd.sinogram(:),...
-   sos.R, 'niter', 10, 'isave', 'all');
+   sos.R, 'niter', 10, 'isave', 'all', 'pxmin',0);
 
 for i=1:size(xos,2)
   xxos = reshape(xos(:,i),ny,nx);

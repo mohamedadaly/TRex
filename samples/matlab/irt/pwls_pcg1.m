@@ -53,6 +53,8 @@ arg.stop_diff_norm = 2;
 arg.stop_grad_tol = 0;
 arg.stop_grad_norm = 2;
 arg.chat = 0;
+arg.pxmin = -Inf;
+arg.pxmax = Inf;
 
 arg = vararg_pair(arg, varargin, 'subs', ...
 {'stop_threshold', 'stop_diff_tol'; 'stop_norm_type', 'stop_diff_norm'});
@@ -206,6 +208,9 @@ for iter = 1:arg.niter
 %	Cx = Cx + step * Cdir;
 	x = x + step * ddir;
 
+  % clip
+  x = min(arg.pxmax, max(arg.pxmin, x));
+  
 	if any(arg.isave == iter)
 		xs(:, arg.isave == iter) = x;
 	end
