@@ -49,9 +49,9 @@ cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
 cfg.ProxInputDataId = prox_in_id;
-cfg.option.UseMinConstraint = 1;
+cfg.option.UseMinConstraint = 0;
 cfg.option.MinConstraintValue = 0;
-cfg.option.UseMaxConstraint = 1;
+cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
 cfg.option.ClearRayLength = 1;
 cfg.option.Alpha = 2;
@@ -73,10 +73,10 @@ end
 
 function ADMM(cfg, P, sinogram)
 % sigma
-sigma = 1000;
+sigma = 100; %100
 
-% CP algorithm parameters
-rho = 10; %.001
+% ADMM algorithm parameters
+rho = 10; %10
 
 mu = 1 / (8 * rho)
 % lambda * mu * 8
@@ -93,7 +93,7 @@ for it=1:20
   % x-step
 %   new_x = l2_data_prox(cfg, x - lambda * ndiv(z), lambda, 20);
   x = l2_data_prox(cfg, x - rho*mu * ndiv(fdiff(x)-z+u), ...
-    mu/sigma, 20);
+    mu/sigma, 2);
 
   % z-step
   z = atv_prox(fdiff(x) + u, 1/rho, 1);

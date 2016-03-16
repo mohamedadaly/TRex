@@ -96,6 +96,12 @@ while((itr <= maxitr) && (diffx/normx >= dxtol) && (diffcost <= dcosttol)) % 0))
     rhsx = ( params.A )' * (z{1} - d{1}) + nu1 * Ru1d1;
     xnew = doCGAL_AARR(rhsx, xnew, params);
     
+    % malaa: clip minimum value
+    if isfield(params, 'minx')
+      xnew = max(xnew, params.minx);
+    end
+    
+    
     % Book Keeping
     Ax = params.A * xnew;
     Rx = params.R * xnew;
@@ -146,8 +152,9 @@ while((itr <= maxitr) && (diffx/normx >= dxtol) && (diffcost <= dcosttol)) % 0))
     
     %% Display cost and other parameters
     strStatus{itr} = ['ADMM: ' int2str(itr-1) '/' int2str(maxitr) ...
+                      '; SNR=' num2str(RMSE(itr)) ...
                       '; C=' num2str(cost_new, fstrC) ';DC=' num2str(diffcost, fstrC) ';Dx/||x||=' num2str(diffx/normx, fstrO) ...
-                      '; l2D=' num2str(EAL(itr), fstrC) '; RMSE=' num2str(errnorm, fstrC) '; SNR=' num2str(RMSE(itr)) '; ' num2str(time_elapse, fstrT) 's' ...
+                      '; l2D=' num2str(EAL(itr), fstrC) '; RMSE=' num2str(errnorm, fstrC) '; ' num2str(time_elapse, fstrT) 's' ...
                       ];
     if(dispitr && ~mod(itr-1, dispitrnum))
         disp('--------------------------------------------------------------------');

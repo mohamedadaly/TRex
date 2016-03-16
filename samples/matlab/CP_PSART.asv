@@ -1,5 +1,5 @@
 function [] = CP_PSART()
-% minimizes ||Ax-b||^2 + sigma TV(x)
+% minimizes ||Ax-b||^2 / sigma + TV(x)
 
 x = [1 2 3; 5 8 12; 15, 21, 30]
 dx = fdiff(x)
@@ -73,12 +73,12 @@ end
 
 function ADMM(cfg, P, sinogram)
 % sigma
-sigma = 20;
+sigma = 1000;
 
-% CP algorithm parameters
-rho = 10; %.001
+% ADMM algorithm parameters
+rho = 0.1; %.001
 
-mu = 1 / (4 * rho);
+mu = 1 / (8 * rho)
 % lambda * mu * 8
 theta = 1;
 
@@ -96,12 +96,13 @@ for it=1:20
     mu/sigma, 20);
 
   % z-step
-  z = z - (1/rho) * atv_conj_prox((fdiff(x) + u) * rho, rho, 1);
+  z = atv_prox(fdiff(x) + u, 1/rho, 1);
+%   z = z - (1/rho) * atv_conj_prox((fdiff(x) + u) * rho, rho, 1);
 %   z = atv_conj_prox(z + mu * fdiff(xbar), mu, sigma);
 %   z = itv_conj_prox(z + mu * fdiff(xbar), mu, sigma);
   
   % u-step
-  u = u + fdiff(new_x) - z;
+  u = u + fdiff(x) - z;
   
 %   x = new_x;
   
@@ -278,6 +279,14 @@ assert(length(sz) == 3);
 
 % project on L_inf ball with radius sigma
 zp = max(-sigma, min(sigma, z));
+end
+
+function zp = atv_prox(z, mu, sigma)
+sz = size(z);
+assert(length(sz) == 3);
+
+% Use Moreau decomposition
+zp = z - mu * atv_conj_prox(z / mu, 1/mu, sigma);
 end
 
 % Anisotropic TV objective

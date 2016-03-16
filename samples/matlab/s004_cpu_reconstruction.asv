@@ -73,7 +73,7 @@ cfg.ProjectorId = proj_id;
 cfg.ProxInputDataId = prox_in_id;
 cfg.option.UseMinConstraint = 1;
 cfg.option.MinConstraintValue = 0;
-cfg.option.UseMaxConstraint = 1;
+cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
 cfg.option.ClearRayLength = 1;
 cfg.option.Alpha = 2;
@@ -91,7 +91,7 @@ alg_id = astra_mex_algorithm('create', cfg);
 % This will have a runtime in the order of 10 seconds.
 tic;
 % astra_mex_algorithm('iterate', alg_id, 30*30);
-astra_mex_algorithm('iterate', alg_id, 18);
+astra_mex_algorithm('iterate', alg_id, 10);
 toc;
 
 % Get the result
