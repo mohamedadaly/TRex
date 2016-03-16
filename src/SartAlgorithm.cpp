@@ -289,7 +289,7 @@ void CSartAlgorithm::run(int _iNrIterations)
 	CDataProjectorInterface* pBackProjector;
 	CDataProjectorInterface* pFirstForwardProjector;
 
-
+	// Init.
 	m_pTotalRayLength->setData(0.0f);
 	m_pTotalPixelWeight->setData(0.0f);
 
@@ -334,8 +334,14 @@ void CSartAlgorithm::run(int _iNrIterations)
 	m_pTotalPixelWeight->setData(0.0f);
 	pFirstForwardProjector->project();
 
+	//// end of init.
+	//ttime = CPlatformDepSystemCode::getMSCount() - timer;
+
 	// iteration loop, each iteration loops over all available projections
 	for (int iIteration = 0; iIteration < _iNrIterations && !m_bShouldAbort; ++iIteration) {
+		// start timer
+		m_ulTimer = CPlatformDepSystemCode::getMSCount();
+
 		//ASTRA_INFO("Iteration %d", iIteration);
 		// Clear RayLength before another loop over projections. This is needed so that
 		// RayLength is correct, because updating RayLength with the forward projection
@@ -368,10 +374,11 @@ void CSartAlgorithm::run(int _iNrIterations)
 				m_pReconstruction->clampMax(m_fMaxValue);
 		}
 
-		// Compute SNR
-		if (m_bComputeIterationMetrics) {
-			ASTRA_INFO("SNR = %f", m_pReconstruction->getSNR(*m_pGTReconstruction));
-		}
+		// end timer
+		m_ulTotalTime += CPlatformDepSystemCode::getMSCount() - m_ulTimer;
+
+		// Compute metrics.
+		computeIterationMetrics(iIteration, _iNrIterations);
 	}
 
 	ASTRA_DELETE(pForwardProjector);

@@ -37,6 +37,7 @@ $Id$
 #include "Projector2D.h"
 #include "Float32ProjectionData2D.h"
 #include "Float32VolumeData2D.h"
+#include "PlatformDepSystemCode.h"
 
 
 namespace astra {
@@ -170,6 +171,11 @@ public:
 	 */
 	virtual bool getResidualNorm(float32& _fNorm) { return false; }
 
+	/** Compute iteration metrics for the specific iteration 
+	 *  and store or print out.
+	 */
+	virtual void computeIterationMetrics(int iIteration, int iNrIterations);
+
 protected:
 	
 	/** Check this object.
@@ -213,6 +219,13 @@ protected:
 
 	//< Whether to compute SNR at each iteration.
 	bool m_bComputeIterationMetrics;
+
+	//< Itration metrics. One column per metric, one row per iteration.
+	CFloat32VolumeData2D* m_pIterationMetics;
+
+	//< Total time for timing operations.
+	unsigned long m_ulTotalTime;
+	unsigned long m_ulTimer;
 
 	//< Whether to clear the input reconstruction volume before starting, or
 	// keep it. Default = true.

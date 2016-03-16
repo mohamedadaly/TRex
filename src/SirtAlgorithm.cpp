@@ -218,6 +218,8 @@ void CSirtAlgorithm::run(int _iNrIterations)
 
 	// iteration loop, each iteration loops over all available projections
 	for (int iIteration = 0; iIteration < _iNrIterations && !m_bShouldAbort; ++iIteration) {
+		// start timer
+		m_ulTimer = CPlatformDepSystemCode::getMSCount();
 		// forward projection to compute differences.
 		pForwardProjector->project(); 
 		// backprojection
@@ -230,10 +232,11 @@ void CSirtAlgorithm::run(int _iNrIterations)
 		if (m_bUseMaxConstraint)
 			m_pReconstruction->clampMax(m_fMaxValue);
 
-		// Compute SNR
-		if (m_bComputeIterationMetrics) {
-			ASTRA_INFO("SNR = %f", m_pReconstruction->getSNR(*m_pGTReconstruction));
-		}
+		// end timer
+		m_ulTotalTime += CPlatformDepSystemCode::getMSCount() - m_ulTimer;
+
+		// Compute metrics.
+		computeIterationMetrics(iIteration, _iNrIterations);
 	}
 
 	ASTRA_DELETE(pForwardProjector);

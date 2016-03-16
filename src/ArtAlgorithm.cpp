@@ -325,6 +325,9 @@ void CArtAlgorithm::run(int _iNrIterations)
 
 	// iteration loop, each iteration loops over all available rays
 	for (int iIteration = 0; iIteration < _iNrIterations && !m_bShouldAbort; ++iIteration) {
+		// start timer
+		m_ulTimer = CPlatformDepSystemCode::getMSCount();
+
 		// loop over rays
 		for (int iR = 0; iR < m_iRayCount; ++iR) {
 			// ray id
@@ -344,10 +347,11 @@ void CArtAlgorithm::run(int _iNrIterations)
 			//	m_pReconstruction->clampMax(m_fMaxValue);
 		}
 
-		// Compute SNR
-		if (m_bComputeIterationMetrics) {
-			ASTRA_INFO("SNR = %f", m_pReconstruction->getSNR(*m_pGTReconstruction));
-		}
+		// end timer
+		m_ulTotalTime += CPlatformDepSystemCode::getMSCount() - m_ulTimer;
+
+		// Compute metrics.
+		computeIterationMetrics(iIteration, _iNrIterations);
 	}
 
 	ASTRA_DELETE(pForwardProjector);

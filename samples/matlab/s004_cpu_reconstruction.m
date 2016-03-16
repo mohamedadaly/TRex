@@ -63,6 +63,9 @@ rec_id = astra_mex_data2d('create', '-vol', vol_geom);
 prox_in = zeros(size(P));
 prox_in_id = astra_mex_data2d('create', '-vol', vol_geom, prox_in);
 
+% create object for metrics
+metrics_id = astra_mex_data2d('create', '-vol', vol_geom);
+
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
@@ -78,8 +81,9 @@ cfg.option.MaxConstraintValue = 1;
 cfg.option.ClearRayLength = 1;
 cfg.option.Alpha = 1;
 cfg.option.Lambda = 1e3;
-cfg.option.ComputeIterationMetrics = 0;
+cfg.option.ComputeIterationMetrics = 1;
 cfg.option.GTReconstructionId = P_id;
+cfg.option.IterationMetricsId = metrics_id;
 cfg.option.ClearReconstruction = 1;
 
 % Available algorithms:
@@ -105,6 +109,9 @@ tic;
 % astra_mex_algorithm('iterate', alg_id, 30*30);
 astra_mex_algorithm('iterate', alg_id, 20);
 toc;
+
+% get the metrics
+metrics = astra_mex_data2d('get', metrics_id)
 
 % Get the result
 rec = astra_mex_data2d('get', rec_id);

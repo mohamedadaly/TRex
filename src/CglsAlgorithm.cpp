@@ -226,10 +226,11 @@ void CCglsAlgorithm::run(int _iNrIterations)
 		// z = A'*b;
 		z->setData(0.0f);
 		pBackProjector->project();
-		if (m_bUseMinConstraint)
-			z->clampMin(m_fMinValue);
-		if (m_bUseMaxConstraint)
-			z->clampMax(m_fMaxValue);
+		// CHECK
+		//if (m_bUseMinConstraint)
+		//	z->clampMin(m_fMinValue);
+		//if (m_bUseMaxConstraint)
+		//	z->clampMax(m_fMaxValue);
 
 		// p = z;
 		p->copyData(z->getData());
@@ -239,12 +240,16 @@ void CCglsAlgorithm::run(int _iNrIterations)
 		for (i = 0; i < z->getSize(); ++i) {
 			gamma += z->getData()[i] * z->getData()[i];
 		}
+		
 		m_iIteration++;
 	}
 
 
 	// start iterations
-	for (int iIteration = _iNrIterations-1; iIteration >= 0; --iIteration) {
+	//for (int iIteration = _iNrIterations-1; iIteration >= 0; --iIteration) {
+	for (int iIteration = 0; iIteration < _iNrIterations; ++iIteration) {
+		// start timer
+		m_ulTimer = CPlatformDepSystemCode::getMSCount();
 	
 		// w = A*p;
 		pForwardProjector->project();
@@ -271,10 +276,11 @@ void CCglsAlgorithm::run(int _iNrIterations)
 		pBackProjector->project();
 
 		// CHECKME: should these be here?
+		// This was z. CHECK
 		if (m_bUseMinConstraint)
-			z->clampMin(m_fMinValue);
+			m_pReconstruction->clampMin(m_fMinValue);
 		if (m_bUseMaxConstraint)
-			z->clampMax(m_fMaxValue);
+			m_pReconstruction->clampMax(m_fMaxValue);
 
 		// beta = 1/gamma;
 		beta = 1.0f / gamma;
@@ -293,12 +299,13 @@ void CCglsAlgorithm::run(int _iNrIterations)
 			p->getData()[i] = z->getData()[i] + beta * p->getData()[i];
 		}
 		
-		m_iIteration++;
+		// end timer
+		m_ulTotalTime += CPlatformDepSystemCode::getMSCount() - m_ulTimer;
 
-		// Compute SNR
-		if (m_bComputeIterationMetrics) {
-			ASTRA_INFO("SNR = %f", m_pReconstruction->getSNR(*m_pGTReconstruction));
-		}
+		// Compute metrics.
+		computeIterationMetrics(iIteration, _iNrIterations);
+
+		m_iIteration++;
 	}
 
 }

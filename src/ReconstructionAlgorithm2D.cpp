@@ -31,6 +31,7 @@ $Id$
 #include <boost/lexical_cast.hpp>
 
 #include "astra/AstraObjectManager.h"
+#include "astra/Logging.h"
 
 using namespace std;
 
@@ -69,6 +70,8 @@ void CReconstructionAlgorithm2D::_clear()
 	m_pGTReconstruction = NULL;
 	m_bComputeIterationMetrics = false;
 	m_bClearReconstruction = true;
+	m_pIterationMetics = NULL;
+	m_ulTotalTime = 0;
 }
 
 //---------------------------------------------------------------------------------------
@@ -178,6 +181,15 @@ bool CReconstructionAlgorithm2D::initialize(const Config& _cfg)
 			m_pGTReconstruction != NULL;
 		CC.markOptionParsed("ComputeIterationMetrics");
 	}
+	
+	// Iteration metrics.
+	if (_cfg.self.hasOption("IterationMetricsId")) {
+		id = boost::lexical_cast<int>(_cfg.self.getOptionNumerical("IterationMetricsId"));
+		m_pIterationMetics = dynamic_cast<CFloat32VolumeData2D*>(
+			CData2DManager::getSingleton().get(id));
+		CC.markOptionParsed("IterationMetricsId");
+	}
+
 
 	// Compute metrics per iteration.
 	if (_cfg.self.hasOption("ClearReconstruction")) {
@@ -188,6 +200,45 @@ bool CReconstructionAlgorithm2D::initialize(const Config& _cfg)
 
 	// return success
 	return _check();
+}
+
+
+//----------------------------------------------------------------------------------------
+void CReconstructionAlgorithm2D::computeIterationMetrics(int iIteration, int iNrIterations) 
+{
+	// First iteration? 
+	if (iIteration == 0) {
+		// init time.
+		m_ulTotalTime = 0;
+
+		// Initialize space for metrics
+		if (m_bComputeIterationMetrics && m_pIterationMetics) {
+			// Initalize with 2 cols (time secs, SNR) and 1 row per iteration.
+			CVolumeGeometry2D geo(2, iNrIterations);
+			m_pIterationMetics->initialize(&geo);
+			m_pIterationMetics->setData(0.f);
+		}
+	}
+
+	// Compute SNR
+	if (m_bComputeIterationMetrics) {
+		// convert to seconds
+		float32 fTime = static_cast<float32>(m_ulTotalTime) / 1000.;
+
+		// SNR.
+		float32 fSNR = m_pReconstruction->getSNR(*m_pGTReconstruction);
+			
+		if (m_pIterationMetics && 
+			iIteration < m_pIterationMetics->getHeight()) {
+			// Store [y][x]
+			m_pIterationMetics->getData2D()[iIteration][0] = fTime;
+			m_pIterationMetics->getData2D()[iIteration][1] = fSNR;
+		} else {
+			// Print
+			ASTRA_INFO("It %d/%d Time=%fsec SNR=%f", 
+				iIteration, iNrIterations, fTime, fSNR);
+		}
+	}
 }
 
 //----------------------------------------------------------------------------------------

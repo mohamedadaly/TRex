@@ -305,6 +305,9 @@ void CPSartAlgorithm::run(int _iNrIterations)
 		//	m_pTotalRayLength->setData(0.f);
 		//}
 
+		// start timer
+		m_ulTimer = CPlatformDepSystemCode::getMSCount();
+
 		// loop over projections
 		for (int iP = 0; iP < m_iProjectionCount; ++iP) {
 			// projection id
@@ -326,10 +329,11 @@ void CPSartAlgorithm::run(int _iNrIterations)
 				m_pReconstruction->clampMax(m_fMaxValue);
 		}
 
-		// Compute SNR
-		if (m_bComputeIterationMetrics) {
-			ASTRA_INFO("SNR = %f", m_pReconstruction->getSNR(*m_pGTReconstruction));
-		}
+		// end timer
+		m_ulTotalTime += CPlatformDepSystemCode::getMSCount() - m_ulTimer;
+
+		// Compute metrics.
+		computeIterationMetrics(iIteration, _iNrIterations);
 	}
 
 	ASTRA_DELETE(pForwardProjector);
