@@ -214,6 +214,10 @@ protected:
 	//< Whether to compute SNR at each iteration.
 	bool m_bComputeIterationMetrics;
 
+	//< Whether to clear the input reconstruction volume before starting, or
+	// keep it. Default = true.
+	bool m_bClearReconstruction;
+
 	//< Specify if initialize/check should check for a valid Projector
 	virtual bool requiresProjector() const { return true; }
 };

@@ -437,7 +437,7 @@ addpath I:/Temp/astra-1.7.1beta-src/samples/matlab/ramaniwhic
 
 addpath I:/Temp/astra-1.7.1beta-src/samples/matlab/irt/
 % disp(mfilename)
-nsubsets = 10;
+nsubsets = 10; %10 or 15
 
 % idx to convert from row-major to column-major in both input and output
 cids = reshape(reshape(1:nx*ny, nx,ny)',[],1);
@@ -449,10 +449,10 @@ sos.Ab = Gblock(Gmatrix(Acm), nsubsets);
 % R
 % fail potential  wpot(t) = (1 + a * |t/d|) / (1 + b * |t/d|)
 sos.R = Reg1(ones(size(dd.P)), 'type_denom', 'matlab', ...
-  'pot_arg', {'huber', 1}, 'beta', 0.1);  %0.1
+    'pot_arg',{'gf1', 1, [1, 1]}, 'beta', 1); %1
 %   'pot_arg',{'gf1', 1, [1, 1]}, 'beta',0.1); 
 %   'pot_arg', {'hyper3', 1}, 'beta', 0.1);
-%   'pot_arg', {'huber', 1}, 'beta', 10);  %0.1
+%   'pot_arg', {'huber', 1}, 'beta', 10);  %1
 
 		
 % SQS-OS

@@ -294,7 +294,9 @@ void CSartAlgorithm::run(int _iNrIterations)
 	m_pTotalPixelWeight->setData(0.0f);
 
 	// Initialize m_pReconstruction to zero.
-	m_pReconstruction->setData(0.f);
+	if (m_bClearReconstruction) {
+		m_pReconstruction->setData(0.f);
+	}
 
 	// backprojection data projector
 	pBackProjector = dispatchDataProjector(

@@ -175,7 +175,9 @@ void CSirtAlgorithm::run(int _iNrIterations)
 	CDataProjectorInterface* pFirstForwardProjector;
 
 	// Initialize m_pReconstruction to zero.
-	m_pReconstruction->setData(0.f);
+	if (m_bClearReconstruction) {
+		m_pReconstruction->setData(0.f);
+	}
 
 	// forward projection data projector
 	pForwardProjector = dispatchDataProjector(

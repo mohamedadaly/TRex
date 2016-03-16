@@ -192,6 +192,11 @@ void CCglsAlgorithm::run(int _iNrIterations)
 	CDataProjectorInterface* pForwardProjector;
 	CDataProjectorInterface* pBackProjector;
 
+	// Clear reconstruction volume.
+	if (m_bClearReconstruction) {
+		m_pReconstruction->setData(0.0f);
+	}
+
 	// forward projection data projector
 	pForwardProjector = dispatchDataProjector(
 		m_pProjector, 

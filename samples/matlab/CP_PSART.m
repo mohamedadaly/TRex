@@ -49,7 +49,7 @@ cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
 cfg.ProxInputDataId = prox_in_id;
-cfg.option.UseMinConstraint = 0;
+cfg.option.UseMinConstraint = 1;
 cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
@@ -57,11 +57,21 @@ cfg.option.ClearRayLength = 1;
 cfg.option.Alpha = 2;
 cfg.option.Lambda = 1e8;
 
+% initialize with FBP
+cfgi = cfg;
+cfgi.type = 'FBP';
+alg_id = astra_mex_algorithm('create', cfgi);
+astra_mex_algorithm('iterate', alg_id, 5);
+astra_mex_algorithm('delete', alg_id);
+% now initial value is stored in rec_id
+
+init = true;
+
 % CP
 % CP(cfg, P, sinogram);
 
 % ADMM
-ADMM(cfg, P, sinogram);
+ADMM(cfg, P, sinogram, init);
 
 % cleanup
 astra_mex_projector('delete', proj_id);
@@ -71,7 +81,7 @@ astra_mex_data2d('delete', prox_in_id);
 
 end
 
-function ADMM(cfg, P, sinogram)
+function ADMM(cfg, P, sinogram, init)
 % sigma
 sigma = 100; %100
 
@@ -83,7 +93,12 @@ mu = 1 / (8 * rho)
 theta = 1;
 
 % init
-x = zeros(size(P));
+if init 
+  % read initial value from recid
+  x = astra_mex_data2d('get', cfg.ReconstructionDataId);
+else
+  x = zeros(size(P));
+end
 z = fdiff(x);
 u = z;
 

@@ -68,6 +68,7 @@ void CReconstructionAlgorithm2D::_clear()
 	m_bIsInitialized = false;
 	m_pGTReconstruction = NULL;
 	m_bComputeIterationMetrics = false;
+	m_bClearReconstruction = true;
 }
 
 //---------------------------------------------------------------------------------------
@@ -176,6 +177,13 @@ bool CReconstructionAlgorithm2D::initialize(const Config& _cfg)
 		m_bComputeIterationMetrics = m_bComputeIterationMetrics && 
 			m_pGTReconstruction != NULL;
 		CC.markOptionParsed("ComputeIterationMetrics");
+	}
+
+	// Compute metrics per iteration.
+	if (_cfg.self.hasOption("ClearReconstruction")) {
+		m_bClearReconstruction = _cfg.self.getOptionBool(
+			"ClearReconstruction", true);
+		CC.markOptionParsed("ClearReconstruction");
 	}
 
 	// return success
