@@ -447,9 +447,9 @@ Acm = dd.proj_mat(rids, cids);
 sos.Ab = Gblock(Gmatrix(Acm), nsubsets);
 
 % R
-% fail potential  wpot(t) = (1 + a * |t/d|) / (1 + b * |t/d|)
+% fair potential  wpot(t) = (1 + a * |t/d|) / (1 + b * |t/d|)
 sos.R = Reg1(ones(size(dd.P)), 'type_denom', 'matlab', ...
-    'pot_arg',{'gf1', 1, [1, 1]}, 'beta', 1); %1
+    'pot_arg',{'gf1', 1, [1, 1]}, 'beta', .1); %1
 %   'pot_arg',{'gf1', 1, [1, 1]}, 'beta',0.1); 
 %   'pot_arg', {'hyper3', 1}, 'beta', 0.1);
 %   'pot_arg', {'huber', 1}, 'beta', 10);  %1
@@ -470,7 +470,7 @@ sos.R = Reg1(ones(size(dd.P)), 'type_denom', 'matlab', ...
 %   sos.R, 10, [0 inf], [], [], [1 1e-5], 1);  %[1 1e-5]
 
 % PCG
-[xos tim.cg] = pwls_pcg1(params.xini(:), sos.Ab, Gdiag(wi), dd.sinogram(:),...
+[xos tim.cg] = pwls_pcg1(zeros(size(params.xini(:))), sos.Ab, Gdiag(wi), dd.sinogram(:),...
    sos.R, 'niter', 10, 'isave', 'all');
 
 for i=1:size(xos,2)

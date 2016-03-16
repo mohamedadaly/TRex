@@ -222,8 +222,13 @@ void CCglsAlgorithm::run(int _iNrIterations)
 	if (m_iIteration == 0) {
 		// r = b;
 		r->copyData(m_pSinogram->getData());
+		// w = A*x0
+		p->copyData(m_pReconstruction->getData());
+		pForwardProjector->project();
+		// r = b - A*x0
+		*r -= *w;
 
-		// z = A'*b;
+		// z = A' * (b - A * x0) = A' * r
 		z->setData(0.0f);
 		pBackProjector->project();
 		// CHECK
@@ -234,12 +239,6 @@ void CCglsAlgorithm::run(int _iNrIterations)
 
 		// p = z;
 		p->copyData(z->getData());
-
-		// gamma = dot(z,z);
-		gamma = 0.0f;
-		for (i = 0; i < z->getSize(); ++i) {
-			gamma += z->getData()[i] * z->getData()[i];
-		}
 		
 		m_iIteration++;
 	}
@@ -251,7 +250,14 @@ void CCglsAlgorithm::run(int _iNrIterations)
 		// start timer
 		m_ulTimer = CPlatformDepSystemCode::getMSCount();
 	
+		// gamma = dot(z,z);
+		gamma = 0.0f;
+		for (i = 0; i < z->getSize(); ++i) {
+			gamma += z->getData()[i] * z->getData()[i];
+		}
+
 		// w = A*p;
+		w->setData(0);
 		pForwardProjector->project();
 	
 		// alpha = gamma/dot(w,w);
@@ -307,6 +313,94 @@ void CCglsAlgorithm::run(int _iNrIterations)
 
 		m_iIteration++;
 	}
+	//if (m_iIteration == 0) {
+	//	// r = b;
+	//	r->copyData(m_pSinogram->getData());
+
+	//	// z = A'*b;
+	//	z->setData(0.0f);
+	//	pBackProjector->project();
+	//	// CHECK
+	//	//if (m_bUseMinConstraint)
+	//	//	z->clampMin(m_fMinValue);
+	//	//if (m_bUseMaxConstraint)
+	//	//	z->clampMax(m_fMaxValue);
+
+	//	// p = z;
+	//	p->copyData(z->getData());
+
+	//	// gamma = dot(z,z);
+	//	gamma = 0.0f;
+	//	for (i = 0; i < z->getSize(); ++i) {
+	//		gamma += z->getData()[i] * z->getData()[i];
+	//	}
+	//	
+	//	m_iIteration++;
+	//}
+
+
+	//// start iterations
+	////for (int iIteration = _iNrIterations-1; iIteration >= 0; --iIteration) {
+	//for (int iIteration = 0; iIteration < _iNrIterations; ++iIteration) {
+	//	// start timer
+	//	m_ulTimer = CPlatformDepSystemCode::getMSCount();
+	//
+	//	// w = A*p;
+	//	pForwardProjector->project();
+	//
+	//	// alpha = gamma/dot(w,w);
+	//	float32 tmp = 0;
+	//	for (i = 0; i < w->getSize(); ++i) {
+	//		tmp += w->getData()[i] * w->getData()[i];
+	//	}
+	//	alpha = gamma / tmp;
+
+	//	// x = x + alpha*p;
+	//	for (i = 0; i < m_pReconstruction->getSize(); ++i) {
+	//		m_pReconstruction->getData()[i] += alpha * p->getData()[i];
+	//	}
+
+	//	// r = r - alpha*w;
+	//	for (i = 0; i < r->getSize(); ++i) {
+	//		r->getData()[i] -= alpha * w->getData()[i];
+	//	}
+
+	//	// z = A'*r;
+	//	z->setData(0.0f);
+	//	pBackProjector->project();
+
+	//	// CHECKME: should these be here?
+	//	// This was z. CHECK
+	//	if (m_bUseMinConstraint)
+	//		m_pReconstruction->clampMin(m_fMinValue);
+	//	if (m_bUseMaxConstraint)
+	//		m_pReconstruction->clampMax(m_fMaxValue);
+
+	//	// beta = 1/gamma;
+	//	beta = 1.0f / gamma;
+
+	//	// gamma = dot(z,z);
+	//	gamma = 0;
+	//	for (i = 0; i < z->getSize(); ++i) {
+	//		gamma += z->getData()[i] * z->getData()[i];
+	//	}
+
+	//	// beta = gamma*beta;
+	//	beta *= gamma; 
+
+	//	// p = z + beta*p;
+	//	for (i = 0; i < z->getSize(); ++i) {
+	//		p->getData()[i] = z->getData()[i] + beta * p->getData()[i];
+	//	}
+	//	
+	//	// end timer
+	//	m_ulTotalTime += CPlatformDepSystemCode::getMSCount() - m_ulTimer;
+
+	//	// Compute metrics.
+	//	computeIterationMetrics(iIteration, _iNrIterations);
+
+	//	m_iIteration++;
+	//}
 
 }
 //----------------------------------------------------------------------------------------
