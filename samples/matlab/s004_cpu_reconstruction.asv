@@ -66,6 +66,55 @@ prox_in_id = astra_mex_data2d('create', '-vol', vol_geom, prox_in);
 % create object for metrics
 metrics_id = astra_mex_data2d('create', '-vol', vol_geom);
 
+%%
+
+cfgi = astra_struct('FBP');
+cfgi.ReconstructionDataId = rec_id;
+cfgi.ProjectionDataId = sinogram_id;
+cfgi.ProjectorId = proj_id;
+alg_id = astra_mex_algorithm('create', cfgi);
+astra_mex_algorithm('iterate', alg_id, 5);
+astra_mex_algorithm('delete', alg_id);
+% now initial value is stored in rec_id
+fbp = astra_mex_data2d('get',rec_id);
+
+%%
+addpath samples/matlab
+
+in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
+  'gt_vol',P, 'sino',sinogram, 'A',proj_mat, ...
+  'wi',ones(size(sinogram)), 'fbp',fbp);
+
+alg = 'admm';
+alg_params = struct('mu',0.001, 'nCG',2, 'lambda',0.02, 'iter',20);  
+
+%%
+alg = 'mfista';
+alg_params = struct('nCG',2, 'lambda',0.1, 'iter',20);  
+%%
+alg = 'pcg';
+alg_params = struct('iter',2, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}});  
+%%
+alg = 'sqs-os';
+alg_params = struct('iter',2, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
+  'mom',0, 'relax',[1 1e-5], 'nsubsets',10);  
+
+%     % Regularizer
+%     % fail potential  wpot(t) = (1 + a * |t/d|) / (1 + b * |t/d|)
+%     params.R = Reg1(ones(size(in_prams.gt_vol)), 'type_denom', 'matlab', ...
+%       'pot_arg',alg_params.pot_arg, 'beta',alg_params.beta); %1
+% %         'pot_arg',{'gf1', 1, [1, 1]}, 'beta', 1); %1
+%     %   'pot_arg',{'gf1', 1, [1, 1]}, 'beta',0.1); 
+%     %   'pot_arg', {'hyper3', 1}, 'beta', 0.1);
+%     %   'pot_arg', {'huber', 1}, 'beta', 10);  %1
+%     params.relax = alg_params.relax; % [1 1e-5]
+
+
+
+[rec, times, snrs, iters] = ma_alg_irt(alg, in_params, alg_params);
+[times snrs iters]
+
+%%
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
@@ -97,6 +146,7 @@ if cfg.option.ClearReconstruction == 0
   astra_mex_algorithm('iterate', alg_id, 5);
   astra_mex_algorithm('delete', alg_id);
   % now initial value is stored in rec_id
+  fbp = astra_mex_data2d('get',rec_id);
 end
 
 

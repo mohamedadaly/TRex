@@ -54,6 +54,7 @@ params.A = Fatrix(size(A), farg, 'caller', 'malaa', ...
 params.zoomr = 1:ny;
 params.zoomc = 1:nx;
 params.scale = 1;
+params.N = N;
 
 %% Image geometry for recon image
 % if ~isvar('ig')
@@ -354,30 +355,31 @@ end
 	params.mxRR = mxRR;
 	params.mnRR = mnRR;
 
-% 	%% Calculate (or load) max eigenvalue of A'WA for MFISTA
+	%% Calculate (or load) max eigenvalue of A'WA for MFISTA
 % 	fname_EvalsAWA = ['Z_Nx' int2str(nx) '_FOV' num2str(fov) '_DS' int2str(down) '_Sino' int2str(sg.nb) 'x' int2str(sg.na) '_Int' num2str(I0) '_mEAWA.mat'];
 % 	params.fname_EvalsAWA = fname_EvalsAWA;
-% 
-% 	% Power method parameters; Power method is used to find the max.eigenvalue of a matrix
+
+	% Power method parameters; Power method is used to find the max.eigenvalue of a matrix
 % 	if exist(fname_EvalsAWA, 'file')
 % 		load(fname_EvalsAWA, 'mEAWA');
 % 	else
-% 		warn 'no file?'
-% 		params.eigtol = eps; % Matlab epsilon
-% 		params.eigpowermaxitr = 10000;
-% 		params.eigdispitr = 10;
-% 
-% 		printm('Computing max eigvalue of AWA using Power method for MFISTA...');
-% 		tic
-% 		mEAWA = get_MaxEigenValue_1by1(params, 'AWA'); % Find maximum eigenvalues of the forward system and the regularization
-% 		toc
-% 		printm(['Max eigvalue of AWA =' num2str(mEAWA)]);
-% 		% save(fname_EvalsAWA, 'mEAWA');
+		warn 'no file?'
+		params.eigtol = eps; % Matlab epsilon
+		params.eigpowermaxitr = 10000;
+		params.eigdispitr = 10;
+    params.N = N;
+
+		printm('Computing max eigvalue of AWA using Power method for MFISTA...');
+		tic
+		mEAWA = get_MaxEigenValue_1by1(params, 'AWA'); % Find maximum eigenvalues of the forward system and the regularization
+		toc
+		printm(['Max eigvalue of AWA =' num2str(mEAWA)]);
+		% save(fname_EvalsAWA, 'mEAWA');
 % 	end
-% 
-% 	params.mEAWA = mEAWA;
-% 	params.eiginflate = 1.0025;
-% 	params.mEval_adjust = mEAWA * params.eiginflate;
+
+	params.mEAWA = mEAWA;
+	params.eiginflate = 1.0025;
+	params.mEval_adjust = mEAWA * params.eiginflate;
 % end
 
 
@@ -401,16 +403,21 @@ end
 %% Compare algos
 % Run MFISTA
 % if ~isvar('xMFIS'), printm('Doing MFISTA ...')
-% 	params.figno = 2;
-% 	params.doMFISTA = 1;
-% 	params.maxitr = 39; % Max # of outer iterations
-% 
-% 	[xMFIS CMFIS TFIS l2DFIS RMSEFIS] = runMFISTA(data, AWy, xini, params);
-% 	TFIS = cumsum(TFIS);
-% 	im(xMFIS)
+	params.figno = 2;
+	params.doMFISTA = 1;
+	params.maxitr = 20; % Max # of outer iterations
+  params.AWy = params.A' * params.Wy;
+  
+  params.lambda = .1; %.02
+  params.MFISTA.nCG = 2; % 5;
+  
+	[xMFIS CMFIS TFIS l2DFIS RMSEFIS] = runMFISTA(dd.sinogram, params.AWy, ...
+    params.xini, params);
+	TFIS = cumsum(TFIS);
+	im(xMFIS)
 % end
-
-addpath I:/Temp/astra-1.7.1beta-src/samples/matlab/ramaniwhic
+%%
+addpath I:/Temp/astra-1.7.1beta-src/samples/matlab/ramani
 
 % Run ADMM
 % if ~isvar('xADMM'), printm('Doing ADMM ...')
@@ -471,7 +478,7 @@ sos.R = Reg1(ones(size(dd.P)), 'type_denom', 'matlab', ...
 
 % PCG
 [xos tim.cg] = pwls_pcg1(zeros(size(params.xini(:))), sos.Ab, Gdiag(wi), dd.sinogram(:),...
-   sos.R, 'niter', 10, 'isave', 'all', 'pxmin',0);
+   sos.R, 'niter', 15, 'isave', 'all', 'pxmin',0);
 
 for i=1:size(xos,2)
   xxos = reshape(xos(:,i),ny,nx);

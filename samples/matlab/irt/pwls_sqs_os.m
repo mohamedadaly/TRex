@@ -132,6 +132,7 @@ if arg.mom == 2
    
   % iterate
   for iter=1:arg.niter
+    tic;
     ticker(mfilename, iter, arg.niter)
     
     relax = relax0 / (1 + relax_rate * (iter-1));
@@ -158,13 +159,15 @@ if arg.mom == 2
     if any(arg.isave == iter)
       xs(:, arg.isave == iter) = x;
     end
-    info(iter,:) = arg.userfun(x, arg.userarg{:});    
+%     info(iter,:) = arg.userfun(x, arg.userarg{:});    
+    info(iter, :) = toc;
   end
 
 else
   % iterate
   for iter = 1:arg.niter
     ticker(mfilename, iter, arg.niter)
+    tic;
 
     relax = relax0 / (1 + relax_rate * (iter-1));
 
@@ -178,7 +181,8 @@ else
     if any(arg.isave == iter)
       xs(:, arg.isave == iter) = x;
     end
-    info(iter,:) = arg.userfun(x, arg.userarg{:});
+%     info(iter,:) = arg.userfun(x, arg.userarg{:});
+    info(iter,:) = toc;
   end  
 end
 

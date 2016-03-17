@@ -1,0 +1,17 @@
+function [times, snr] = ma_run_irt(alg, in_params, alg_params)
+%MA_RUN_IRT a wrapper around running IRT methods.
+% - alg: the name of the algorithm 'admm', 'sqs-os', 'pcg'
+% 
+% - in_params: the input paramters
+%     vol_geom: the volume geometry
+%     proj_geom: the projection geometry
+%     gt_vol: the ground truth volume 
+%     sino: the input projections
+%     proj_mat: the projection matrix
+%     fbp: the initial FBP of the sino
+%     
+% - alg_params: the parameters for the algorithm, depends on the kind of 
+%               algorithm used
+
+end
+

@@ -89,6 +89,7 @@ oldinprod = 0;
 % iterate
 for iter = 1:arg.niter
 	ticker(mfilename, iter, arg.niter)
+  pcg1 = tic;
 
 	% (negative) gradient
 	ngrad = A' * (W * (yi-Ax));
@@ -214,7 +215,8 @@ for iter = 1:arg.niter
 	if any(arg.isave == iter)
 		xs(:, arg.isave == iter) = x;
 	end
-	info(iter,:) = arg.userfun(x, iter, arg.userarg{:});
+% 	info(iter,:) = arg.userfun(x, iter, arg.userarg{:});
+  info(iter,:) = toc(pcg1);
 
 	% check norm(xnew-xold) / norm(xnew) vs threshold
 	if arg.stop_diff_tol && ...

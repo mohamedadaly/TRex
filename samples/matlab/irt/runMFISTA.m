@@ -85,7 +85,7 @@ z = zeros(size(Rx));
 
 %% Inner while loop for minimizing cost corresponding to a given sigma
 while((itr <= maxitr) && (diffx/normx >= dxtol) && (diffcost <= dcosttol))
-    tic;
+    mfista = tic;
     
     %% Book Keeping
     cost_old = cost_new;
@@ -128,7 +128,7 @@ while((itr <= maxitr) && (diffx/normx >= dxtol) && (diffcost <= dcosttol))
     end
     itr = itr + 1; %% Book Keeping
 
-    time_elapse = toc;
+    time_elapse = toc(mfista);
 
     %% Compute Cost at current estimate
     cost_new = compute_Cost_CT2D(data, xnew, params); % Reinitialize cost_old for current sigma
@@ -147,7 +147,7 @@ while((itr <= maxitr) && (diffx/normx >= dxtol) && (diffcost <= dcosttol))
     E(itr) = sqrt( sum( params.ig.mask(:) .* abs( xnew(:) - params.xinf(:) ) .^ 2)) / params.xinfnorm;
     % malaa
 %     RMSE(itr) = err;
-    RMSE(itr) = snr(params.img, params.img - xnew);
+    RMSE(itr) = ma_snr(params.img, params.img - xnew);
 
     if(dispfig)
         if(~mod(itr-1, dispitrnum))
@@ -162,6 +162,7 @@ while((itr <= maxitr) && (diffx/normx >= dxtol) && (diffcost <= dcosttol))
     
     %% Display cost and other parameters
     strStatus{itr} = ['MFISTA: ' int2str(itr-1) '/' int2str(maxitr) ...
+                      '; SNR=' num2str(RMSE(itr)) ...      
                      '; C=' num2str(cost_new, fstrC) ';DC=' num2str(diffcost, fstrC) ';Dx/||x||=', num2str(diffx/normx, fstrO) ...
                      '; l2D=' num2str(E(itr), fstrC) '; RMSE=' num2str(err, fstrC) '; ' num2str(time_elapse, fstrT) 's'];
     

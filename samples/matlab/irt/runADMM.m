@@ -86,7 +86,7 @@ z{2} = Rx + d{2};
 z{2} = thresholdRx(z{2}, params, nu1*mu); % Perform thresholding
 
 while((itr <= maxitr) && (diffx/normx >= dxtol) && (diffcost <= dcosttol)) % 0)) %
-    tic;
+    admm = tic;
     
     cost_old = cost_new;
     xold = xnew;
@@ -118,7 +118,7 @@ while((itr <= maxitr) && (diffx/normx >= dxtol) && (diffcost <= dcosttol)) % 0))
     d{1} = d{1} - (z{1} - Ax);
     d{2} = d{2} - (z{2} - Rx);
     itr = itr + 1;
-    time_elapse = toc;
+    time_elapse = toc(admm);
 
     %% Compute Cost at current estimate
     cost_new = compute_Cost_CT2D(data, xnew, params, Ax, Rx); % Reinitialize cost_old for current sigma
@@ -132,7 +132,7 @@ while((itr <= maxitr) && (diffx/normx >= dxtol) && (diffcost <= dcosttol)) % 0))
     TAL(itr) = time_elapse;
     EAL(itr) = sqrt(sum(params.ig.mask(:).*abs(xnew(:) - params.xinf(:)).^2)) / params.xinfnorm;
 %     malaa
-    RMSE(itr) = snr(params.img, params.img - xnew);
+    RMSE(itr) = ma_snr(params.img, params.img - xnew);
 %     RMSE(itr) = errnorm;
 
     %% Compute the norm difference between successive iterates

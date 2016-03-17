@@ -1,0 +1,15 @@
+function [snr] = ma_snr(gt, noise)
+%MA_SNR Computes SNR between input gt and approximation.
+
+% make sure they have the same size
+assert(all(size(gt) == size(apprx)));
+
+% sum square of gt
+num = sum(gt(:).^2);
+% sum square of noise (difference)
+den = sum((gt(:) - apprx(:)).^2);
+
+
+
+end
+
