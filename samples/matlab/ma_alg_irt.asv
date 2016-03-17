@@ -49,7 +49,7 @@ switch alg
     [rec CADMM TADMM l2DADMM snrs] = runADMM(in_params.sino, ...
       params.xini, params);
     times = cumsum(TADMM); times(1) = [];
-    snrs = snrs(:);
+    snrs(1) = [];
     % inner iterations
     iters = (1:alg_params.iter) * alg_params.nCG;
     
@@ -66,51 +66,50 @@ switch alg
 
     [rec CMFIS TFIS l2DFIS snrs] = runMFISTA(in_params.sino, ...
       params.AWy, params.xini, params);
-    times = cumsum(TFIS);
-    snrs = snrs(:);
+    times = cumsum(TFIS); times(1) = [];
+    snrs(1) = [];
     
     % inner iterations
     iters = (1:alg_params.iter) * alg_params.nCG;    
   
-  case {'sqs-os', 'sqs-os-mom', 'pwls'}
-
-    nsubsets = alg_params.nsubsets; %10; %10 or 15
-
+  case {'sqs-os', 'sqs-os-mom', 'pcg'}
     % ids to convert from row-major to column-major in both input and output
     cids = reshape(reshape(1:nx*ny, nx,ny)',[],1);
     rids = reshape(reshape(1:nxs*nys, nxs,nys)',[],1);
-    Acm = in_params.A(rids, cids);
-    % convert to blocks
-    params.Ab = Gblock(Gmatrix(Acm), nsubsets);
+    params.Ab = Gmatrix(in_params.A(rids, cids));
 
     % Regularizer
     % fail potential  wpot(t) = (1 + a * |t/d|) / (1 + b * |t/d|)
-    params.R = Reg1(ones(size(in_prams.gt_vol)), 'type_denom', 'matlab', ...
+    params.R = Reg1(ones(size(in_params.gt_vol)), 'type_denom', 'matlab', ...
       'pot_arg',alg_params.pot_arg, 'beta',alg_params.beta); %1
 %         'pot_arg',{'gf1', 1, [1, 1]}, 'beta', 1); %1
     %   'pot_arg',{'gf1', 1, [1, 1]}, 'beta',0.1); 
     %   'pot_arg', {'hyper3', 1}, 'beta', 0.1);
     %   'pot_arg', {'huber', 1}, 'beta', 10);  %1
-    params.relax = alg_params.relax; % [1 1e-5]
 
     if strcmpi(alg, 'pcg')
       [xos timos] = pwls_pcg1(params.xini(:), params.Ab, ...
-        Gdiag(params.wi), in_params.sino(:),...
+        Gdiag(in_params.wi), in_params.sino(:),...
          params.R, 'niter',alg_params.iter, 'isave', 'all');
     else      
+      nsubsets = alg_params.nsubsets; %10; %10 or 15
+      % convert to blocks
+      params.Ab = Gblock(params.Ab, nsubsets);
+      params.relax = alg_params.relax; % [1 1e-5]
+      
       % SQS-OS
-      [xos timos] = pwls_sqs_os(params.fbp, params.Ab, in_params.sino, ...
+      [xos timos] = pwls_sqs_os(in_params.fbp, params.Ab, in_params.sino, ...
         params.R, 'wi', in_params.wi, 'niter', alg_params.iter, ...
         'pixmax', [0 inf], 'isave', 'all', 'chat',0, ...
         'relax0',alg_params.relax, 'mom', alg_params.mom);
     end;
     
     % compute SNR from return values
-    snrs = compute_snr(xos);
+    snrs = compute_snr(xos(:,end - alg_params.iter + 1:end));
     % times
     times = cumsum(timos);    
     % rec
-    rec = reshape(xos(:,end), params.ny, params.nx);    
+    rec = reshape(xos(:,end), ny, nx);    
     
     % inner iterations
     iters = (1:alg_params.iter);
@@ -119,9 +118,15 @@ switch alg
     error(['Unknown algorithm: ' alg]);
 end;
 
+
+% adjust output
+snrs = snrs(:);
+times = times(:);
+iters = iters(:);
+
   % compute SNR from the reconstruction in each iteration
   function snrs = compute_snr(xs)
-    snrs = zeros(size(xs, 2));
+    snrs = zeros(size(xs, 2), 1);
     for i=1:length(snrs)
       snrs(i) = ma_snr(in_params.gt_vol(:), in_params.gt_vol(:) - xs(:,i));
     end;    
@@ -146,7 +151,7 @@ end;
     nxs = in_params.proj_geom.DetectorCount;
     nys = length(in_params.proj_geom.ProjectionAngles);
     N = [nx ny];
-    farg.A = in_params.A;
+    farg.A = sparse(in_params.A); %here
     farg.ny = ny;
     farg.nx = nx;
     farg.nys = nys;

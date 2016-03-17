@@ -27,7 +27,7 @@ Brentfx = measbx;
 
 itrb = 0;
 
-disp(['             Itrb=' int2str(itrb) '; stepsize = ' num2str(Brentbx) '; measVAL = ' num2str(measbx)]);
+% disp(['             Itrb=' int2str(itrb) '; stepsize = ' num2str(Brentbx) '; measVAL = ' num2str(measbx)]);
 
 % Start BRENT ITERATIONS
 Brentxm = Brentx; 
@@ -97,7 +97,7 @@ while((itrb<maxBitr) && (abs(Brentx-Brentxm)>=Brenttol2-0.5*(Brentb-Brenta))) % 
         te = te(1)*0 + te(2)*0 + te(3)*86400 + te(4)*3600 + te(5)*60 + te(6);
         
 %         disp('--------------------------------------------------------------------');
-        disp(['             Itrb=' int2str(itrb+1) '; stepsize = ' num2str(Brentu) '; measVAL = ' num2str(Brentfu) '; Time = ' num2str(te)]);
+%         disp(['             Itrb=' int2str(itrb+1) '; stepsize = ' num2str(Brentu) '; measVAL = ' num2str(Brentfu) '; Time = ' num2str(te)]);
         
         % Now decide what to do with our function evaluation.
         if(Brentfu <= Brentfx) % House keeping...

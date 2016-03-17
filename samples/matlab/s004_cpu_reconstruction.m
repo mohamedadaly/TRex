@@ -84,13 +84,13 @@ addpath samples/matlab
 in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
   'gt_vol',P, 'sino',sinogram, 'A',proj_mat, ...
   'wi',ones(size(sinogram)), 'fbp',fbp);
-
+%%
 alg = 'admm';
-alg_params = struct('mu',0.001, 'nCG',2, 'lambda',0.02, 'iter',20);  
+alg_params = struct('iter',10, 'mu',0.001, 'nCG',2, 'lambda',0.02);
 
 %%
 alg = 'mfista';
-alg_params = struct('nCG',2, 'lambda',0.1, 'iter',20);  
+alg_params = struct('iter',10, 'nCG',2, 'lambda',0.1);  
 %%
 alg = 'pcg';
 alg_params = struct('iter',2, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}});  
@@ -100,9 +100,9 @@ alg_params = struct('iter',2, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
   'mom',0, 'relax',[1 1e-5], 'nsubsets',10);  
 %%
 alg = 'sqs-os-mom';
-alg_params = struct('iter',20, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
+alg_params = struct('iter',2, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
   'mom',2, 'relax',[1 1e-5], 'nsubsets',10);  
-
+%%
 %     % Regularizer
 %     % fail potential  wpot(t) = (1 + a * |t/d|) / (1 + b * |t/d|)
 %     params.R = Reg1(ones(size(in_prams.gt_vol)), 'type_denom', 'matlab', ...
@@ -114,25 +114,40 @@ alg_params = struct('iter',20, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
 %     params.relax = alg_params.relax; % [1 1e-5]
 
 
-
 [rec, times, snrs, iters] = ma_alg_irt(alg, in_params, alg_params);
 [times snrs iters]
+
+%%
+in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
+  'gt_vol',P, 'sino',sinogram, 'proj_id',proj_id, ...
+  'wi',ones(size(sinogram)), 'fbp',fbp);
+
+alg = 'CGLS';
+alg_params = struct('iter',20, ...
+    'option',struct('UseMinConstraint',1, 'MinConstraintValue',0, ...
+      'UseMaxConstraint',0, 'MaxConstraintValue',1, ...
+      'Alpha',2, 'Lambda',1e3, 'ComputeIterationMetrics',1, ...
+      'ClearReconstruction',1));
+      
+[rec, times, snrs, iters] = ma_alg_astra(alg, in_params, alg_params);
+[times snrs iters]
+
 
 %%
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('CGLS');
+cfg = astra_struct('SART');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
 cfg.ProxInputDataId = prox_in_id;
-cfg.option.UseMinConstraint = 0;
+cfg.option.UseMinConstraint = 1;
 cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
 cfg.option.ClearRayLength = 1;
-cfg.option.Alpha = 1;
+cfg.option.Alpha = 2;
 cfg.option.Lambda = 1e3;
 cfg.option.ComputeIterationMetrics = 1;
 cfg.option.GTReconstructionId = P_id;

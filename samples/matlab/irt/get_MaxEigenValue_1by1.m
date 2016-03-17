@@ -38,7 +38,7 @@ while((itr <= maxitr) && (atol > tol))
     atol = abs(anew-aold)/abs(anew);
     
     if(~mod(itr, dispitrnum))
-        disp(['Itr=' int2str(itr) '; Eval_' strMat ' = ', num2str(anew) '; adiff = ' num2str(atol) '; Tol = ' num2str(tol)]);
+%         disp(['Itr=' int2str(itr) '; Eval_' strMat ' = ', num2str(anew) '; adiff = ' num2str(atol) '; Tol = ' num2str(tol)]);
     end
 end
 disp(['Itr=' int2str(itr) '; Eval_' strMat ' = ', num2str(anew) '; adiff = ' num2str(atol) '; Tol = ' num2str(tol)]);

@@ -1,5 +1,6 @@
 function [rec, times, snrs, iters] = ma_alg_irt(alg, in_params, alg_params)
 % MA_ALG_IRT a wrapper around running IRT methods.
+% 
 % INPUT
 % - alg: the name of the algorithm 'admm', 'sqs-os', 'sqs-os-mom', 'pcg'
 % 
@@ -151,7 +152,7 @@ iters = iters(:);
     nxs = in_params.proj_geom.DetectorCount;
     nys = length(in_params.proj_geom.ProjectionAngles);
     N = [nx ny];
-    farg.A = in_params.A;
+    farg.A = in_params.A; %here
     farg.ny = ny;
     farg.nx = nx;
     farg.nys = nys;
