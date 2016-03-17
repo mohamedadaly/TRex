@@ -2,7 +2,8 @@ function [rec, times, snrs, iters] = ma_alg_astra(alg, in_params, alg_params)
 % MA_ALG_ASTRA a wrapper around running ASTRA methods.
 %
 % INPUT
-% - alg: the name of the algorithm 'admm', 'sqs-os', 'sqs-os-mom', 'pcg'
+% - alg: the name of the algorithm 'SART', 'ART', 'SIRT', 'FBP', 'BICAV',
+%        'CGLS', 'PSART'
 % 
 % - in_params: the input paramters
 %     vol_geom: the volume geometry
@@ -28,7 +29,8 @@ function [rec, times, snrs, iters] = ma_alg_astra(alg, in_params, alg_params)
 gt_vol_id = astra_mex_data2d('create','-vol', in_params.vol_geom, ...
   in_params.gt_vol);
 % create prox id
-prox_in_id = astra_mex_data2d('create','-vol', in_params.vol_geom);
+prox_in_id = astra_mex_data2d('create','-vol', in_params.vol_geom, ...
+  in_params.prox_in);
 % rec and copy in fbp for initialization (if available)
 rec_id = astra_mex_data2d('create', '-vol', in_params.vol_geom, ...
   in_params.fbp);
