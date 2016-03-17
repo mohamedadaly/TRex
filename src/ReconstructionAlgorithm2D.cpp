@@ -223,6 +223,7 @@ void CReconstructionAlgorithm2D::computeIterationMetrics(int iIteration, int iNr
 	// Compute SNR
 	if (m_bComputeIterationMetrics) {
 		// convert to seconds
+		m_ulTotalTime += m_ulTimer;
 		float32 fTime = static_cast<float32>(m_ulTotalTime) / 1000.;
 
 		// SNR.

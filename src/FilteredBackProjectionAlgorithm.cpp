@@ -92,24 +92,35 @@ void CFilteredBackProjectionAlgorithm::clear()
 bool CFilteredBackProjectionAlgorithm::initialize(const Config& _cfg)
 {
 	ASTRA_ASSERT(_cfg.self);
+	ConfigStackCheck<CAlgorithm> CC("FBPAlgorithm", this, _cfg);
 	
-	// projector
+	// if already initialized, clear first
+	if (m_bIsInitialized) {
+		clear();
+	}
+
+	// initialization of parent class
+	if (!CReconstructionAlgorithm2D::initialize(_cfg)) {
+		return false;
+	}
+
+	//// projector
 	XMLNode node = _cfg.self.getSingleNode("ProjectorId");
-	ASTRA_CONFIG_CHECK(node, "FilteredBackProjection", "No ProjectorId tag specified.");
-	int id = boost::lexical_cast<int>(node.getContent());
-	m_pProjector = CProjector2DManager::getSingleton().get(id);
+	//ASTRA_CONFIG_CHECK(node, "FilteredBackProjection", "No ProjectorId tag specified.");
+	//int id = boost::lexical_cast<int>(node.getContent());
+	//m_pProjector = CProjector2DManager::getSingleton().get(id);
 
-	// sinogram data
-	node = _cfg.self.getSingleNode("ProjectionDataId");
-	ASTRA_CONFIG_CHECK(node, "FilteredBackProjection", "No ProjectionDataId tag specified.");
-	id = boost::lexical_cast<int>(node.getContent());
-	m_pSinogram = dynamic_cast<CFloat32ProjectionData2D*>(CData2DManager::getSingleton().get(id));
+	//// sinogram data
+	//node = _cfg.self.getSingleNode("ProjectionDataId");
+	//ASTRA_CONFIG_CHECK(node, "FilteredBackProjection", "No ProjectionDataId tag specified.");
+	//id = boost::lexical_cast<int>(node.getContent());
+	//m_pSinogram = dynamic_cast<CFloat32ProjectionData2D*>(CData2DManager::getSingleton().get(id));
 
-	// volume data
-	node = _cfg.self.getSingleNode("ReconstructionDataId");
-	ASTRA_CONFIG_CHECK(node, "FilteredBackProjection", "No ReconstructionDataId tag specified.");
-	id = boost::lexical_cast<int>(node.getContent());
-	m_pReconstruction = dynamic_cast<CFloat32VolumeData2D*>(CData2DManager::getSingleton().get(id));
+	//// volume data
+	//node = _cfg.self.getSingleNode("ReconstructionDataId");
+	//ASTRA_CONFIG_CHECK(node, "FilteredBackProjection", "No ReconstructionDataId tag specified.");
+	//id = boost::lexical_cast<int>(node.getContent());
+	//m_pReconstruction = dynamic_cast<CFloat32VolumeData2D*>(CData2DManager::getSingleton().get(id));
 
 	node = _cfg.self.getSingleNode("ProjectionIndex");
 	if (node) 
@@ -226,6 +237,9 @@ void CFilteredBackProjectionAlgorithm::run(int _iNrIterations)
 {
 	ASTRA_ASSERT(m_bIsInitialized);
 
+	// start timer
+	m_ulTimer = CPlatformDepSystemCode::getMSCount();
+
 	// Filter sinogram
 	CFloat32ProjectionData2D filteredSinogram(m_pSinogram->getGeometry(), m_pSinogram->getData());
 	performFiltering(&filteredSinogram);
@@ -238,6 +252,18 @@ void CFilteredBackProjectionAlgorithm::run(int _iNrIterations)
 	// Scale data
 	int iAngleCount = m_pProjector->getProjectionGeometry()->getProjectionAngleCount();
 	(*m_pReconstruction) *= (PI/2)/iAngleCount;
+
+	// Check limits.
+	if (m_bUseMinConstraint)
+		m_pReconstruction->clampMin(m_fMinValue);
+	if (m_bUseMaxConstraint)
+		m_pReconstruction->clampMax(m_fMaxValue);
+
+	// end timer
+	m_ulTimer = CPlatformDepSystemCode::getMSCount() - m_ulTimer;
+
+	// Compute metrics.
+	computeIterationMetrics(0, 1);
 
 	m_pReconstruction->updateStatistics();
 }

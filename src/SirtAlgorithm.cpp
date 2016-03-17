@@ -233,7 +233,7 @@ void CSirtAlgorithm::run(int _iNrIterations)
 			m_pReconstruction->clampMax(m_fMaxValue);
 
 		// end timer
-		m_ulTotalTime += CPlatformDepSystemCode::getMSCount() - m_ulTimer;
+		m_ulTimer = CPlatformDepSystemCode::getMSCount() - m_ulTimer;
 
 		// Compute metrics.
 		computeIterationMetrics(iIteration, _iNrIterations);

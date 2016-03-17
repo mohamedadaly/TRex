@@ -330,7 +330,7 @@ void CPSartAlgorithm::run(int _iNrIterations)
 		}
 
 		// end timer
-		m_ulTotalTime += CPlatformDepSystemCode::getMSCount() - m_ulTimer;
+		m_ulTimer = CPlatformDepSystemCode::getMSCount() - m_ulTimer;
 
 		// Compute metrics.
 		computeIterationMetrics(iIteration, _iNrIterations);
