@@ -233,7 +233,6 @@ void CPSartAlgorithm::run(int _iNrIterations)
 	CDataProjectorInterface* pBackProjector;
 	CDataProjectorInterface* pFirstForwardProjector;
 
-
 	// Init Y = 0
 	m_pY->setData(0.f);
 	// Init Reconstruction = ProxInput

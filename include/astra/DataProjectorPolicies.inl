@@ -807,27 +807,27 @@ PSARTBPPolicy::PSARTBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 	m_fSqrt2Lambda = _fSqrt2Lambda;
 
 	// init C as a copy from Y
-	m_pC = new CFloat32ProjectionData2D(*m_pY);
+	m_pC = new CFloat32ProjectionData2D(m_pY->getGeometry());
 }
 //----------------------------------------------------------------------------------------	
 PSARTBPPolicy::~PSARTBPPolicy() 
 {
-
+	ASTRA_DELETE(m_pC);
 }
 //----------------------------------------------------------------------------------------	
 bool PSARTBPPolicy::rayPrior(int _iRayIndex) 
 {
 	// denominator
 	float32 fGammaBeta = m_fSqrt2Lambda * m_pTotalRayLength->getData()[_iRayIndex] + 1.f;
-	// check zero
-	if (fabsf(fGammaBeta) >= 1e-10f) {
+	//// check zero
+	//if (fabsf(fGammaBeta) >= 1e-16f) {
 		// Update: alpha * C_i
 		m_pC->getData()[_iRayIndex] = m_fAlpha * (m_fSqrt2Lambda * 
 			  m_pSinogram->getData()[_iRayIndex] - m_pY->getData()[_iRayIndex]) 
 			/ fGammaBeta;
-	} else {
-		m_pC->getData()[_iRayIndex] = 0.f;
-	}
+	//} else {
+	//	m_pC->getData()[_iRayIndex] = 0.f;
+	//}
 
 	//ASTRA_INFO("RayPrior ray=%d val=%f len=%f", _iRayIndex, 
 	//	m_pC->getData()[_iRayIndex], m_pTotalRayLength->getData()[_iRayIndex]);
@@ -846,7 +846,7 @@ void PSARTBPPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeigh
 	// denominator: (PixelWeight) 
 	float32 fGammaBeta = m_pTotalPixelWeight->getData()[_iVolumeIndex];
 	// check zero
-	if (fabsf(fGammaBeta) >= 1e-10f) {
+	if (fabsf(fGammaBeta) >= 1e-16f) {
 		// Update: c_i * weight * sqrt2lambda / pixelweight
 		m_pReconstruction->getData()[_iVolumeIndex] += _fWeight * 
 			m_pC->getData()[_iRayIndex] / fGammaBeta;
