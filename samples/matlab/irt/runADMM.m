@@ -86,7 +86,7 @@ z{2} = Rx + d{2};
 z{2} = thresholdRx(z{2}, params, nu1*mu); % Perform thresholding
 
 while((itr <= maxitr) && (diffx/normx >= dxtol) && (diffcost <= dcosttol)) % 0)) %
-    admm = tic;
+    admmt = tic;
     
     cost_old = cost_new;
     xold = xnew;
@@ -99,8 +99,7 @@ while((itr <= maxitr) && (diffx/normx >= dxtol) && (diffcost <= dcosttol)) % 0))
     % malaa: clip minimum value
     if isfield(params, 'minx')
       xnew = max(xnew, params.minx);
-    end
-    
+    end    
     
     % Book Keeping
     Ax = params.A * xnew;
@@ -118,7 +117,7 @@ while((itr <= maxitr) && (diffx/normx >= dxtol) && (diffcost <= dcosttol)) % 0))
     d{1} = d{1} - (z{1} - Ax);
     d{2} = d{2} - (z{2} - Rx);
     itr = itr + 1;
-    time_elapse = toc(admm);
+    time_elapse = toc(admmt);
 
     %% Compute Cost at current estimate
     cost_new = compute_Cost_CT2D(data, xnew, params, Ax, Rx); % Reinitialize cost_old for current sigma

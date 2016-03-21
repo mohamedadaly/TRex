@@ -61,6 +61,15 @@ iters = cumsum(iters);
     z = fdiff(x);
     u = z;
 
+%     [ny, nx] = size(in_params.gt_vol);
+%     [nys, nxs] = size(in_params.sino);
+%     cids = reshape(reshape(1:nx*ny, nx,ny)',[],1);
+%     rids = reshape(reshape(1:nxs*nys, nxs,nys)',[],1);
+%     A = Gmatrix(in_params.A(rids, cids));
+%     % solve with CG
+%     AA = @(x)(2*mu/sigma * (A' * A) * x + x);
+%     Ab = sqrt(2*mu/sigma) * A' * in_params.sino(:) ;
+    
     % loop
     for it=1:alg_params.iter
 
@@ -68,16 +77,41 @@ iters = cumsum(iters);
     %   new_x = l2_data_prox(cfg, x - lambda * ndiv(z), lambda, 20);
 %       x = l2_data_prox(cfg, x - rho*mu * ndiv(fdiff(x)-z+u), ...
 %         mu/sigma, 2);
-      [x, itimes, isnrs, iiters] = l2_data_prox(...
-        x - rho*mu * ndiv(fdiff(x)-z+u), mu / sigma, ...
-        alg_params.psart_params, in_params);
+      % 1/sigma with data term
+      if alg_params.sigma_with_data
+        [x, itimes, isnrs, iiters] = l2_data_prox(...
+          x - rho*mu * ndiv(fdiff(x)-z+u), mu / sigma, ...
+          alg_params.psart_params, in_params);
+      else
+        % sigma with regularizer
+        [x, itimes, isnrs, iiters] = l2_data_prox(...
+          x - rho*mu * ndiv(fdiff(x)-z+u), mu, ...
+          alg_params.psart_params, in_params);      
+      end
+      x = max(0, x);
       times(it) = itimes(end);
       snrs(it) = isnrs(end);
       iters(it) = iiters(end);
+    
+%       % ids to convert from row-major to column-major in both input and output
+%       [x] = pcg(AA, Ab + reshape(x - rho*mu * ndiv(fdiff(x)-z+u),[],1), ...
+%         1e-10, alg_params.psart_params.iter, [], [], x(:));
+%       x = reshape(x, ny, nx);
+%       x = max(0, min(1, x));
+% %       max(x(:))
+%       times(it) = 0;
+%       snrs(it) = ma_snr(in_params.gt_vol, in_params.gt_vol - x);
+%       iters(it) = 2;      
+
 
       % z-step
       tt = tic;
-      z = atv_prox(fdiff(x) + u, 1/rho, 1);
+      if alg_params.sigma_with_data
+        z = atv_prox(fdiff(x) + u, 1/rho, 1);
+      else
+        z = atv_prox(fdiff(x) + u, 1/rho, sigma);
+      end
+      
     %   z = z - (1/rho) * atv_conj_prox((fdiff(x) + u) * rho, rho, 1);
 
       % u-step
@@ -85,10 +119,13 @@ iters = cumsum(iters);
       
       times(it) = times(it) + toc(tt);
       
-      % objective
-%       obj = objective(x, sigma, sinogram, cfg);
+      % objective, can be increasing or decreasing...
+      obj = objective(x, z, sigma);
+      
+      % primal residual, should be decreasing per iteration...
+      r = rho * norm(reshape(fdiff(x),[],1) - z(:));
 
-%       fprintf('it=%d\tobj=%.2f\tsnr=%.2f\t\n', it, obj, snr(P, x-P));
+      fprintf('it=%d\tobj=%.2f\tsnr=%.2f\tres=%f\n', it, obj, snrs(it), r);
     end
 %   figure(3), imshow(x, []);
   end % admm
@@ -149,6 +186,40 @@ iters = cumsum(iters);
 % 
 %       fprintf('it=%d\tobj=%.2f\tsnr=%.2f\tgap=%.2f\n', it, obj, snr(P, x-P), pdg);
     end;
+  end
+
+  % Computes the objective function
+  function val = objective(x, z, sigma)
+    % geom
+    proj_id = in_params.proj_id;
+    proj_geom = astra_mex_projector('projection_geometry', proj_id);
+    vol_geom = astra_mex_projector('volume_geometry', proj_id);
+
+    % create astra volume 
+    volume_id = astra_mex_data2d('create','-vol', vol_geom, x);
+
+    % crate sino
+    sino_id = astra_mex_data2d('create','-sino', proj_geom, 0);
+
+    % project
+    cfg = astra_struct('FP');
+    cfg.ProjectorId = proj_id;
+    cfg.ProjectionDataId = sino_id;
+    cfg.VolumeDataId = volume_id;
+    alg_id = astra_mex_algorithm('create', cfg);
+    astra_mex_algorithm('iterate', alg_id);
+    astra_mex_algorithm('delete', alg_id);
+
+    % compute objective
+    sino = astra_mex_data2d('get',sino_id);
+    if alg_params.sigma_with_data
+      val = norm(sino - in_params.sino, 'fro')^2 / sigma + atv(x);
+    else
+      val = norm(sino - in_params.sino, 'fro')^2 + sigma * atv(x);
+    end
+
+    astra_mex_data2d('delete', volume_id);
+    astra_mex_data2d('delete', sino_id);
   end
 % vol_geom = astra_create_vol_geom(256, 256);
 % proj_geom = astra_create_proj_geom('parallel', 1.0, 384, ...
@@ -338,36 +409,36 @@ end
 % figure(3), imshow(x, []);
 % end
 
-% Computes the objective function
-function val = objective(x, sigma, sinogram, psart_cfg)
-% geom
-proj_id = psart_cfg.ProjectorId;
-proj_geom = astra_mex_projector('projection_geometry', proj_id);
-vol_geom = astra_mex_projector('volume_geometry', proj_id);
-
-% create astra volume 
-volume_id = astra_mex_data2d('create','-vol', vol_geom, x);
-
-% crate sino
-sino_id = astra_mex_data2d('create','-sino', proj_geom, 0);
-
-% project
-cfg = astra_struct('FP');
-cfg.ProjectorId = proj_id;
-cfg.ProjectionDataId = sino_id;
-cfg.VolumeDataId = volume_id;
-alg_id = astra_mex_algorithm('create', cfg);
-astra_mex_algorithm('iterate', alg_id);
-astra_mex_algorithm('delete', alg_id);
-
-% compute objective
-sino = astra_mex_data2d('get',sino_id);
-% val = norm(sino - sinogram, 'fro')^2 + sigma * atv(x);
-val = norm(sino - sinogram, 'fro')^2 / sigma + atv(x);
-
-astra_mex_data2d('delete', volume_id);
-astra_mex_data2d('delete', sino_id);
-end
+% % Computes the objective function
+% function val = objective(x, sigma, sinogram, psart_cfg)
+% % geom
+% proj_id = psart_cfg.ProjectorId;
+% proj_geom = astra_mex_projector('projection_geometry', proj_id);
+% vol_geom = astra_mex_projector('volume_geometry', proj_id);
+% 
+% % create astra volume 
+% volume_id = astra_mex_data2d('create','-vol', vol_geom, x);
+% 
+% % crate sino
+% sino_id = astra_mex_data2d('create','-sino', proj_geom, 0);
+% 
+% % project
+% cfg = astra_struct('FP');
+% cfg.ProjectorId = proj_id;
+% cfg.ProjectionDataId = sino_id;
+% cfg.VolumeDataId = volume_id;
+% alg_id = astra_mex_algorithm('create', cfg);
+% astra_mex_algorithm('iterate', alg_id);
+% astra_mex_algorithm('delete', alg_id);
+% 
+% % compute objective
+% sino = astra_mex_data2d('get',sino_id);
+% % val = norm(sino - sinogram, 'fro')^2 + sigma * atv(x);
+% val = norm(sino - sinogram, 'fro')^2 / sigma + atv(x);
+% 
+% astra_mex_data2d('delete', volume_id);
+% astra_mex_data2d('delete', sino_id);
+% end
 
 % computes the first forward difference in both horizontal and vertical
 % direction with Neumann boundary conditions i.e. zeros at the end
@@ -443,6 +514,9 @@ end
 % Anisotropic TV convex conjugate proximal operator
 % z is a "gradient" object i.e. 3-dim with horizontal diff in first channel
 % and vertical diff in second channel
+% This is equivalent to the proximal operator of the convex conjugate of
+%   sigma * ||z||_1 i.e. prox_{mu conj(sigma * ||.||_1)}
+% and mu does not affect the result because it's simply a projection
 function zp = atv_conj_prox(z, mu, sigma)
 sz = size(z);
 assert(length(sz) == 3);
@@ -451,12 +525,18 @@ assert(length(sz) == 3);
 zp = max(-sigma, min(sigma, z));
 end
 
+% This is equivalent to the proximal operator of sigma * ||z||_1 i.e.
+%   prox{mu * \sigma ||z||_1} and we get it via Moreau decomposition from
+%   its convex conjugate
 function zp = atv_prox(z, mu, sigma)
 sz = size(z);
 assert(length(sz) == 3);
 
-% Use Moreau decomposition
-zp = z - mu * atv_conj_prox(z / mu, 1/mu, sigma);
+% Use Moreau decomposition plus the relation of convex conjugate
+% zp = z - atv_conj_prox(z, 1 / (mu * sigma), mu * sigma);
+
+% Use normal formula
+zp = sign(z) .* max(0, abs(z) - mu * sigma);
 end
 
 % Anisotropic TV objective
@@ -487,11 +567,22 @@ mag = sqrt(sum(z.^2, 3));
 g = sum(mag(:));
 end
 
-  % Power Iteration to estimate spectral norm of first diff matrix
-  % xx = randn(size(P));
-  % for i=1:1e3
-  %   xx = ndiv(fdiff(xx));
-  %   xx = xx / sqrt(sum(reshape(xx,[],1).^2));
-  % end
-  % val = sigma^2 * sum(reshape(fdiff(xx).^2,[],1)) / sum(reshape(xx.^2,[],1))
-  % return;
+%%
+% P = zeros(256, 256);
+% 
+% % Wavelet decomposition operator
+% R = Gwave2('mask', true(size(P)), 'dwtmode', 'per', ...
+%   'redundancy', 'undecimated', 'wname', 'haar', ...
+%   'nlevel', 2, 'includeApprox', false, ...
+%   'scale_filters', 1/sqrt(2));
+% 
+% % Power Iteration to estimate spectral norm of first diff matrix
+%   xx = randn(size(P));
+%   for i=1:1e2
+% %     xx = ndiv(fdiff(xx));
+%     xx = R' * R * xx;
+%     xx = xx / sqrt(sum(reshape(xx,[],1).^2));
+%   end
+% %   val = sum(reshape(fdiff(xx).^2,[],1)) / sum(reshape(xx.^2,[],1))
+% val = sum(reshape(R* xx.^2,[],1)) / sum(reshape(xx.^2,[],1))
+  

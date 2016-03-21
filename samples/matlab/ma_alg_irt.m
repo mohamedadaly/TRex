@@ -37,8 +37,10 @@ switch alg
     params.AL.mu = alg_params.mu; %0.001; %medwi;
     params.CG.nCG = alg_params.nCG; % 2;
     params.lambda = alg_params.lambda; % 0.02
-    params.minx = -Inf;
+%     params.minx = -Inf;
     params.AL.nu1 = nuoptapprox / params.AL.nu1AL1factor;
+    %disp(sprintf('nu = %f', params.AL.nu1));
+    if ~isempty(alg_params.nu), params.AL.nu1 = alg_params.nu; end
 
     params.figno = 0;
     kWAL1 = (mxW + params.AL.mu)/(mnW + params.AL.mu);
@@ -46,7 +48,7 @@ switch alg
     params.maxitr = alg_params.iter; % 25; % Max # of outer iterations
     params.dispitrnum = 0;
 
-%     printm(['Doing ADMM with mu = ' num2str(params.AL.mu) '; nu1 = ' num2str(params.AL.nu1) '...'])
+    printm(['Doing ADMM with mu = ' num2str(params.AL.mu) '; nu1 = ' num2str(params.AL.nu1) '...'])
     [rec CADMM TADMM l2DADMM snrs] = runADMM(in_params.sino, ...
       params.xini, params);
     times = cumsum(TADMM); times(1) = [];
@@ -223,14 +225,23 @@ iters = iters(:);
 
     % Recon Setup
     % Potential Function
-    params.PriorType = 'l1'; % Absolute function = |t|
+%     params.PriorType = 'l1'; % Absolute function = |t|
     % params.PriorType = 'FP'; % Fair potential = alpha^2 * ( |t| / alpha - log(1 + |t| / alpha ) )
     % params.Prior.alpha = 1e-4; % smoothing parameter for Fair potential
 
     % Type of reg op
     % params.Operator = 'AFD'; % plain finite differences (bilateral form)
     % params.Operator = 'FD'; % gradient-norm of finite differences; **** for TV use l1-FD ****
-    params.Operator = 'W'; % Undecimanted (shift-invariant) wavelet transform
+    % params.Operator = 'W'; % Undecimanted (shift-invariant) wavelet transform
+    
+    switch alg
+      case {'admm', 'mfista'}
+        params.PriorType = alg_params.prior_type;
+        params.Operator = alg_params.operator;
+      otherwise
+        params.PriorType = 'l1';
+        params.Operator = 'W';
+    end;
 
     % Wavelet Options
     params.dwtmode = 'per'; % Period boundaries for wavelet implementation
@@ -266,7 +277,17 @@ iters = iters(:);
         'nlevel', params.nlev, 'includeApprox', false, ...
         'scale_filters', 1/sqrt(2));
 
-    case {'FD', 'AFD'}
+    case {'AFD'}
+      R = fatrix2('imask', params.ig.mask, 'odim',[size(params.ig.mask) 2], ...
+        'arg',[], 'abs',[], 'power',[], ...
+        'forw', @(arg,x)(fdiff(x)), ...
+        'back', @(arg,x)(ndiv(x)));
+
+      Rf = fatrix2('imask',true(N), 'odim',[1 N], ...
+        'arg',[], 'abs',[], 'power',[], ...
+        'forw', @(arg,x)(fdiff(x)), ...
+        'back', @(arg,x)(ndiv(x)));
+    case { 'FD'}
       fail('Fatrix for finite differences should be inserted here...')
 
     otherwise
@@ -315,7 +336,7 @@ iters = iters(:);
 
     params.nuoptapprox = nuoptapprox; % approximate nu that minimizes condition number of original system (A'A + nu * R'R)
     params.CondCAARRapprox = minCondCAARRapprox; % approximate min.cond.num
-%     printm(['ADMM: Approx min cond num = ' num2str(minCondCAARRapprox, '%0.4E'), '; approx optimal nu = ' num2str(nuoptapprox, '%0.4E')]);
+    printm(['ADMM: Approx min cond num = ' num2str(minCondCAARRapprox, '%0.4E'), '; approx optimal nu = ' num2str(nuoptapprox, '%0.4E')]);
 
     % SPS the same as SQS
     % [xos timos] = pwls_sps_os(params.xini, dd.sinogram, wi, sos.Ab,  ...
@@ -325,3 +346,39 @@ iters = iters(:);
 
 end
 
+% computes the first forward difference in both horizontal and vertical
+% direction with Neumann boundary conditions i.e. zeros at the end
+% returns the horizontal difference and vertical difference on third
+% dimension
+function [dx] = fdiff(x)
+sz = size(x);
+assert(length(sz) == 2);
+
+% horizontal difference
+dxh = zeros(sz);
+dxh(1:end, 1:end-1) = x(1:end, 2:end) - x(1:end, 1:end-1);
+
+% vertical
+dxv = zeros(sz);
+dxv(1:end-1, 1:end) = x(2:end, 1:end) - x(1:end-1, 1:end);
+
+% stack in third dimension
+dx = cat(3,dxh, dxv);
+end
+
+% computes the negative divergence (transpose of fdiff)
+% returns a matrix with same columns and rows
+function [x] = ndiv(dx)
+sz = size(dx);
+assert(length(sz) == 3);
+
+% return matrix
+x = zeros(sz(1:2));
+
+% contribution of left with +ve
+x(:, 2:end) = dx(:, 1:end-1,1);
+% up with +ve
+x(2:end, :) = x(2:end, :) + dx(1:end-1, 1:end, 2);
+% down and right with -ve
+x =  x - dx(:, 1:end, 1) - dx(:, 1:end, 2);
+end

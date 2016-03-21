@@ -38,8 +38,8 @@ P_id = astra_mex_data2d('create', '-vol', vol_geom, P);
 
 % P = phantom(4);
 [sinogram_id, sinogram] = astra_create_sino(P, proj_id);
-figure(1); imshow(P, []); axis image; axis off;
-figure(2); imshow(sinogram, []); axis image; axis off;
+% figure(1); imshow(P, []); axis image; axis off;
+% figure(2); imshow(sinogram, []); axis image; axis off;
 % imshow(sinogram, []);
 
 % compare full projection matrix
@@ -47,6 +47,7 @@ sino2 = reshape(proj_mat * reshape(P',[],1), 384, 30)';
 disp(norm(sino2 - sinogram, 'fro'));
 
 % add sinogram noise
+rng('default') 
 rng(123);
 sinogram = sinogram + randn(size(sinogram)) * 0.5;
 
@@ -86,14 +87,23 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
   'wi',ones(size(sinogram)), 'fbp',fbp);
 %%
 alg = 'admm';
-alg_params = struct('iter',10, 'mu',0.001, 'nCG',2, 'lambda',0.02);
+% alg_params = struct('iter',20, 'mu',0.001, 'nCG',2, 'lambda',0.02, ... .001&.02
+%   'nu',[], 'operator','W', 'prior_type','l1'); %nu=200
+alg_params = struct('iter',20, 'mu',0.001, 'nCG',2, 'lambda',.1, ... .001 .01
+  'nu', 200, 'operator','AFD', 'prior_type','l1'); %nu=200
+
+% profile on      
+[rec, times, snrs, iters] = ma_alg_irt(alg, in_params, alg_params);
+% profile viewer
+[times snrs iters]
+% figure(1), imshow(rec,[])
 
 %%
 alg = 'mfista';
 alg_params = struct('iter',10, 'nCG',2, 'lambda',0.1);  
 %%
 alg = 'pcg';
-alg_params = struct('iter',2, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}});  
+alg_params = struct('iter',40, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}});  
 %%
 alg = 'sqs-os';
 alg_params = struct('iter',2, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
@@ -120,10 +130,10 @@ alg_params = struct('iter',2, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
 %%
 in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
   'gt_vol',P, 'sino',sinogram, 'proj_id',proj_id, ...
-  'wi',ones(size(sinogram)), 'fbp',fbp);
+  'wi',ones(size(sinogram)), 'fbp',fbp, 'prox_in',zeros(size(P)));
 
 alg = 'CGLS';
-alg_params = struct('iter',20, ...
+alg_params = struct('iter',40, ...
     'option',struct('UseMinConstraint',1, 'MinConstraintValue',0, ...
       'UseMaxConstraint',0, 'MaxConstraintValue',1, ...
       'Alpha',2, 'Lambda',1e3, 'ComputeIterationMetrics',1, ...
@@ -135,12 +145,13 @@ alg_params = struct('iter',20, ...
 %% PSART
 in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
   'gt_vol',P, 'sino',sinogram, 'proj_id',proj_id, ...
-  'wi',ones(size(sinogram)), 'fbp',fbp);
+  'wi',ones(size(sinogram)), 'fbp',fbp, 'A',proj_mat);
 %%
 alg = 'admm';
-alg_params = struct('iter',20, 'sigma',100, 'rho',10, 'mu',1/(8*10), ...
+alg_params = struct('iter',100, 'sigma',100, 'rho',100, 'mu',[], ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
   'theta',1, 'init_fbp',0, 'data','l2', 'prior','atv', ...
-  'psart_params', struct('iter',2, ...
+  'sigma_with_data', 1, ...
+  'psart_params', struct('iter',20, ...
       'option',struct('UseMinConstraint',1, 'MinConstraintValue',0, ...
         'UseMaxConstraint',0, 'MaxConstraintValue',1, ...
         'Alpha',2, 'Lambda',1e3, 'ComputeIterationMetrics',1, ...
@@ -158,15 +169,17 @@ alg_params = struct('iter',20, 'sigma',100, 'lambda',0.03, 'mu',[], ... 1/(8*.01
         'UseMaxConstraint',0, 'MaxConstraintValue',1, ...
         'Alpha',2, 'Lambda',1e3, 'ComputeIterationMetrics',1, ...
         'ClearReconstruction',1)));
-      
+
+profile on      
 [rec, times, snrs, iters] = ma_alg_psart(alg, in_params, alg_params);
+profile viewer
 [times snrs iters]
 
 %%
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('SART');
+cfg = astra_struct('PSART');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
@@ -216,6 +229,7 @@ rec = astra_mex_data2d('get', rec_id);
 figure(3); imshow(rec, []); axis image; axis off; %, []);
 fprintf('%s SNR=%f\n', cfg.type, snr(P, (P-rec)));
 
+%%
 % Clean up. 
 astra_mex_projector('delete', proj_id);
 astra_mex_algorithm('delete', alg_id);
