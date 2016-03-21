@@ -719,7 +719,7 @@ SIRTBPPolicy::SIRTBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 						   CFloat32ProjectionData2D* _pSinogram, 
 						   CFloat32VolumeData2D* _pTotalPixelWeight, 
 						   CFloat32ProjectionData2D* _pTotalRayLength,
-						   float32 _fAlhpa,						   
+						   CFloat32VolumeData2D* _pPreconditioner, float32 _fAlhpa,						   
 						   bool _bUseMinConstraint, float32 _fMinConstraintVal,
 						   bool _bUseMaxConstraint, float32 _fMaxConstraintVal) 
 {
@@ -732,6 +732,7 @@ SIRTBPPolicy::SIRTBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 	m_fMinConstraintVal = _fMinConstraintVal;
 	m_bUseMaxConstraint = _bUseMaxConstraint;
 	m_fMaxConstraintVal = _fMaxConstraintVal;
+	m_pPreconditioner = _pPreconditioner;
 }
 //----------------------------------------------------------------------------------------	
 SIRTBPPolicy::~SIRTBPPolicy() 
@@ -753,7 +754,13 @@ void SIRTBPPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight
 {
 	float32 fGammaBeta = m_pTotalPixelWeight->getData()[_iVolumeIndex] * 
 		m_pTotalRayLength->getData()[_iRayIndex];
-	if ((fGammaBeta > 0.001f) || (fGammaBeta < -0.001f)) {
+	// preconditioner
+	if (m_pPreconditioner) {
+		fGammaBeta *= m_pPreconditioner->getData()[_iVolumeIndex];
+	}
+
+	// apply upate
+	if (fabs(fGammaBeta) > 1e-16) {
 		m_pReconstruction->getData()[_iVolumeIndex] += m_fAlpha * _fWeight * 
 			m_pSinogram->getData()[_iRayIndex] / fGammaBeta;
 	}

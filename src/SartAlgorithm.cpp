@@ -55,6 +55,7 @@ void CSartAlgorithm::_clear()
 	m_iIterationCount = 0;
 	m_fAlpha = 1.0f;
 	m_bClearRayLength = true;
+	m_pPreconditioner = NULL;
 }
 
 //---------------------------------------------------------------------------------------
@@ -171,6 +172,14 @@ bool CSartAlgorithm::initialize(const Config& _cfg)
 	m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 	m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
 	m_pDiffSinogram = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
+
+	// Preconditioner
+	int id = _cfg.self.getOptionNumerical("PreconditionerId");
+	m_pPreconditioner = dynamic_cast<CFloat32VolumeData2D*>(CData2DManager::getSingleton().get(id));
+	CC.markOptionParsed("PreconditionerId");
+	ASTRA_CONFIG_CHECK(m_pPreconditioner == NULL || 
+		m_pPreconditioner->getGeometry()->isEqual(m_pReconstruction->getGeometry()),
+		"SART", "Error in Preconditioner");
 
 	// success
 	m_bIsInitialized = _check();
@@ -308,7 +317,7 @@ void CSartAlgorithm::run(int _iNrIterations)
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 			SIRTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
-				m_pTotalPixelWeight, m_pTotalRayLength, m_fAlpha),  // SIRT backprojection
+			m_pTotalPixelWeight, m_pTotalRayLength, m_pPreconditioner, m_fAlpha),  // SIRT backprojection
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 
 

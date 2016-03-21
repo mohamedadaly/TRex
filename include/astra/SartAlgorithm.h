@@ -109,6 +109,9 @@ protected:
 	// Clear TotalRayLength after each sweep. Defaults to true.
 	bool m_bClearRayLength;
 
+	// Preconditioner for the volume.
+	CFloat32VolumeData2D* m_pPreconditioner;
+
 	int m_iIterationCount;
 
 public:

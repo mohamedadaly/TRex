@@ -172,7 +172,7 @@ void CBicavAlgorithm::run(int _iNrIterations)
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 			SIRTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
-			m_pTotalPixelWeight, m_pTotalRayLength, m_fAlpha),	// SIRT backprojection
+			m_pTotalPixelWeight, m_pTotalRayLength, m_pPreconditioner, m_fAlpha),	// SIRT backprojection
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 
 

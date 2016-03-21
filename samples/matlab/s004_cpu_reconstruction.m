@@ -49,7 +49,7 @@ disp(norm(sino2 - sinogram, 'fro'));
 % add sinogram noise
 rng('default') 
 rng(123);
-sinogram = sinogram + randn(size(sinogram)) * 0.5;
+% sinogram = sinogram + randn(size(sinogram)) * 0.5;
 
 astra_mex_data2d('delete', sinogram_id);
 
@@ -89,8 +89,8 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
 alg = 'admm';
 % alg_params = struct('iter',20, 'mu',0.001, 'nCG',2, 'lambda',0.02, ... .001&.02
 %   'nu',[], 'operator','W', 'prior_type','l1'); %nu=200
-alg_params = struct('iter',20, 'mu',0.001, 'nCG',2, 'lambda',.1, ... .001 .01
-  'nu', 200, 'operator','AFD', 'prior_type','l1'); %nu=200
+alg_params = struct('iter',40, 'mu',0.001, 'nCG',2, 'lambda',.01, ... .001&.01
+  'nu', 100, 'operator','AFD', 'prior_type','l1', 'precon',0); %nu=200
 
 % profile on      
 [rec, times, snrs, iters] = ma_alg_irt(alg, in_params, alg_params);
@@ -103,14 +103,14 @@ alg = 'mfista';
 alg_params = struct('iter',10, 'nCG',2, 'lambda',0.1);  
 %%
 alg = 'pcg';
-alg_params = struct('iter',40, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}});  
+alg_params = struct('iter',20, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}});  
 %%
 alg = 'sqs-os';
-alg_params = struct('iter',2, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
+alg_params = struct('iter',20, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
   'mom',0, 'relax',[1 1e-5], 'nsubsets',10);  
 %%
 alg = 'sqs-os-mom';
-alg_params = struct('iter',2, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
+alg_params = struct('iter',20, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
   'mom',2, 'relax',[1 1e-5], 'nsubsets',10);  
 %%
 %     % Regularizer
@@ -148,10 +148,10 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
   'wi',ones(size(sinogram)), 'fbp',fbp, 'A',proj_mat);
 %%
 alg = 'admm';
-alg_params = struct('iter',100, 'sigma',100, 'rho',100, 'mu',[], ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
+alg_params = struct('iter',40, 'sigma',100, 'rho',5, 'mu',[], ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
   'theta',1, 'init_fbp',0, 'data','l2', 'prior','atv', ...
   'sigma_with_data', 1, ...
-  'psart_params', struct('iter',20, ...
+  'psart_params', struct('iter',2, ...
       'option',struct('UseMinConstraint',1, 'MinConstraintValue',0, ...
         'UseMaxConstraint',0, 'MaxConstraintValue',1, ...
         'Alpha',2, 'Lambda',1e3, 'ComputeIterationMetrics',1, ...
@@ -179,7 +179,7 @@ profile viewer
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('PSART');
+cfg = astra_struct('ART');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
@@ -190,7 +190,7 @@ cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
 cfg.option.ClearRayLength = 1;
 cfg.option.Alpha = 2;
-cfg.option.Lambda = 1e3;
+cfg.option.Lambda = 1e2;
 cfg.option.ComputeIterationMetrics = 1;
 cfg.option.GTReconstructionId = P_id;
 cfg.option.IterationMetricsId = metrics_id;
@@ -226,7 +226,7 @@ metrics = astra_mex_data2d('get', metrics_id)
 
 % Get the result
 rec = astra_mex_data2d('get', rec_id);
-figure(3); imshow(rec, []); axis image; axis off; %, []);
+% figure(3); imshow(rec, []); axis image; axis off; %, []);
 fprintf('%s SNR=%f\n', cfg.type, snr(P, (P-rec)));
 
 %%

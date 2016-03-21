@@ -39,6 +39,8 @@ switch alg
     params.lambda = alg_params.lambda; % 0.02
 %     params.minx = -Inf;
     params.AL.nu1 = nuoptapprox / params.AL.nu1AL1factor;
+    params.CG.precon = alg_params.precon; % Do Precondition CG-solver inverting (A'A + mu*R'R) in ADMM
+
     %disp(sprintf('nu = %f', params.AL.nu1));
     if ~isempty(alg_params.nu), params.AL.nu1 = alg_params.nu; end
 

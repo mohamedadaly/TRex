@@ -462,6 +462,11 @@ public:
 	 */
 	float32 getSNR(const CFloat32Data2D& _gtData) const;
 
+	/** 
+	 * Computes the norm (sqrt of sum of squares) of the volume.
+	 */
+	float32 getNorm() const;
+
 private:
 	CFloat32CustomMemory* m_pCustomMemory;
 };

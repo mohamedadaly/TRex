@@ -49,6 +49,7 @@ iters = cumsum(iters);
     mu = alg_params.mu;
     if isempty(mu), mu = 1 / (rho * 8); end    
     sigma = alg_params.sigma;
+    mu/sigma
     
     % initialize from FBP
     if alg_params.init_fbp 
@@ -80,7 +81,7 @@ iters = cumsum(iters);
       % 1/sigma with data term
       if alg_params.sigma_with_data
         [x, itimes, isnrs, iiters] = l2_data_prox(...
-          x - rho*mu * ndiv(fdiff(x)-z+u), mu / sigma, ...
+          x - rho*mu * ndiv(fdiff(x)-z+u), mu / sigma, ... 1e-3
           alg_params.psart_params, in_params);
       else
         % sigma with regularizer
@@ -103,7 +104,6 @@ iters = cumsum(iters);
 %       snrs(it) = ma_snr(in_params.gt_vol, in_params.gt_vol - x);
 %       iters(it) = 2;      
 
-
       % z-step
       tt = tic;
       if alg_params.sigma_with_data
@@ -120,12 +120,12 @@ iters = cumsum(iters);
       times(it) = times(it) + toc(tt);
       
       % objective, can be increasing or decreasing...
-      obj = objective(x, z, sigma);
+      [obj1, obj2] = objective(x, z, sigma);
       
       % primal residual, should be decreasing per iteration...
       r = rho * norm(reshape(fdiff(x),[],1) - z(:));
 
-      fprintf('it=%d\tobj=%.2f\tsnr=%.2f\tres=%f\n', it, obj, snrs(it), r);
+      fprintf('it=%d\tobj1=%.2f\tobj2=%.2f\tsnr=%.2f\tres=%f\n', it, obj1, obj2, snrs(it), r);
     end
 %   figure(3), imshow(x, []);
   end % admm
@@ -189,7 +189,7 @@ iters = cumsum(iters);
   end
 
   % Computes the objective function
-  function val = objective(x, z, sigma)
+  function [val1, val2] = objective(x, z, sigma)
     % geom
     proj_id = in_params.proj_id;
     proj_geom = astra_mex_projector('projection_geometry', proj_id);
@@ -213,9 +213,11 @@ iters = cumsum(iters);
     % compute objective
     sino = astra_mex_data2d('get',sino_id);
     if alg_params.sigma_with_data
-      val = norm(sino - in_params.sino, 'fro')^2 / sigma + atv(x);
+      val1 = norm(sino - in_params.sino, 'fro')^2 / sigma;
+      val2 = sum(abs(z(:))); %atv(x);
     else
-      val = norm(sino - in_params.sino, 'fro')^2 + sigma * atv(x);
+      val1 = norm(sino - in_params.sino, 'fro')^2;
+      val2 = sigma * sum(abs(z(:))); % atv(x);
     end
 
     astra_mex_data2d('delete', volume_id);

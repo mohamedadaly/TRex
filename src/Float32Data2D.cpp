@@ -613,5 +613,20 @@ float32 CFloat32Data2D::getSNR(const CFloat32Data2D& _gtData) const
 	return static_cast<float32>(10 * log10(signal / noise));
 }
 
+float32 CFloat32Data2D::getNorm() const 
+{
+	ASTRA_ASSERT(m_bInitialized);
+
+	float64 sum = 0.;
+
+	// compute sum of squares
+	for (int i = 0; i < m_iSize; ++i) {
+		sum += static_cast<float64>(m_pfData[i]) * m_pfData[i];
+	}
+
+	return static_cast<float32>(sqrt(sum));
+
+}
+
 
 } // end namespace astra
