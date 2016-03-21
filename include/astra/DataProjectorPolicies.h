@@ -378,7 +378,8 @@ public:
 	FORCEINLINE PSARTBPPolicy();
 	FORCEINLINE PSARTBPPolicy(CFloat32VolumeData2D* _pReconstruction, CFloat32ProjectionData2D* _pSinogram, 
 		CFloat32VolumeData2D* _pTotalPixelWeight, CFloat32ProjectionData2D* _pTotalRayLength, 
-		CFloat32ProjectionData2D* _pY, float32 _fAlhpa = 1.0f, float32 _fSqrt2Lambda = 1.0f); 
+		CFloat32ProjectionData2D* _pY, CFloat32ProjectionData2D* _pC, 
+		float32 _fAlhpa = 1.0f, float32 _fSqrt2Lambda = 1.0f); 
 	FORCEINLINE ~PSARTBPPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);

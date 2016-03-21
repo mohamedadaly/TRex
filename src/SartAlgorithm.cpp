@@ -70,6 +70,10 @@ void CSartAlgorithm::clear()
 	m_iCurrentProjection = 0;
 	m_bIsInitialized = false;
 	m_iIterationCount = 0;
+
+	ASTRA_DELETE(m_pTotalRayLength);
+	ASTRA_DELETE(m_pTotalPixelWeight);
+	ASTRA_DELETE(m_pDiffSinogram);
 }
 
 //----------------------------------------------------------------------------------------

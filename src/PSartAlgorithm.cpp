@@ -52,6 +52,8 @@ void CPSartAlgorithm::_clear()
 	//CReconstructionAlgorithm2D::_clear();
 	CSartAlgorithm::_clear();
 	m_fLambda = 1.0f;
+	m_pC = NULL;
+	m_pY = NULL;
 }
 
 //---------------------------------------------------------------------------------------
@@ -68,6 +70,8 @@ void CPSartAlgorithm::clear()
 	//m_iCurrentProjection = 0;
 	//m_bIsInitialized = false;
 	//m_iIterationCount = 0;
+	ASTRA_DELETE(m_pY);
+	ASTRA_DELETE(m_pC);
 }
 
 //----------------------------------------------------------------------------------------
@@ -83,8 +87,8 @@ CPSartAlgorithm::CPSartAlgorithm(CProjector2D* _pProjector,
 							   CFloat32ProjectionData2D* _pSinogram, 
 							   CFloat32VolumeData2D* _pReconstruction) 
 {
+	_clear();
 	CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction);
-	//_clear();
 	//initialize(_pProjector, _pSinogram, _pReconstruction);
 }
 
@@ -96,9 +100,9 @@ CPSartAlgorithm::CPSartAlgorithm(CProjector2D* _pProjector,
 							   int* _piProjectionOrder, 
 							   int _iProjectionCount)
 {
+	_clear();
 	CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction, 
 		_piProjectionOrder, _iProjectionCount);
-	//_clear();
 	//initialize(_pProjector, _pSinogram, _pReconstruction, _piProjectionOrder, _iProjectionCount);
 }
 
@@ -180,6 +184,7 @@ bool CPSartAlgorithm::initialize(const Config& _cfg)
 	//m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
 	//m_pDiffSinogram = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 	m_pY = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
+	m_pC = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 
 	// success
 	m_bIsInitialized = _check();
@@ -256,13 +261,16 @@ void CPSartAlgorithm::run(int _iNrIterations)
 	// m_pSinogram->operator*=(fSqrt_2_lambda);
 
 	// backprojection data projector
+	//PSARTBPPolicy* pPSartPolicy = new  PSARTBPPolicy(m_pReconstruction, 
+	//	m_pDiffSinogram, m_pTotalPixelWeight, m_pTotalRayLength, 
+	//	m_pY, m_fAlpha, fSqrt2Lambda);
 	pBackProjector = dispatchDataProjector(
 			m_pProjector, 
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 			PSARTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
 						 m_pTotalPixelWeight, m_pTotalRayLength, 
-						 m_pY, m_fAlpha, fSqrt2Lambda),			// PSART backprojection
+						 m_pY, m_pC, m_fAlpha, fSqrt2Lambda),			// PSART backprojection
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 
 

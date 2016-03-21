@@ -796,6 +796,7 @@ PSARTBPPolicy::PSARTBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 						   CFloat32VolumeData2D* _pTotalPixelWeight, 
 						   CFloat32ProjectionData2D* _pTotalRayLength,
 						   CFloat32ProjectionData2D* _pY, 
+						   CFloat32ProjectionData2D* _pC, 
 						   float32 _fAlhpa, float32 _fSqrt2Lambda) 
 {
 	m_pReconstruction = _pReconstruction;
@@ -803,16 +804,19 @@ PSARTBPPolicy::PSARTBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 	m_pTotalPixelWeight = _pTotalPixelWeight;
 	m_pTotalRayLength = _pTotalRayLength;
 	m_pY = _pY;
+	m_pC = _pC;
 	m_fAlpha = _fAlhpa;
 	m_fSqrt2Lambda = _fSqrt2Lambda;
 
-	// init C as a copy from Y
-	m_pC = new CFloat32ProjectionData2D(m_pY->getGeometry());
+	//// init C as a copy from Y
+	//m_pC = new CFloat32ProjectionData2D(m_pY->getGeometry());
+	//ASTRA_INFO("PSARTPolicy Constructor");
 }
 //----------------------------------------------------------------------------------------	
 PSARTBPPolicy::~PSARTBPPolicy() 
 {
-	ASTRA_DELETE(m_pC);
+	//ASTRA_INFO("PSARTPolicy Destructor: %p", m_pC);
+	//ASTRA_DELETE(m_pC);
 }
 //----------------------------------------------------------------------------------------	
 bool PSARTBPPolicy::rayPrior(int _iRayIndex) 

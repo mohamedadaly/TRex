@@ -101,6 +101,7 @@ protected:
 
     // temporary data objects
     CFloat32ProjectionData2D* m_pY;
+	CFloat32ProjectionData2D* m_pC;
 
     // Proximal operator parameter
     float32 m_fLambda;
