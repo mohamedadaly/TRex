@@ -54,7 +54,7 @@ sum_rows(abs(sum_rows)<1e-16) = 1;
 
 % If BSSART, then initialize rec with one of the rows of A
 if alg_params.BSSART
-  rec = reshape(in_params.A(10,:), ny, nx);
+  rec = reshape(in_params.A(floor(ndet * nviews/2),:), ny, nx);
 end
 
 % iterations
