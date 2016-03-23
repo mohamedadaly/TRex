@@ -360,7 +360,7 @@ public:
 //----------------------------------------------------------------------------------------
 /** Policy For ProxiSART PSART Backprojection
  */
-class PSARTBPPolicy {
+class SartProxBPPolicy {
 
 	CFloat32ProjectionData2D* m_pSinogram;
 	CFloat32VolumeData2D* m_pReconstruction;
@@ -379,12 +379,12 @@ class PSARTBPPolicy {
 
 public:
 
-	FORCEINLINE PSARTBPPolicy();
-	FORCEINLINE PSARTBPPolicy(CFloat32VolumeData2D* _pReconstruction, CFloat32ProjectionData2D* _pSinogram, 
+	FORCEINLINE SartProxBPPolicy();
+	FORCEINLINE SartProxBPPolicy(CFloat32VolumeData2D* _pReconstruction, CFloat32ProjectionData2D* _pSinogram, 
 		CFloat32VolumeData2D* _pTotalPixelWeight, CFloat32ProjectionData2D* _pTotalRayLength, 
 		CFloat32ProjectionData2D* _pY, CFloat32ProjectionData2D* _pC, 
 		float32 _fAlhpa = 1.0f, float32 _fSqrt2Lambda = 1.0f); 
-	FORCEINLINE ~PSARTBPPolicy();
+	FORCEINLINE ~SartProxBPPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);
 	FORCEINLINE bool pixelPrior(int _iVolumeIndex);

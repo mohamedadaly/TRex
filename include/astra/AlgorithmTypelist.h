@@ -35,7 +35,7 @@ $Id$
 #include "ArtAlgorithm.h"
 #include "SirtAlgorithm.h"
 #include "SartAlgorithm.h"
-#include "PSartAlgorithm.h"
+#include "SartProxOperatorAlgorithm.h"
 #include "BicavAlgorithm.h"
 #include "BlockSimplifiedSartAlgorithm.h"
 #include "OrderedSubsetSQSAlgorithm.h"
@@ -70,7 +70,7 @@ using namespace astra;
 typedef TYPELIST_27(
 			CArtAlgorithm,
 			CSartAlgorithm,
-			CPSartAlgorithm,
+			CSartProxOperatorAlgorithm,
 			CBicavAlgorithm,
 			CBlockSimplifiedSartAlgorithm,
 			COrderedSubsetSQSAlgorithm,
@@ -107,7 +107,7 @@ typedef TYPELIST_11(
 			CBlockSimplifiedSartAlgorithm,
 			COrderedSubsetSQSAlgorithm,
 			CSartAlgorithm,
-			CPSartAlgorithm,
+			CSartProxOperatorAlgorithm,
 			CSirtAlgorithm,
 			CCglsAlgorithm,
 			CBackProjectionAlgorithm,

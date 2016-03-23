@@ -26,7 +26,7 @@ along with the ASTRA Toolbox. If not, see <http://www.gnu.org/licenses/>.
 $Id$
 */
 
-#include "astra/PSartAlgorithm.h"
+#include "astra/SartProxOperatorAlgorithm.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -42,12 +42,12 @@ namespace astra {
 #include "astra/Projector2DImpl.inl"
 
 // type of the algorithm, needed to register with CAlgorithmFactory
-std::string CPSartAlgorithm::type = "PSART";
+std::string CSartProxOperatorAlgorithm::type = "SART-PROX";
 
 
 //---------------------------------------------------------------------------------------
 // Clear - Constructors
-void CPSartAlgorithm::_clear()
+void CSartProxOperatorAlgorithm::_clear()
 {
 	//CReconstructionAlgorithm2D::_clear();
 	CSartAlgorithm::_clear();
@@ -58,7 +58,7 @@ void CPSartAlgorithm::_clear()
 
 //---------------------------------------------------------------------------------------
 // Clear - Public
-void CPSartAlgorithm::clear()
+void CSartProxOperatorAlgorithm::clear()
 {
 	//CReconstructionAlgorithm2D::clear();
 	CSartAlgorithm::clear();
@@ -76,14 +76,14 @@ void CPSartAlgorithm::clear()
 
 //----------------------------------------------------------------------------------------
 // Constructor
-CPSartAlgorithm::CPSartAlgorithm() 
+CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm() 
 {
 	_clear();
 }
 
 //----------------------------------------------------------------------------------------
 // Constructor
-CPSartAlgorithm::CPSartAlgorithm(CProjector2D* _pProjector, 
+CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm(CProjector2D* _pProjector, 
 							   CFloat32ProjectionData2D* _pSinogram, 
 							   CFloat32VolumeData2D* _pReconstruction) 
 {
@@ -94,7 +94,7 @@ CPSartAlgorithm::CPSartAlgorithm(CProjector2D* _pProjector,
 
 //----------------------------------------------------------------------------------------
 // Constructor
-CPSartAlgorithm::CPSartAlgorithm(CProjector2D* _pProjector, 
+CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm(CProjector2D* _pProjector, 
 							   CFloat32ProjectionData2D* _pSinogram, 
 							   CFloat32VolumeData2D* _pReconstruction,
 							   int* _piProjectionOrder, 
@@ -108,14 +108,14 @@ CPSartAlgorithm::CPSartAlgorithm(CProjector2D* _pProjector,
 
 //----------------------------------------------------------------------------------------
 // Destructor
-CPSartAlgorithm::~CPSartAlgorithm() 
+CSartProxOperatorAlgorithm::~CSartProxOperatorAlgorithm() 
 {
 	clear();
 }
 
 //---------------------------------------------------------------------------------------
 // Initialize - Config
-bool CPSartAlgorithm::initialize(const Config& _cfg)
+bool CSartProxOperatorAlgorithm::initialize(const Config& _cfg)
 {
 	assert(_cfg.self);
 	ConfigStackCheck<CAlgorithm> CC("PSartAlgorithm", this, _cfg);
@@ -193,7 +193,7 @@ bool CPSartAlgorithm::initialize(const Config& _cfg)
 
 
 //----------------------------------------------------------------------------------------
-bool CPSartAlgorithm::_check()
+bool CSartProxOperatorAlgorithm::_check()
 {
 	// check base class
 	ASTRA_CONFIG_CHECK(CSartAlgorithm::_check(), "PSART", "Error in ReconstructionAlgorithm2D initialization");
@@ -203,7 +203,7 @@ bool CPSartAlgorithm::_check()
 
 //---------------------------------------------------------------------------------------
 // Information - All
-map<string,boost::any> CPSartAlgorithm::getInformation() 
+map<string,boost::any> CSartProxOperatorAlgorithm::getInformation() 
 {
 	map<string, boost::any> res;
 	res["ProjectionOrder"] = getInformation("ProjectionOrder");
@@ -212,7 +212,7 @@ map<string,boost::any> CPSartAlgorithm::getInformation()
 
 //---------------------------------------------------------------------------------------
 // Information - Specific
-boost::any CPSartAlgorithm::getInformation(std::string _sIdentifier) 
+boost::any CSartProxOperatorAlgorithm::getInformation(std::string _sIdentifier) 
 {
 	if (_sIdentifier == "ProjectionOrder") {
 		vector<float32> res;
@@ -226,7 +226,7 @@ boost::any CPSartAlgorithm::getInformation(std::string _sIdentifier)
 
 //----------------------------------------------------------------------------------------
 // Iterate
-void CPSartAlgorithm::run(int _iNrIterations)
+void CSartProxOperatorAlgorithm::run(int _iNrIterations)
 {
 	// check initialized
 	ASTRA_ASSERT(m_bIsInitialized);
@@ -268,7 +268,7 @@ void CPSartAlgorithm::run(int _iNrIterations)
 			m_pProjector, 
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			PSARTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
+			SartProxBPPolicy(m_pReconstruction, m_pDiffSinogram, 
 						 m_pTotalPixelWeight, m_pTotalRayLength, 
 						 m_pY, m_pC, m_fAlpha, fSqrt2Lambda),			// PSART backprojection
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off

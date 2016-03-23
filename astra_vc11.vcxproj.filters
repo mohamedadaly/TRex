@@ -321,9 +321,6 @@
     <ClCompile Include="src\CudaSirtAlgorithm3D.cpp">
       <Filter>CUDA\astra source</Filter>
     </ClCompile>
-    <ClCompile Include="src\PSartAlgorithm.cpp">
-      <Filter>Algorithms\source</Filter>
-    </ClCompile>
     <ClCompile Include="src\BicavAlgorithm.cpp">
       <Filter>Algorithms\source</Filter>
     </ClCompile>
@@ -334,6 +331,9 @@
       <Filter>Algorithms\source</Filter>
     </ClCompile>
     <ClCompile Include="src\OrderedSubsetSQSAlgorithm.cpp">
+      <Filter>Algorithms\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SartProxOperatorAlgorithm.cpp">
       <Filter>Algorithms\source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -686,9 +686,6 @@
     <ClInclude Include="cuda\3d\util3d.h">
       <Filter>CUDA\cuda headers</Filter>
     </ClInclude>
-    <ClInclude Include="include\astra\PSartAlgorithm.h">
-      <Filter>Algorithms\headers</Filter>
-    </ClInclude>
     <ClInclude Include="include\astra\BicavAlgorithm.h">
       <Filter>Algorithms\headers</Filter>
     </ClInclude>
@@ -699,6 +696,9 @@
       <Filter>Algorithms\headers</Filter>
     </ClInclude>
     <ClInclude Include="include\astra\OrderedSubsetSQSAlgorithm.h">
+      <Filter>Algorithms\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\astra\SartProxOperatorAlgorithm.h">
       <Filter>Algorithms\headers</Filter>
     </ClInclude>
   </ItemGroup>

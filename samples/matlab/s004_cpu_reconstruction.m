@@ -49,7 +49,7 @@ disp(norm(sino2 - sinogram, 'fro'));
 % add sinogram noise
 rng('default') 
 rng(123);
-% sinogram = sinogram + randn(size(sinogram)) * 0.5;
+sinogram = sinogram + randn(size(sinogram)) * 0.1;
 
 astra_mex_data2d('delete', sinogram_id);
 
@@ -186,13 +186,13 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
 %%    SART
 % --> debug sqs
 alg_params = struct('iter',10, 'alpha',1, 'min_val',0, 'precon',0, ...
-  'wls',0, 'BSSART',0, 'prox',0, 'lambda',1e2, 'nsubsets',[], 'sqs',1, ...
-  'init_fbp',1);
+  'wls',0, 'BSSART',0, 'prox',0, 'lambda',1e2, 'nsubsets',30, 'sqs',1, ...
+  'init_fbp',0);
 [rec, times, snrs, iters] = ma_alg_sart(in_params, alg_params);
 [times snrs iters]
 
 %%    SIRT
-alg_params = struct('iter',10, 'alpha',1.999, 'min_val',0, 'precon',0, ...
+alg_params = struct('iter',10, 'alpha',2, 'min_val',0, 'precon',0, ...
   'gamma', .08);
 [rec, times, snrs, iters] = ma_alg_sirt(in_params, alg_params);
 [times snrs iters]
@@ -211,7 +211,7 @@ prec_id = astra_mex_data2d('create', '-vol', vol_geom, prec);
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('SART');
+cfg = astra_struct('SART-PROX');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
@@ -221,7 +221,7 @@ cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
 cfg.option.ClearRayLength = 1;
-cfg.option.Alpha = 2;
+cfg.option.Alpha = 1.4;
 cfg.option.Lambda = 1e3;
 cfg.option.ComputeIterationMetrics = 1;
 cfg.option.GTReconstructionId = P_id;

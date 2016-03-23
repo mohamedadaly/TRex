@@ -26,8 +26,8 @@ along with the ASTRA Toolbox. If not, see <http://www.gnu.org/licenses/>.
 $Id$
 */
 
-#ifndef _INC_ASTRA_PSARTALGORITHM
-#define _INC_ASTRA_PSARTALGORITHM
+#ifndef _INC_ASTRA_SARTPROXOPERATORALGORITHM
+#define _INC_ASTRA_SARTPROXOPERATORALGORITHM
 
 #include "Globals.h"
 #include "Config.h"
@@ -83,7 +83,7 @@ namespace astra {
  *		astra_mex_algorithm('delete'\, alg_id);\n
  * }
  */
-class _AstraExport CPSartAlgorithm : public CSartAlgorithm {
+class _AstraExport CSartProxOperatorAlgorithm : public CSartAlgorithm {
 
 protected:
 
@@ -116,7 +116,7 @@ public:
     
     /** Default constructor, containing no code.
      */
-    CPSartAlgorithm();
+    CSartProxOperatorAlgorithm();
     
     /** Constructor.
      *
@@ -124,7 +124,7 @@ public:
      * @param _pSinogram		ProjectionData2D object containing the sinogram data.
      * @param _pReconstruction	VolumeData2D object for storing the reconstructed volume.
      */
-    CPSartAlgorithm(CProjector2D* _pProjector, 
+    CSartProxOperatorAlgorithm(CProjector2D* _pProjector, 
                    CFloat32ProjectionData2D* _pSinogram, 
                    CFloat32VolumeData2D* _pReconstruction);
 
@@ -136,7 +136,7 @@ public:
      * @param _piProjectionOrder	array containing a projection order.
      * @param _iProjectionCount		number of elements in _piProjectionOrder.
      */
-    CPSartAlgorithm(CProjector2D* _pProjector, 
+    CSartProxOperatorAlgorithm(CProjector2D* _pProjector, 
                    CFloat32ProjectionData2D* _pSinogram, 
                    CFloat32VolumeData2D* _pReconstruction,
                    int* _piProjectionOrder, 
@@ -144,7 +144,7 @@ public:
 
     /** Destructor.
      */
-    virtual ~CPSartAlgorithm();
+    virtual ~CSartProxOperatorAlgorithm();
     
     /** Clear this class.
      */
@@ -222,7 +222,7 @@ protected:
 };
 
 // inline functions
-inline std::string CPSartAlgorithm::description() const { return CPSartAlgorithm::type; };
+inline std::string CSartProxOperatorAlgorithm::description() const { return CSartProxOperatorAlgorithm::type; };
 
 
 } // end namespace

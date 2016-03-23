@@ -549,7 +549,7 @@
     <ClCompile Include="src\ProjectionGeometry3D.cpp" />
     <ClCompile Include="src\Projector2D.cpp" />
     <ClCompile Include="src\Projector3D.cpp" />
-    <ClCompile Include="src\PSartAlgorithm.cpp" />
+    <ClCompile Include="src\SartProxOperatorAlgorithm.cpp" />
     <ClCompile Include="src\ReconstructionAlgorithm2D.cpp" />
     <ClCompile Include="src\ReconstructionAlgorithm3D.cpp" />
     <ClCompile Include="src\SartAlgorithm.cpp" />
@@ -668,7 +668,7 @@
     <ClInclude Include="include\astra\Projector2D.h" />
     <ClInclude Include="include\astra\Projector3D.h" />
     <ClInclude Include="include\astra\ProjectorTypelist.h" />
-    <ClInclude Include="include\astra\PSartAlgorithm.h" />
+    <ClInclude Include="include\astra\SartProxOperatorAlgorithm.h" />
     <ClInclude Include="include\astra\ReconstructionAlgorithm2D.h" />
     <ClInclude Include="include\astra\ReconstructionAlgorithm3D.h" />
     <ClInclude Include="include\astra\SartAlgorithm.h" />

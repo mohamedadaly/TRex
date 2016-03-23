@@ -793,12 +793,12 @@ void SIRTBPPolicy::pixelPosterior(int _iVolumeIndex)
 //----------------------------------------------------------------------------------------
 // PSART BACKPROJECTION  (Ray+Pixel Driven)
 //----------------------------------------------------------------------------------------
-PSARTBPPolicy::PSARTBPPolicy() 
+SartProxBPPolicy::SartProxBPPolicy() 
 {
 
 }
 //----------------------------------------------------------------------------------------
-PSARTBPPolicy::PSARTBPPolicy(CFloat32VolumeData2D* _pReconstruction, 
+SartProxBPPolicy::SartProxBPPolicy(CFloat32VolumeData2D* _pReconstruction, 
 						   CFloat32ProjectionData2D* _pSinogram, 
 						   CFloat32VolumeData2D* _pTotalPixelWeight, 
 						   CFloat32ProjectionData2D* _pTotalRayLength,
@@ -820,13 +820,13 @@ PSARTBPPolicy::PSARTBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 	//ASTRA_INFO("PSARTPolicy Constructor");
 }
 //----------------------------------------------------------------------------------------	
-PSARTBPPolicy::~PSARTBPPolicy() 
+SartProxBPPolicy::~SartProxBPPolicy() 
 {
 	//ASTRA_INFO("PSARTPolicy Destructor: %p", m_pC);
 	//ASTRA_DELETE(m_pC);
 }
 //----------------------------------------------------------------------------------------	
-bool PSARTBPPolicy::rayPrior(int _iRayIndex) 
+bool SartProxBPPolicy::rayPrior(int _iRayIndex) 
 {
 	// denominator
 	float32 fGammaBeta = m_fSqrt2Lambda * m_pTotalRayLength->getData()[_iRayIndex] + 1.f;
@@ -845,12 +845,12 @@ bool PSARTBPPolicy::rayPrior(int _iRayIndex)
 	return true;
 }
 //----------------------------------------------------------------------------------------
-bool PSARTBPPolicy::pixelPrior(int _iVolumeIndex) 
+bool SartProxBPPolicy::pixelPrior(int _iVolumeIndex) 
 {
 	return true;
 }
 //----------------------------------------------------------------------------------------	
-void PSARTBPPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
+void SartProxBPPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
 {  
 	if (_fWeight == 0) return;
 
@@ -868,14 +868,14 @@ void PSARTBPPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeigh
 
 }
 //----------------------------------------------------------------------------------------
-void PSARTBPPolicy::rayPosterior(int _iRayIndex) 
+void SartProxBPPolicy::rayPosterior(int _iRayIndex) 
 {
 	// Update the Y auxiliary structure after the ray is processed
 	m_pY->getData()[_iRayIndex] += m_pC->getData()[_iRayIndex];
 	//ASTRA_INFO("RayPosterior ray=%d val=%f", _iRayIndex, m_pY->getData()[_iRayIndex]);
 }
 //----------------------------------------------------------------------------------------
-void PSARTBPPolicy::pixelPosterior(int _iVolumeIndex) 
+void SartProxBPPolicy::pixelPosterior(int _iVolumeIndex) 
 {
 	// nothing
 }
