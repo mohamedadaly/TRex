@@ -7,6 +7,10 @@ function [rec, times, snrs, iters] = ma_alg_sart(in_params, alg_params)
 % init in the transpose to make row-major
 rec = zeros(size(in_params.gt_vol))';
 [ny, nx] = size(rec);
+if alg_params.init_fbp
+  assert(all(size(in_params.fbp') == size(rec)));
+  rec = in_params.fbp';
+end
 
 % take transpose to make row major because the projection matrix assumes
 % row-major sinogram, and gives row-major volume
@@ -58,14 +62,20 @@ if alg_params.BSSART
 end
 
 % imitating ordered-subsets with more views per inner iteration
-if ~isempty(alg_params.nsubsets)
-  % how many views per subset
-  subset_size =floor(nviews / alg_params.nsubsets); 
-  % how many inner iterations
-  inner_iter = alg_params.nsubsets;
-else
-  subset_size = 1;
-  inner_iter = nviews;
+if isempty(alg_params.nsubsets), alg_params.nsubsets = nviews; end;
+% how many views per subset
+subset_size =floor(nviews / alg_params.nsubsets); 
+% how many inner iterations
+inner_iter = alg_params.nsubsets;
+
+% OS-SQS
+if alg_params.sqs 
+  % set BSSART to 1 so that we don't update column sums
+  alg_params.BSSART = 1;
+  % set row sums to 1 to neutralize
+  sum_rows(:) = 1;
+  % compute the column sums which are sum(A' * A)
+  sum_cols = in_params.A' * sum(in_params.A, 2) / alg_params.nsubsets;
 end
 
 % iterations
@@ -81,12 +91,12 @@ for it = 1:alg_params.iter
     
     if ~alg_params.BSSART
       % sum over pixels for this view
-      sum_cols = sum(in_params.A(arows, :), 1)';
-      sum_cols(abs(sum_cols) < 1e-16) = 1;
+      sum_cols = full(sum(in_params.A(arows, :), 1)');
+%       sum_cols(abs(sum_cols) < 1e-16) = 1;
     end
     
     % forward project current view
-    Ax = reshape(in_params.A(arows, :) * rec(:), ndet, []);
+    Ax = full(reshape(in_params.A(arows, :) * rec(:), ndet, []));
     
     % difference
     if alg_params.prox

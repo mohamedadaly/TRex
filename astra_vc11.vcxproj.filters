@@ -333,6 +333,9 @@
     <ClCompile Include="src\BlockSimplifiedSartAlgorithm.cpp">
       <Filter>Algorithms\source</Filter>
     </ClCompile>
+    <ClCompile Include="src\OrderedSubsetSQSAlgorithm.cpp">
+      <Filter>Algorithms\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\astra\Algorithm.h">
@@ -693,6 +696,9 @@
       <Filter>Algorithms\headers</Filter>
     </ClInclude>
     <ClInclude Include="include\astra\BlockSimplifiedSartAlgorithm.h">
+      <Filter>Algorithms\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\astra\OrderedSubsetSQSAlgorithm.h">
       <Filter>Algorithms\headers</Filter>
     </ClInclude>
   </ItemGroup>

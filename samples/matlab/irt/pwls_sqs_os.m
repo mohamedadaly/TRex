@@ -45,6 +45,7 @@ arg.wi = [];
 arg.aai = [];
 arg.relax0 = 1;
 arg.denom = [];
+arg.bit_reverse = 1;
 arg.scale_nblock = true; % traditional scaling
 arg.update_even_if_denom_0 = true;
 % malaa
@@ -55,7 +56,11 @@ arg.isave = iter_saver(arg.isave, arg.niter);
 
 Ab = block_op(Ab, 'ensure'); % make it a block object (if not already)
 nblock = block_op(Ab, 'n');
-starts = subset_start(nblock);
+if arg.bit_reverse
+  starts = subset_start(nblock);
+else
+  starts = 1:nblock;
+end
 
 cpu etic
 

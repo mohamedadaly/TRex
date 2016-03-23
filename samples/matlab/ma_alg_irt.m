@@ -94,6 +94,11 @@ switch alg
       %   'pot_arg', {'hyper3', 1}, 'beta', 0.1);
       %   'pot_arg', {'huber', 1}, 'beta', 10);  %1
     end
+    
+    % initial value
+    if ~alg_params.init_fbp
+      params.xini(:) = 0;
+    end
 
     if strcmpi(alg, 'pcg')
       [xos timos] = pwls_pcg1(params.xini(:), params.Ab, ...
@@ -103,13 +108,14 @@ switch alg
       nsubsets = alg_params.nsubsets; %10; %10 or 15
       % convert to blocks
       params.Ab = Gblock(params.Ab, nsubsets);
-      params.relax = alg_params.relax; % [1 1e-5]
+      params.relax = alg_params.relax; % [1 1e-5]      
       
       % SQS-OS
-      [xos timos] = pwls_sqs_os(in_params.fbp, params.Ab, in_params.sino, ...
+      [xos timos] = pwls_sqs_os(params.xini, params.Ab, in_params.sino, ...
         params.R, 'wi', in_params.wi, 'niter', alg_params.iter, ...
         'pixmax', [0 inf], 'isave', 'all', 'chat',0, ...
-        'relax0',alg_params.relax, 'mom', alg_params.mom);
+        'relax0',alg_params.relax, 'mom', alg_params.mom, ...
+        'bit_reverse', alg_params.bit_reverse);
     end;
     
     % compute SNR from return values
@@ -347,6 +353,11 @@ iters = iters(:);
     % [xos timos] = pwls_sps_os(params.xini, dd.sinogram, wi, sos.Ab,  ...
     %   sos.R, 10, [0 inf], [], [], [1 1e-5], 1);  %[1 1e-5]
 
+    % initial value
+    if ~alg_params.init_fbp
+      params.xini(:) = 0;
+    end
+    
   end
 
 end
