@@ -93,8 +93,10 @@ for iter = 1:arg.niter
 
 	% (negative) gradient
 	ngrad = A' * (W * (yi-Ax));
-	pgrad = R.cgrad(R, x);
-	ngrad = ngrad - pgrad;
+  if ~isempty(R)
+    pgrad = R.cgrad(R, x);
+    ngrad = ngrad - pgrad;
+  end
 
 	if arg.stop_grad_tol && norm_grad(ngrad) < arg.stop_grad_tol
 		if arg.chat

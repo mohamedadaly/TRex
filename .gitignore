@@ -35,4 +35,4 @@ lib/*
 bin/*
 *.sdf
 sl.mat
-*.asv
+.*.asv

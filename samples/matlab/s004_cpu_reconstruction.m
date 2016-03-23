@@ -89,8 +89,8 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
 alg = 'admm';
 % alg_params = struct('iter',20, 'mu',0.001, 'nCG',2, 'lambda',0.02, ... .001&.02
 %   'nu',[], 'operator','W', 'prior_type','l1'); %nu=200
-alg_params = struct('iter',40, 'mu',0.001, 'nCG',2, 'lambda',.01, ... .001&.01
-  'nu', 100, 'operator','AFD', 'prior_type','l1', 'precon',0); %nu=200
+alg_params = struct('iter',20, 'mu',0.001, 'nCG',2, 'lambda',.01, ... .001&.01
+  'nu', 100, 'operator','AFD', 'prior_type','l1', 'precon',1); %nu=200
 
 % profile on      
 [rec, times, snrs, iters] = ma_alg_irt(alg, in_params, alg_params);
@@ -103,18 +103,19 @@ alg = 'mfista';
 alg_params = struct('iter',10, 'nCG',2, 'lambda',0.1);  
 %%
 alg = 'pcg';
-alg_params = struct('iter',20, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}});  
+alg_params = struct('iter',10, 'beta',0, 'pot_arg',{{'gf1',1,[1 1]}}, ...
+  'reg', 1);  
 %%
 alg = 'sqs-os';
-alg_params = struct('iter',20, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
-  'mom',0, 'relax',[1 1e-5], 'nsubsets',10);  
+alg_params = struct('iter',10, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
+  'mom',0, 'relax',[1 1e-5], 'nsubsets',10, 'reg',0);  
 %%
 alg = 'sqs-os-mom';
-alg_params = struct('iter',20, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
-  'mom',2, 'relax',[1 1e-5], 'nsubsets',10);  
+alg_params = struct('iter',10, 'beta',.01, 'pot_arg',{{'huber', 1}}, ...
+  'mom',2, 'relax',[1 1e-5], 'nsubsets',10, 'reg',0);  
 %%
 %     % Regularizer
-%     % fail potential  wpot(t) = (1 + a * |t/d|) / (1 + b * |t/d|)
+%     % fair potential  wpot(t) = (1 + a * |t/d|) / (1 + b * |t/d|)
 %     params.R = Reg1(ones(size(in_prams.gt_vol)), 'type_denom', 'matlab', ...
 %       'pot_arg',alg_params.pot_arg, 'beta',alg_params.beta); %1
 % %         'pot_arg',{'gf1', 1, [1, 1]}, 'beta', 1); %1
@@ -148,7 +149,7 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
   'wi',ones(size(sinogram)), 'fbp',fbp, 'A',proj_mat);
 %%
 alg = 'admm';
-alg_params = struct('iter',40, 'sigma',100, 'rho',5, 'mu',[], ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
+alg_params = struct('iter',20, 'sigma',25, 'rho',10, 'mu',[], ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
   'theta',1, 'init_fbp',0, 'data','l2', 'prior','atv', ...
   'sigma_with_data', 1, ...
   'psart_params', struct('iter',2, ...
@@ -175,11 +176,39 @@ profile on
 profile viewer
 [times snrs iters]
 
+
+%% Matrix Experimental SART
+in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
+  'gt_vol',P, 'sino',sinogram, 'proj_id',proj_id, ...
+  'wi',ones(size(sinogram)), 'fbp',fbp, 'A',proj_mat, 'prox_in',fbp);
+
+%%    SART
+alg_params = struct('iter',2, 'alpha',1.999, 'min_val',0, 'precon',0, ...
+  'wls',0, 'use_view_sums',1, 'prox',1, 'lambda',1e3);
+[rec, times, snrs, iters] = ma_alg_sart(in_params, alg_params);
+[times snrs iters]
+
+%%    SIRT
+alg_params = struct('iter',10, 'alpha',1.999, 'min_val',0, 'precon',0, ...
+  'gamma', .08);
+[rec, times, snrs, iters] = ma_alg_sirt(in_params, alg_params);
+[times snrs iters]
+
+% figure(1), imshow(rec, [])
 %%
+
+% preconditioner
+prec = ones(size(P));
+prec(128,128)=1;
+prec = reshape(proj_mat' * (proj_mat * prec(:)), 256, 256);
+% prec(prec < 1e-16) = 1;
+% prec = 1;
+prec_id = astra_mex_data2d('create', '-vol', vol_geom, prec);
+
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('ART');
+cfg = astra_struct('SART');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
@@ -190,11 +219,13 @@ cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
 cfg.option.ClearRayLength = 1;
 cfg.option.Alpha = 2;
-cfg.option.Lambda = 1e2;
+cfg.option.Lambda = 1e3;
 cfg.option.ComputeIterationMetrics = 1;
 cfg.option.GTReconstructionId = P_id;
 cfg.option.IterationMetricsId = metrics_id;
 cfg.option.ClearReconstruction = 1;
+cfg.option.PreconditionerId = -1; prec_id;
+cfg.option.ProjectionOrder = 'random';
 
 % Available algorithms:
 % ART, SART, SIRT, CGLS, FBP
@@ -218,7 +249,7 @@ alg_id = astra_mex_algorithm('create', cfg);
 % This will have a runtime in the order of 10 seconds.
 tic;
 % astra_mex_algorithm('iterate', alg_id, 30*30);
-astra_mex_algorithm('iterate', alg_id, 20);
+astra_mex_algorithm('iterate', alg_id, 10);
 toc;
 
 % get the metrics

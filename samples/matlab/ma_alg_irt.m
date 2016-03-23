@@ -84,13 +84,16 @@ switch alg
     params.Ab = Gmatrix(in_params.A(rids, cids));
 
     % Regularizer
-    % fail potential  wpot(t) = (1 + a * |t/d|) / (1 + b * |t/d|)
-    params.R = Reg1(ones(size(in_params.gt_vol)), 'type_denom', 'matlab', ...
-      'pot_arg',alg_params.pot_arg, 'beta',alg_params.beta); %1
-%         'pot_arg',{'gf1', 1, [1, 1]}, 'beta', 1); %1
-    %   'pot_arg',{'gf1', 1, [1, 1]}, 'beta',0.1); 
-    %   'pot_arg', {'hyper3', 1}, 'beta', 0.1);
-    %   'pot_arg', {'huber', 1}, 'beta', 10);  %1
+    params.R = [];
+    if alg_params.reg
+      % fail potential  wpot(t) = (1 + a * |t/d|) / (1 + b * |t/d|)
+      params.R = Reg1(ones(size(in_params.gt_vol)), 'type_denom', 'matlab', ...
+        'pot_arg',alg_params.pot_arg, 'beta',alg_params.beta); %1
+  %         'pot_arg',{'gf1', 1, [1, 1]}, 'beta', 1); %1
+      %   'pot_arg',{'gf1', 1, [1, 1]}, 'beta',0.1); 
+      %   'pot_arg', {'hyper3', 1}, 'beta', 0.1);
+      %   'pot_arg', {'huber', 1}, 'beta', 10);  %1
+    end
 
     if strcmpi(alg, 'pcg')
       [xos timos] = pwls_pcg1(params.xini(:), params.Ab, ...
