@@ -54,7 +54,18 @@ sum_rows(abs(sum_rows)<1e-16) = 1;
 
 % If BSSART, then initialize rec with one of the rows of A
 if alg_params.BSSART
-  rec = reshape(in_params.A(floor(ndet * nviews/2),:), ny, nx);
+%   rec = reshape(in_params.A(floor(ndet * nviews/2),:), ny, nx);
+end
+
+% imitating ordered-subsets with more views per inner iteration
+if ~isempty(alg_params.nsubsets)
+  % how many views per subset
+  subset_size =floor(nviews / alg_params.nsubsets); 
+  % how many inner iterations
+  inner_iter = alg_params.nsubsets;
+else
+  subset_size = 1;
+  inner_iter = nviews;
 end
 
 % iterations
@@ -62,29 +73,31 @@ for it = 1:alg_params.iter
   % loop on views
   tic;
   pstart = 1;
-  for v = 1:nviews
-    % rows
-    rows = pstart : pstart + ndet - 1;
+  for v = 1:inner_iter
+    % rows of A
+    arows = pstart : pstart + ndet * subset_size - 1;
+    % cols of sino
+    scols = (v - 1) * subset_size + 1 : v * subset_size;
     
     if ~alg_params.BSSART
       % sum over pixels for this view
-      sum_cols = sum(in_params.A(rows, :), 1)';
+      sum_cols = sum(in_params.A(arows, :), 1)';
       sum_cols(abs(sum_cols) < 1e-16) = 1;
     end
     
     % forward project current view
-    Ax = in_params.A(rows, :) * rec(:);
+    Ax = reshape(in_params.A(arows, :) * rec(:), ndet, []);
     
     % difference
     if alg_params.prox
-      diff = (sino(:,v) - Ax - y(:,v)) ./ (sum_rows(rows) + 1);
-      y(:,v) = y(:,v) + alg_params.alpha * diff;
+      diff = (sino(:,scols) - Ax - y(:,scols)) ./ (sum_rows(arows) + 1);
+      y(:,scols) = y(:,scols) + alg_params.alpha * diff;
     else
-      diff = (sino(:,v) - Ax) ./ sum_rows(rows);
+      diff = (sino(:,scols) - Ax) ./ reshape(sum_rows(arows), ndet, []);
     end
     
     % backproject
-    bp = (in_params.A(rows,:)' * diff) ./ sum_cols;
+    bp = (in_params.A(arows,:)' * diff(:)) ./ sum_cols;
     
     % precondition
     if alg_params.precon
@@ -103,7 +116,7 @@ for it = 1:alg_params.iter
     end
 
     % update
-    pstart = pstart + ndet;
+    pstart = pstart + ndet * subset_size;
   end;
   
   

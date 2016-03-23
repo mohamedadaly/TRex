@@ -183,8 +183,8 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
   'wi',ones(size(sinogram)), 'fbp',fbp, 'A',proj_mat, 'prox_in',fbp*0);
 
 %%    SART
-alg_params = struct('iter',2, 'alpha',1.999, 'min_val',0, 'precon',0, ...
-  'wls',0, 'BSSART',1, 'prox',0, 'lambda',1e2);
+alg_params = struct('iter',10, 'alpha',2, 'min_val',0, 'precon',0, ...
+  'wls',0, 'BSSART',0, 'prox',0, 'lambda',1e2, 'nsubsets',[]);
 [rec, times, snrs, iters] = ma_alg_sart(in_params, alg_params);
 [times snrs iters]
 
@@ -208,7 +208,7 @@ prec_id = astra_mex_data2d('create', '-vol', vol_geom, prec);
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('BICAV');
+cfg = astra_struct('SART');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
@@ -249,7 +249,7 @@ alg_id = astra_mex_algorithm('create', cfg);
 % This will have a runtime in the order of 10 seconds.
 tic;
 % astra_mex_algorithm('iterate', alg_id, 30*30);
-astra_mex_algorithm('iterate', alg_id, 100);
+astra_mex_algorithm('iterate', alg_id, 10);
 toc;
 
 % get the metrics
