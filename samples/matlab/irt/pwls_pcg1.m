@@ -53,8 +53,7 @@ arg.stop_diff_norm = 2;
 arg.stop_grad_tol = 0;
 arg.stop_grad_norm = 2;
 arg.chat = 0;
-arg.pxmin = -Inf;
-arg.pxmax = Inf;
+arg.pixmax = Inf;
 
 arg = vararg_pair(arg, varargin, 'subs', ...
 {'stop_threshold', 'stop_diff_tol'; 'stop_norm_type', 'stop_diff_norm'});
@@ -66,6 +65,16 @@ end
 if arg.stop_grad_tol
 	% todo: the "correct" way is sum(abs(sqrtm(W) * y).^2, 'double')
 	norm_grad = @(g) norm(g, arg.stop_grad_norm) / reale(yi' * (W * yi));
+end
+
+if length(arg.pixmax) == 2
+	pixmin = arg.pixmax(1);
+	pixmax = arg.pixmax(2);
+elseif length(arg.pixmax) == 1
+	pixmin = 0;
+	pixmax = arg.pixmax;
+else
+	error pixmax
 end
 
 cpu etic
@@ -212,7 +221,7 @@ for iter = 1:arg.niter
 	x = x + step * ddir;
 
   % clip
-  x = min(arg.pxmax, max(arg.pxmin, x));
+  x = min(pixmax, max(pixmin, x));
   
 	if any(arg.isave == iter)
 		xs(:, arg.isave == iter) = x;

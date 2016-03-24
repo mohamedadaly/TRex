@@ -102,11 +102,12 @@ alg_params = struct('iter',10, 'mu',0.001, 'nCG',2, 'lambda',.01, ... .001&.01
 
 %%
 alg = 'mfista';
-alg_params = struct('iter',10, 'nCG',2, 'lambda',0.1);  
+alg_params = struct('iter',10, 'nCG',2, 'lambda',0.1, ...
+  'prior_type','l1', 'operator','AFD', 'init_fbp',1, 'precon',0);  
 %%
 alg = 'pcg';
 alg_params = struct('iter',10, 'beta',0, 'pot_arg',{{'gf1',1,[1 1]}}, ...
-  'reg', 1);  
+  'reg', 1, 'init_fbp',0, 'pixmax',[0 Inf]);  
 %%
 alg = 'sqs-os';
 alg_params = struct('iter',10, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
@@ -261,7 +262,7 @@ cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
 cfg.ProxInputDataId = prox_in_id;
-cfg.option.UseMinConstraint = 0;
+cfg.option.UseMinConstraint = 1;
 cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
@@ -273,7 +274,7 @@ cfg.option.GTReconstructionId = P_id;
 cfg.option.IterationMetricsId = metrics_id;
 cfg.option.ClearReconstruction = 1;
 cfg.option.PreconditionerId = -1; prec_id;
-cfg.option.UseJacobiPreconditioner = 1;
+cfg.option.UseJacobiPreconditioner = 0;
 % cfg.option.ProjectionOrder = 'random';
 
 % Available algorithms:
@@ -298,7 +299,7 @@ alg_id = astra_mex_algorithm('create', cfg);
 % This will have a runtime in the order of 10 seconds.
 tic;
 % astra_mex_algorithm('iterate', alg_id, 30*30);
-astra_mex_algorithm('iterate', alg_id, 20);
+astra_mex_algorithm('iterate', alg_id, 10);
 toc;
 
 % get the metrics
