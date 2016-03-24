@@ -438,6 +438,14 @@ public:
 	CFloat32Data2D& operator/=(const float32& _fScalar);
 
 	/**
+	 * Overloaded Operator: data /= scalar (pointwise)
+	 *
+	 * @param _fScalar r-value
+	 * @return l-value
+	 */
+	CFloat32Data2D& operator/=(const CFloat32Data2D& _data);
+
+	/**
 	 * Overloaded Operator: data += scalar (pointwise)
 	 *
 	 * @param _fScalar r-value

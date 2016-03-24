@@ -26,7 +26,7 @@ along with the ASTRA Toolbox. If not, see <http://www.gnu.org/licenses/>.
 $Id$
 */
 
-#include "astra/SartProxOperatorAlgorithm.h"
+#include "astra/OrderedSubsetSQSProxOperatorAlgorithm.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -42,26 +42,27 @@ namespace astra {
 #include "astra/Projector2DImpl.inl"
 
 // type of the algorithm, needed to register with CAlgorithmFactory
-std::string CSartProxOperatorAlgorithm::type = "SART-PROX";
+std::string COrderedSubsetSQSProxOperatorAlgorithm::type = "OS-SQS-PROX";
 
 
 //---------------------------------------------------------------------------------------
 // Clear - Constructors
-void CSartProxOperatorAlgorithm::_clear()
+void COrderedSubsetSQSProxOperatorAlgorithm::_clear()
 {
 	//CReconstructionAlgorithm2D::_clear();
 	CSartAlgorithm::_clear();
 	m_fLambda = 1.0f;
-	m_pC = NULL;
-	m_pY = NULL;
+	m_pTempVol = NULL;
 }
 
 //---------------------------------------------------------------------------------------
 // Clear - Public
-void CSartProxOperatorAlgorithm::clear()
+void COrderedSubsetSQSProxOperatorAlgorithm::clear()
 {
 	//CReconstructionAlgorithm2D::clear();
 	CSartAlgorithm::clear();
+
+	ASTRA_DELETE(m_pTempVol);
 	//if (m_piProjectionOrder) {
 	//	delete[] m_piProjectionOrder;
 	//	m_piProjectionOrder = NULL;
@@ -70,20 +71,18 @@ void CSartProxOperatorAlgorithm::clear()
 	//m_iCurrentProjection = 0;
 	//m_bIsInitialized = false;
 	//m_iIterationCount = 0;
-	ASTRA_DELETE(m_pY);
-	ASTRA_DELETE(m_pC);
 }
 
 //----------------------------------------------------------------------------------------
 // Constructor
-CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm() 
+COrderedSubsetSQSProxOperatorAlgorithm::COrderedSubsetSQSProxOperatorAlgorithm() 
 {
 	_clear();
 }
 
 //----------------------------------------------------------------------------------------
 // Constructor
-CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm(CProjector2D* _pProjector, 
+COrderedSubsetSQSProxOperatorAlgorithm::COrderedSubsetSQSProxOperatorAlgorithm(CProjector2D* _pProjector, 
 							   CFloat32ProjectionData2D* _pSinogram, 
 							   CFloat32VolumeData2D* _pReconstruction) 
 {
@@ -94,7 +93,7 @@ CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm(CProjector2D* _pProjector
 
 //----------------------------------------------------------------------------------------
 // Constructor
-CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm(CProjector2D* _pProjector, 
+COrderedSubsetSQSProxOperatorAlgorithm::COrderedSubsetSQSProxOperatorAlgorithm(CProjector2D* _pProjector, 
 							   CFloat32ProjectionData2D* _pSinogram, 
 							   CFloat32VolumeData2D* _pReconstruction,
 							   int* _piProjectionOrder, 
@@ -108,17 +107,17 @@ CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm(CProjector2D* _pProjector
 
 //----------------------------------------------------------------------------------------
 // Destructor
-CSartProxOperatorAlgorithm::~CSartProxOperatorAlgorithm() 
+COrderedSubsetSQSProxOperatorAlgorithm::~COrderedSubsetSQSProxOperatorAlgorithm() 
 {
 	clear();
 }
 
 //---------------------------------------------------------------------------------------
 // Initialize - Config
-bool CSartProxOperatorAlgorithm::initialize(const Config& _cfg)
+bool COrderedSubsetSQSProxOperatorAlgorithm::initialize(const Config& _cfg)
 {
 	assert(_cfg.self);
-	ConfigStackCheck<CAlgorithm> CC("PSartAlgorithm", this, _cfg);
+	ConfigStackCheck<CAlgorithm> CC("OS-SQS-PROX", this, _cfg);
 	
 	// if already initialized, clear first
 	if (m_bIsInitialized) {
@@ -180,11 +179,10 @@ bool CSartProxOperatorAlgorithm::initialize(const Config& _cfg)
 	CC.markNodeParsed("ProxInputDataId");
 
 	// create data objects
+	m_pTempVol = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
 	//m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 	//m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
 	//m_pDiffSinogram = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
-	m_pY = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
-	m_pC = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 
 	// success
 	m_bIsInitialized = _check();
@@ -193,17 +191,17 @@ bool CSartProxOperatorAlgorithm::initialize(const Config& _cfg)
 
 
 //----------------------------------------------------------------------------------------
-bool CSartProxOperatorAlgorithm::_check()
+bool COrderedSubsetSQSProxOperatorAlgorithm::_check()
 {
 	// check base class
-	ASTRA_CONFIG_CHECK(CSartAlgorithm::_check(), "PSART", "Error in ReconstructionAlgorithm2D initialization");
+	ASTRA_CONFIG_CHECK(CSartAlgorithm::_check(), "OS-SQS-PROX", "Error in ReconstructionAlgorithm2D initialization");
 
 	return true;
 }
 
 //---------------------------------------------------------------------------------------
 // Information - All
-map<string,boost::any> CSartProxOperatorAlgorithm::getInformation() 
+map<string,boost::any> COrderedSubsetSQSProxOperatorAlgorithm::getInformation() 
 {
 	map<string, boost::any> res;
 	res["ProjectionOrder"] = getInformation("ProjectionOrder");
@@ -212,7 +210,7 @@ map<string,boost::any> CSartProxOperatorAlgorithm::getInformation()
 
 //---------------------------------------------------------------------------------------
 // Information - Specific
-boost::any CSartProxOperatorAlgorithm::getInformation(std::string _sIdentifier) 
+boost::any COrderedSubsetSQSProxOperatorAlgorithm::getInformation(std::string _sIdentifier) 
 {
 	if (_sIdentifier == "ProjectionOrder") {
 		vector<float32> res;
@@ -226,144 +224,139 @@ boost::any CSartProxOperatorAlgorithm::getInformation(std::string _sIdentifier)
 
 //----------------------------------------------------------------------------------------
 // Iterate
-void CSartProxOperatorAlgorithm::run(int _iNrIterations)
+void COrderedSubsetSQSProxOperatorAlgorithm::run(int _iNrIterations)
 {
 	// check initialized
-	ASTRA_ASSERT(m_bIsInitialized);
+    ASTRA_ASSERT(m_bIsInitialized);
 
-	m_bShouldAbort = false;
+    m_bShouldAbort = false;
 
-	// data projectors
-	CDataProjectorInterface* pForwardProjector;
-	CDataProjectorInterface* pBackProjector;
-	CDataProjectorInterface* pFirstForwardProjector;
+    // data projectors
+    CDataProjectorInterface* pForwardProjector;
+    CDataProjectorInterface* pBackProjector;
+    CDataProjectorInterface* pFirstForwardProjector;
+    CDataProjectorInterface* pFirstBackProjector;
 
-	// Init Y = 0
-	m_pY->setData(0.f);
-	if (m_bClearReconstruction) {
-		// Init Reconstruction = ProxInput
-		m_pReconstruction->copyData(m_pProxInput->getData());
-	} else {
-		// Add Reconstruction to ProxInput.
-		*m_pReconstruction += *m_pProxInput;
-	}	
-	//m_pReconstruction->updateStatistics();
+    // Initialize m_pReconstruction to zero.
+    if (m_bClearReconstruction) {
+        m_pReconstruction->setData(0.f);
+    }
 
-	//ASTRA_INFO("Initialized from ProxInput: max=%f min=%f id=%d", 
-	//	m_pReconstruction->getGlobalMax(), m_pReconstruction->getGlobalMin(),
-	//	CData2DManager::getSingleton().getIndex(m_pReconstruction));
-	//for (int i=0; i < m_pReconstruction->getSize(); ++i) {
-	//	ASTRA_INFO("voxel=%d val=%f", i, m_pReconstruction->getData()[i]);
-	//}	
+    // backprojection data projector
+    pBackProjector = dispatchDataProjector(
+            m_pProjector, 
+            SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+            ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+			SIRTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
+				m_pTotalPixelWeight, m_pTotalRayLength, m_pPreconditioner, 
+				m_fAlpha * m_fLambda * 2),  // OS-SQS Prox backprojection
+            m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
+        ); 
 
-	// constant
-	float32 fSqrt2Lambda = sqrtf(m_fLambda * 2.f);
-	//ASTRA_INFO("Sqrt2Lambda = %f", fSqrt2Lambda);
-	//ASTRA_INFO("Alpha = %f", m_fAlpha);
+    // also computes total pixel weight and total ray length
+    pForwardProjector = dispatchDataProjector(
+            m_pProjector, 
+            SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+            ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+            DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, m_pSinogram),								// forward projection with difference calculation
+            m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
+        );
 
-	//ASTRA_INFO("UseMinConst=%d MinVal=%f", m_bUseMinConstraint, m_fMinValue);
-	//ASTRA_INFO("UseMaxConst=%d MaxVal=%f", m_bUseMaxConstraint, m_fMaxValue);
-	// Scale projections by sqrt(2 * lambda)
-	// m_pSinogram->operator*=(fSqrt_2_lambda);
+    // first time forward projection data projector,
+    // computes total ray length (sum of rows) and total pixel weights (sum of columns)
+    pFirstForwardProjector = dispatchDataProjector(
+            m_pProjector, 
+            SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+            ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+            TotalRayLengthPolicy(m_pTotalRayLength, false),
+            m_bUseSinogramMask, m_bUseReconstructionMask, true 											 // options on/off
+        );
 
-	// backprojection data projector
-	//PSARTBPPolicy* pPSartPolicy = new  PSARTBPPolicy(m_pReconstruction, 
-	//	m_pDiffSinogram, m_pTotalPixelWeight, m_pTotalRayLength, 
-	//	m_pY, m_fAlpha, fSqrt2Lambda);
-	pBackProjector = dispatchDataProjector(
-			m_pProjector, 
-			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
-			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			SartProxBPPolicy(m_pReconstruction, m_pDiffSinogram, 
-						 m_pTotalPixelWeight, m_pTotalRayLength, 
-						 m_pY, m_pC, m_fAlpha, fSqrt2Lambda),			// PSART backprojection
-			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
-		); 
+	// Backproject the TotalRayLength to compute the required column sums for SQS
+	pFirstBackProjector = dispatchDataProjector(
+            m_pProjector, 
+            SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+            ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+			DefaultBPPolicy(m_pTotalPixelWeight, m_pTotalRayLength),
+            m_bUseSinogramMask, m_bUseReconstructionMask, true 											 // options on/off
+        );
 
-	// first time forward projection data projector,
-	// also computes total pixel weight and total ray length
-	pForwardProjector = dispatchDataProjector(
-			m_pProjector, 
-			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
-			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			CombinePolicy<DiffFPPolicy, TotalPixelWeightPolicy>(					// 3 basic operations
-				DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, m_pSinogram),								// forward projection with difference calculation
-				TotalPixelWeightPolicy(m_pTotalPixelWeight)),												// calculate the total pixel weights
-			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
-		);
+    // Perform the first forward projection to compute ray lengths.
+	m_pTotalRayLength->setData(0.0f);    
+    pFirstForwardProjector->project();
 
-	// first time forward projection data projector,
-	// computes total ray length
-	pFirstForwardProjector = dispatchDataProjector(
-			m_pProjector, 
-			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
-			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			TotalRayLengthPolicy(m_pTotalRayLength),													// calculate the total ray lengths
-			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
-		);
-
-	// Perform the first forward projection to compute ray lengths
-	m_pTotalRayLength->setData(0.0f);
+	// Backproject the row sums to compute the pixel weights (column sums) i.e. A^T * A
 	m_pTotalPixelWeight->setData(0.0f);
-	pFirstForwardProjector->project();
+	pFirstBackProjector->project();
+	// Scale by 2 lambda and add 1
+	*m_pTotalPixelWeight *= (2. * m_fLambda);
+	*m_pTotalPixelWeight += 1.f;
+	// Scale by the number of projections
+	*m_pTotalPixelWeight *= 1.0 / m_iProjectionCount;
 
-	// iteration loop, each iteration loops over all available projections
-	for (int iIteration = 0; iIteration < _iNrIterations && !m_bShouldAbort; ++iIteration) {
-		//ASTRA_INFO("Iteration %d", iIteration);
-		// Clear RayLength before another loop over projections. This is needed so that
-		// RayLength is correct, because updating RayLength with the forward projection
-		// again will multiply the RayLength when processing the same ray in the next
-		// iteration.
-		//if (m_bClearRayLength) {
-		//	m_pTotalRayLength->setData(0.f);
-		//}
+	// The row sums are just set to 1, and untouched again.
+	m_pTotalRayLength->setData(1.0f);
 
-		// start timer
-		m_ulTimer = CPlatformDepSystemCode::getMSCount();
+    //// end of init.
+    //ttime = CPlatformDepSystemCode::getMSCount() - timer;
 
-		// loop over projections
-		for (int iP = 0; iP < m_iProjectionCount; ++iP) {
-			// projection id
-			// int iProjection = m_piProjectionOrder[m_iIterationCount % m_iProjectionCount];
-			int iProjection = m_piProjectionOrder[iP % m_iProjectionCount];
-			//ASTRA_INFO(" Projection %d", iProjection);
+    // iteration loop, each iteration loops over all available projections
+    for (int iIteration = 0; iIteration < _iNrIterations && !m_bShouldAbort; ++iIteration) {
+        // start timer
+        m_ulTimer = CPlatformDepSystemCode::getMSCount();
 
-			// forward projection and difference calculation
-			m_pTotalPixelWeight->setData(0.0f);
-			pForwardProjector->projectSingleProjection(iProjection);
-			// backprojection
-			pBackProjector->projectSingleProjection(iProjection);
-			// update iteration count
-			m_iIterationCount++;
+        //ASTRA_INFO("Iteration %d", iIteration);
+        // Clear RayLength before another loop over projections. This is needed so that
+        // RayLength is correct, because updating RayLength with the forward projection
+        // again will multiply the RayLength when processing the same ray in the next
+        // iteration.
+        //if (m_bClearRayLength) {
+        //	m_pTotalRayLength->setData(0.f);
+        //}
 
-			if (m_bUseMinConstraint)
-				m_pReconstruction->clampMin(m_fMinValue);
-			if (m_bUseMaxConstraint)
-				m_pReconstruction->clampMax(m_fMaxValue);
+        // loop over projections
+        for (int iP = 0; iP < m_iProjectionCount; ++iP) {
+            // projection id
+            // int iProjection = m_piProjectionOrder[m_iIterationCount % m_iProjectionCount];
+            int iProjection = m_piProjectionOrder[iP % m_iProjectionCount];
+            //ASTRA_INFO(" Projection %d", iProjection);
 
+			// Update tempVol = ProxIn - Reconstruction
+			m_pTempVol->copyData(m_pProxInput->getData());
+			*m_pTempVol -= *m_pReconstruction;
 
-		}
+            // forward projection and difference calculation
+            pForwardProjector->projectSingleProjection(iProjection);
+            // backprojection
+            pBackProjector->projectSingleProjection(iProjection);
 
-		// end timer
-		m_ulTimer = CPlatformDepSystemCode::getMSCount() - m_ulTimer;
+			// Add alpha * tempVol / TotalPixel
+			*m_pTempVol /= *m_pTotalPixelWeight;
+			*m_pTempVol *= m_fAlpha;
+			*m_pReconstruction += *m_pTempVol;
 
-		// Y residual
-		float32 res1 = m_pY->getNorm();
-		// current reconstruction - prox input
-		CFloat32Data2D* pResX = new CFloat32VolumeData2D(*m_pReconstruction);
-		*pResX -= *m_pProxInput;
-		float32 res2 = pResX->getNorm();
-		ASTRA_DELETE(pResX);
-		// Print residuals
-		ASTRA_INFO("norm(y) = %f & norm(z) = %f & lambda=%f", res1, res2, m_fLambda);
+            // update iteration count
+            m_iIterationCount++;
 
-		// Compute metrics.
-		computeIterationMetrics(iIteration, _iNrIterations);
-	}
+            // We need to check here, as checking inside the BP (as in ART)
+            // is not correct.
+            if (m_bUseMinConstraint)
+                m_pReconstruction->clampMin(m_fMinValue);
+            if (m_bUseMaxConstraint)
+                m_pReconstruction->clampMax(m_fMaxValue);
+        }
 
-	ASTRA_DELETE(pForwardProjector);
-	ASTRA_DELETE(pBackProjector);
-	ASTRA_DELETE(pFirstForwardProjector);
+        // end timer
+        m_ulTimer = CPlatformDepSystemCode::getMSCount() - m_ulTimer;
+
+        // Compute metrics.
+        computeIterationMetrics(iIteration, _iNrIterations);
+    }
+
+    ASTRA_DELETE(pForwardProjector);
+    ASTRA_DELETE(pBackProjector);
+    ASTRA_DELETE(pFirstForwardProjector);
+	ASTRA_DELETE(pFirstBackProjector);
 
 	//for (int i=0; i < m_pReconstruction->getSize(); ++i) {
 	//	ASTRA_INFO("voxel=%d val=%f", i, m_pReconstruction->getData()[i]);

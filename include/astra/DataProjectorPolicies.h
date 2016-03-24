@@ -358,7 +358,7 @@ public:
 };
 
 //----------------------------------------------------------------------------------------
-/** Policy For ProxiSART PSART Backprojection
+/** Policy For Sart Prox Operator Backprojection
  */
 class SartProxBPPolicy {
 
@@ -392,6 +392,8 @@ public:
 	FORCEINLINE void rayPosterior(int _iRayIndex);
 	FORCEINLINE void pixelPosterior(int _iVolumeIndex);
 };
+
+//----------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------------
 /** Policy For Sinogram Mask

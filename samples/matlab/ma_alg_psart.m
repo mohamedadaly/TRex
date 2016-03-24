@@ -82,12 +82,12 @@ iters = cumsum(iters);
       if alg_params.sigma_with_data
         [x, itimes, isnrs, iiters] = l2_data_prox(...
           x - rho*mu * ndiv(fdiff(x)-z+u), mu / sigma, ... 1e-3
-          alg_params.psart_params, in_params);
+          alg_params.psart_params, in_params, alg_params.prox);
       else
         % sigma with regularizer
         [x, itimes, isnrs, iiters] = l2_data_prox(...
           x - rho*mu * ndiv(fdiff(x)-z+u), mu, ...
-          alg_params.psart_params, in_params);      
+          alg_params.psart_params, in_params, alg_params.prox);
       end
       x = max(0, x);
       times(it) = itimes(end);
@@ -482,14 +482,24 @@ end
 % L2 data proximal operator using PSART
 % function [xp] = l2_data_prox(cfg, prox_in, lambda, it)
 function [xp, time, snr, iter] = l2_data_prox(prox_in, lambda, ...
-  psart_params, in_params)
+  psart_params, in_params, which_prox)
 
-% Set prox_in and Lambda
-in_params.prox_in = prox_in;
-psart_params.option.Lambda = lambda;
-% Run
-[xp, time, snr, iter] = ma_alg_astra('PSART', ...
-        in_params, psart_params);
+% Using SartProx
+switch which_prox
+  case 'astra'
+    % Set prox_in and Lambda
+    in_params.prox_in = prox_in;
+    psart_params.option.Lambda = lambda;
+    % Run
+    [xp, time, snr, iter] = ma_alg_astra('SART-PROX', ...
+            in_params, psart_params);
+  case 'matlab'
+    % Set prox_in and Lambda
+    in_params.prox_in = prox_in;
+    psart_params.lambda = lambda;
+    % Run  
+    [xp, time, snr, iter] = ma_alg_sart(in_params, psart_params);  
+end
       
 % % store input
 % astra_mex_data2d('store', cfg.ProxInputDataId, prox_in);

@@ -4,13 +4,18 @@ function [rec, times, snrs, iters] = ma_alg_sart(in_params, alg_params)
 
 [times, snrs, iters] = deal(zeros(alg_params.iter, 1));
 
+% take the transpose
+in_params.prox_in = in_params.prox_in';
+in_params.fbp = in_params.fbp';
+
 % init in the transpose to make row-major
 rec = zeros(size(in_params.gt_vol))';
 [ny, nx] = size(rec);
 if alg_params.init_fbp
-  assert(all(size(in_params.fbp') == size(rec)));
-  rec = in_params.fbp';
+  assert(all(size(in_params.fbp) == size(rec)));
+  rec = in_params.fbp;
 end
+
 
 % take transpose to make row major because the projection matrix assumes
 % row-major sinogram, and gives row-major volume
@@ -41,11 +46,13 @@ if alg_params.wls
 end
 
 % initialize for proxisart
-if alg_params.prox
-  rec = in_params.prox_in;
-  y = zeros(size(sino));
-  in_params.A = sqrt(2 * alg_params.lambda) * in_params.A;
-  sino = sqrt(2 * alg_params.lambda) * sino;
+switch alg_params.prox
+  case 'sart'
+    rec = in_params.prox_in;
+    if alg_params.init_fbp, rec = rec + in_params.fbp; end
+    y = zeros(size(sino));
+    in_params.A = sqrt(2 * alg_params.lambda) * in_params.A;
+    sino = sqrt(2 * alg_params.lambda) * sino;
 end;
 
 % compute sum_cols
@@ -75,7 +82,16 @@ if alg_params.sqs
   % set row sums to 1 to neutralize
   sum_rows(:) = 1;
   % compute the column sums which are sum(A' * A)
-  sum_cols = in_params.A' * sum(in_params.A, 2) / alg_params.nsubsets;
+  sum_cols = in_params.A' * sum(in_params.A, 2);
+  
+  % prox operator?
+  if strcmp(alg_params.prox, 'sqs')
+    % scale sum_cols by 2 lambda and add 1
+    sum_cols = sum_cols * 2 * alg_params.lambda + alg_params.nu;
+  end
+  
+  % scale
+  sum_cols = sum_cols / alg_params.nsubsets;
 end
 
 % iterations
@@ -99,15 +115,27 @@ for it = 1:alg_params.iter
     Ax = full(reshape(in_params.A(arows, :) * rec(:), ndet, []));
     
     % difference
-    if alg_params.prox
-      diff = (sino(:,scols) - Ax - y(:,scols)) ./ (sum_rows(arows) + 1);
-      y(:,scols) = y(:,scols) + alg_params.alpha * diff;
-    else
-      diff = (sino(:,scols) - Ax) ./ reshape(sum_rows(arows), ndet, []);
+    switch (alg_params.prox)
+      case 'sart'
+        diff = (sino(:,scols) - Ax - y(:,scols)) ./ (sum_rows(arows) + 1);
+        y(:,scols) = y(:,scols) + alg_params.alpha * diff;
+        % backproject
+        bp = (in_params.A(arows,:)' * diff(:)) ./ sum_cols;
+
+      case 'sqs'
+        diff = (sino(:,scols) - Ax) ./ reshape(sum_rows(arows), ndet, []);          
+        % backproject and add
+        bp = 2 * alg_params.lambda * (in_params.A(arows,:)' * diff(:)) + ...
+          (in_params.prox_in(:) - rec(:)) * alg_params.nu;
+        % divide
+        bp = bp ./ sum_cols;
+
+      otherwise
+        diff = (sino(:,scols) - Ax) ./ reshape(sum_rows(arows), ndet, []);
+        % backproject
+        bp = (in_params.A(arows,:)' * diff(:)) ./ sum_cols;
     end
     
-    % backproject
-    bp = (in_params.A(arows,:)' * diff(:)) ./ sum_cols;
     
     % precondition
     if alg_params.precon
@@ -115,9 +143,9 @@ for it = 1:alg_params.iter
       bp = bp(:) / max(bp(:)) * 0.2;
     end
     
-    % update
 %     figure(1), imshow(rec',[]); colorbar;
-    rec(:) = rec(:) + alg_params.alpha * bp; 
+      % update
+      rec(:) = rec(:) + alg_params.alpha * bp;
 %     figure(2), imshow(rec', []); colorbar;
 %     pause;
     

@@ -38,7 +38,6 @@ rec_id = astra_mex_data2d('create', '-vol', in_params.vol_geom, ...
 sino_id = astra_mex_data2d('create', '-sino', in_params.proj_geom, ...
   in_params.sino);
 
-
 % create object for metrics
 metrics_id = astra_mex_data2d('create', '-vol', in_params.vol_geom);
 

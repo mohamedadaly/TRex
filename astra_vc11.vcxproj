@@ -536,6 +536,7 @@
     <ClCompile Include="src\Globals.cpp" />
     <ClCompile Include="src\Logging.cpp" />
     <ClCompile Include="src\OrderedSubsetSQSAlgorithm.cpp" />
+    <ClCompile Include="src\OrderedSubsetSQSProxOperatorAlgorithm.cpp" />
     <ClCompile Include="src\ParallelBeamBlobKernelProjector2D.cpp" />
     <ClCompile Include="src\ParallelBeamLineKernelProjector2D.cpp" />
     <ClCompile Include="src\ParallelBeamLinearKernelProjector2D.cpp" />
@@ -654,6 +655,7 @@
     <ClInclude Include="include\astra\Globals.h" />
     <ClInclude Include="include\astra\Logging.h" />
     <ClInclude Include="include\astra\OrderedSubsetSQSAlgorithm.h" />
+    <ClInclude Include="include\astra\OrderedSubsetSQSProxOperatorAlgorithm.h" />
     <ClInclude Include="include\astra\ParallelBeamBlobKernelProjector2D.h" />
     <ClInclude Include="include\astra\ParallelBeamLineKernelProjector2D.h" />
     <ClInclude Include="include\astra\ParallelBeamLinearKernelProjector2D.h" />

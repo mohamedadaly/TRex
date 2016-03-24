@@ -544,6 +544,17 @@ CFloat32Data2D& CFloat32Data2D::operator*=(const CFloat32Data2D& v)
 	return (*this);
 }
 
+CFloat32Data2D& CFloat32Data2D::operator/=(const CFloat32Data2D& v)
+{
+	ASTRA_ASSERT(m_bInitialized);
+	ASTRA_ASSERT(v.m_bInitialized);
+	ASTRA_ASSERT(getSize() == v.getSize());
+	for (size_t i = 0; i < m_iSize; i++) {
+		m_pfData[i] /= v.m_pfData[i]; 
+	}
+	return (*this);
+}
+
 CFloat32Data2D& CFloat32Data2D::operator*=(const float32& f)
 {
 	ASTRA_ASSERT(m_bInitialized);
