@@ -49,7 +49,8 @@ disp(norm(sino2 - sinogram, 'fro'));
 % add sinogram noise
 rng('default') 
 rng(123);
-sinogram = sinogram + randn(size(sinogram)) * 0.1;
+sinogram = sinogram + randn(size(sinogram)) * 0.5;
+% sinogram = sinogram .* (randn(size(sinogram)) * .1 + 1);
 
 astra_mex_data2d('delete', sinogram_id);
 
@@ -89,8 +90,9 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
 alg = 'admm';
 % alg_params = struct('iter',20, 'mu',0.001, 'nCG',2, 'lambda',0.02, ... .001&.02
 %   'nu',[], 'operator','W', 'prior_type','l1'); %nu=200
-alg_params = struct('iter',20, 'mu',0.001, 'nCG',2, 'lambda',.01, ... .001&.01
-  'nu', 100, 'operator','AFD', 'prior_type','l1', 'precon',1); %nu=200
+alg_params = struct('iter',10, 'mu',0.001, 'nCG',2, 'lambda',.01, ... .001&.01
+  'nu', 100, 'operator','AFD', 'prior_type','l1', 'precon',1, ... %nu=200
+  'init_fbp',1);
 
 % profile on      
 [rec, times, snrs, iters] = ma_alg_irt(alg, in_params, alg_params);
@@ -163,7 +165,7 @@ alg_params = struct('iter',5, 'sigma',25, 'rho',10, 'mu',[], ...1/(8*rho), ... 4
 
 %% ADMM with ma_alg_sart SART
 alg = 'admm';
-alg_params = struct('iter',5, 'sigma',.25, 'rho',10.0, 'mu',[], ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
+alg_params = struct('iter',2, 'sigma',.25, 'rho',10.0, 'mu',[], ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
   'theta',1, 'init_fbp',1, 'data','l2', 'prior','atv', ...
   'sigma_with_data', 1, 'prox','matlab', ...
   'psart_params', struct('iter',2, 'alpha',1, 'min_val',0, 'precon',0, ...
@@ -181,7 +183,7 @@ alg_params = struct('iter',5, 'sigma',.25, 'rho',10.0, 'mu',[], ...1/(8*rho), ..
 
 %% ADMM with ma_alg_sart SQS
 alg = 'admm';
-alg_params = struct('iter',2, 'sigma',.25, 'rho',.1, 'mu',[], ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
+alg_params = struct('iter',2, 'sigma',.25, 'rho',.10, 'mu',[], ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
   'theta',1, 'init_fbp',0, 'data','l2', 'prior','atv', ...
   'sigma_with_data', 1, 'prox','matlab', ...
   'psart_params', struct('iter',2, 'alpha',1, 'min_val',0, 'precon',0, ...
@@ -220,9 +222,9 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
 
 %%    SART
 % --> debug sqs
-alg_params = struct('iter',4, 'alpha',2, 'min_val',0, 'precon',0, ...
+alg_params = struct('iter',5, 'alpha',1, 'min_val',0, 'precon',0, ...
   'wls',0, 'BSSART',0, 'prox','sart', 'lambda',1e0, 'nsubsets',30, 'sqs',0, ...
-  'init_fbp',1);
+  'init_fbp',0);
 [rec, times, snrs, iters] = ma_alg_sart(in_params, alg_params);
 [times snrs iters]
 
@@ -254,23 +256,24 @@ prec_id = astra_mex_data2d('create', '-vol', vol_geom, prec);
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('OS-SQS-PROX');
+cfg = astra_struct('CGLS');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
 cfg.ProxInputDataId = prox_in_id;
-cfg.option.UseMinConstraint = 1;
+cfg.option.UseMinConstraint = 0;
 cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
 cfg.option.ClearRayLength = 1;
-cfg.option.Alpha = 1;
-cfg.option.Lambda = 1e0;
+cfg.option.Alpha = 2;
+cfg.option.Lambda = .5e1;
 cfg.option.ComputeIterationMetrics = 1;
 cfg.option.GTReconstructionId = P_id;
 cfg.option.IterationMetricsId = metrics_id;
 cfg.option.ClearReconstruction = 1;
 cfg.option.PreconditionerId = -1; prec_id;
+cfg.option.UseJacobiPreconditioner = 1;
 % cfg.option.ProjectionOrder = 'random';
 
 % Available algorithms:
@@ -295,7 +298,7 @@ alg_id = astra_mex_algorithm('create', cfg);
 % This will have a runtime in the order of 10 seconds.
 tic;
 % astra_mex_algorithm('iterate', alg_id, 30*30);
-astra_mex_algorithm('iterate', alg_id, 5);
+astra_mex_algorithm('iterate', alg_id, 20);
 toc;
 
 % get the metrics

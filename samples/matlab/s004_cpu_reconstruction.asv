@@ -49,7 +49,8 @@ disp(norm(sino2 - sinogram, 'fro'));
 % add sinogram noise
 rng('default') 
 rng(123);
-sinogram = sinogram + randn(size(sinogram)) * 0.1;
+sinogram = sinogram + randn(size(sinogram)) * 0.5;
+% sinogram = sinogram .* (randn(size(sinogram)) * .1 + 1);
 
 astra_mex_data2d('delete', sinogram_id);
 
@@ -89,8 +90,9 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
 alg = 'admm';
 % alg_params = struct('iter',20, 'mu',0.001, 'nCG',2, 'lambda',0.02, ... .001&.02
 %   'nu',[], 'operator','W', 'prior_type','l1'); %nu=200
-alg_params = struct('iter',20, 'mu',0.001, 'nCG',2, 'lambda',.01, ... .001&.01
-  'nu', 100, 'operator','AFD', 'prior_type','l1', 'precon',1); %nu=200
+alg_params = struct('iter',10, 'mu',0.001, 'nCG',2, 'lambda',.01, ... .001&.01
+  'nu', 100, 'operator','AFD', 'prior_type','l1', 'precon',1, ... %nu=200
+  'init_fbp',1);
 
 % profile on      
 [rec, times, snrs, iters] = ma_alg_irt(alg, in_params, alg_params);
@@ -254,7 +256,7 @@ prec_id = astra_mex_data2d('create', '-vol', vol_geom, prec);
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('OS-SQS-PROX');
+cfg = astra_struct('CGLS');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
@@ -264,13 +266,14 @@ cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
 cfg.option.ClearRayLength = 1;
-cfg.option.Alpha = 1;
-cfg.option.Lambda = 1e0;
+cfg.option.Alpha = 2;
+cfg.option.Lambda = .5e1;
 cfg.option.ComputeIterationMetrics = 1;
 cfg.option.GTReconstructionId = P_id;
 cfg.option.IterationMetricsId = metrics_id;
 cfg.option.ClearReconstruction = 1;
 cfg.option.PreconditionerId = -1; prec_id;
+cfg.option.UseJacobiPreconditioner = 1;
 % cfg.option.ProjectionOrder = 'random';
 
 % Available algorithms:
@@ -295,7 +298,7 @@ alg_id = astra_mex_algorithm('create', cfg);
 % This will have a runtime in the order of 10 seconds.
 tic;
 % astra_mex_algorithm('iterate', alg_id, 30*30);
-astra_mex_algorithm('iterate', alg_id, 5);
+astra_mex_algorithm('iterate', alg_id, 30);
 toc;
 
 % get the metrics

@@ -74,6 +74,9 @@ void CCglsAlgorithm::_clear()
 	w = NULL;
 	z = NULL;
 	p = NULL;
+	t = NULL;
+	c = NULL;
+	m_bUseJacobiPreconditioner;
 	alpha = 0.0f;
 	beta = 0.0f;
 	gamma = 0.0f;
@@ -90,6 +93,8 @@ void CCglsAlgorithm::clear()
 	ASTRA_DELETE(w);
 	ASTRA_DELETE(z);
 	ASTRA_DELETE(p);
+	ASTRA_DELETE(t);
+	ASTRA_DELETE(c);
 	alpha = 0.0f;
 	beta = 0.0f;
 	gamma = 0.0f;
@@ -128,7 +133,18 @@ bool CCglsAlgorithm::initialize(const Config& _cfg)
 	r = new CFloat32ProjectionData2D(m_pSinogram->getGeometry());
 	w = new CFloat32ProjectionData2D(m_pSinogram->getGeometry());
 	z = new CFloat32VolumeData2D(m_pReconstruction->getGeometry());
-	p = new CFloat32VolumeData2D(m_pReconstruction->getGeometry());
+	p = new CFloat32VolumeData2D(m_pReconstruction->getGeometry());	
+
+	// Flag to use the Jacobi Preconditioner
+	m_bUseJacobiPreconditioner = _cfg.self.getOptionBool(
+		"UseJacobiPreconditioner", m_bUseJacobiPreconditioner);
+	CC.markOptionParsed("UseJacobiPreconditioner");
+	// Allocate if will be used.
+	if (m_bUseJacobiPreconditioner) {
+		c = new CFloat32VolumeData2D(m_pReconstruction->getGeometry());
+		t = new CFloat32VolumeData2D(m_pReconstruction->getGeometry());
+	}
+
 
 	alpha = 0.0f;
 	beta = 0.0f;
@@ -190,6 +206,7 @@ void CCglsAlgorithm::run(int _iNrIterations)
 
 	// data projectors
 	CDataProjectorInterface* pForwardProjector;
+	CDataProjectorInterface* pFirstForwardProjector;
 	CDataProjectorInterface* pBackProjector;
 
 	// Clear reconstruction volume.
@@ -198,13 +215,25 @@ void CCglsAlgorithm::run(int _iNrIterations)
 	}
 
 	// forward projection data projector
-	pForwardProjector = dispatchDataProjector(
-		m_pProjector, 
-			SinogramMaskPolicy(m_pSinogramMask),					// sinogram mask
-			ReconstructionMaskPolicy(m_pReconstructionMask),		// reconstruction mask
-			DefaultFPPolicy(p, w),									// forward projection
-			m_bUseSinogramMask, m_bUseReconstructionMask, true		// options on/off
-		); 
+	if (m_bUseJacobiPreconditioner) {
+		// w = A t
+		pForwardProjector = dispatchDataProjector(
+			m_pProjector, 
+				SinogramMaskPolicy(m_pSinogramMask),					// sinogram mask
+				ReconstructionMaskPolicy(m_pReconstructionMask),		// reconstruction mask
+				DefaultFPPolicy(t, w),									// forward projection
+				m_bUseSinogramMask, m_bUseReconstructionMask, true		// options on/off
+			); 
+	} else {
+		// w = A p
+		pForwardProjector = dispatchDataProjector(
+			m_pProjector, 
+				SinogramMaskPolicy(m_pSinogramMask),					// sinogram mask
+				ReconstructionMaskPolicy(m_pReconstructionMask),		// reconstruction mask
+				DefaultFPPolicy(p, w),									// forward projection
+				m_bUseSinogramMask, m_bUseReconstructionMask, true		// options on/off
+			); 
+	}
 
 	// backprojection data projector
 	pBackProjector = dispatchDataProjector(
@@ -215,7 +244,21 @@ void CCglsAlgorithm::run(int _iNrIterations)
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 
 
-
+	// First forward projector to compute the Jacobi preconditioner, which
+	// is just the norm squares of the columns of the projection matrix A
+	// (it is diagonal of A' * A)
+	pFirstForwardProjector = dispatchDataProjector(
+		m_pProjector, 
+			SinogramMaskPolicy(m_pSinogramMask),					// sinogram mask
+			ReconstructionMaskPolicy(m_pReconstructionMask),		// reconstruction mask
+			TotalPixelWeightPolicy(c, false, true),									// forward projection
+			m_bUseSinogramMask, m_bUseReconstructionMask, true		// options on/off
+		); 
+	// Compute the Jacobi preconditioner.
+	if (m_bUseJacobiPreconditioner) {
+		c->setData(0.f);
+		pFirstForwardProjector->project();
+	}
 
 	int i;
 
@@ -237,26 +280,36 @@ void CCglsAlgorithm::run(int _iNrIterations)
 		//if (m_bUseMaxConstraint)
 		//	z->clampMax(m_fMaxValue);
 
+		// Precondition?
+		if (m_bUseJacobiPreconditioner) {
+			*z /= *c;
+		}
+
 		// p = z;
 		p->copyData(z->getData());
 		
-		m_iIteration++;
-	}
-
-
-	// start iterations
-	//for (int iIteration = _iNrIterations-1; iIteration >= 0; --iIteration) {
-	for (int iIteration = 0; iIteration < _iNrIterations; ++iIteration) {
-		// start timer
-		m_ulTimer = CPlatformDepSystemCode::getMSCount();
-	
 		// gamma = dot(z,z);
 		gamma = 0.0f;
 		for (i = 0; i < z->getSize(); ++i) {
 			gamma += z->getData()[i] * z->getData()[i];
 		}
 
-		// w = A*p;
+		m_iIteration++;
+	}
+
+	// start iterations
+	//for (int iIteration = _iNrIterations-1; iIteration >= 0; --iIteration) {
+	for (int iIteration = 0; iIteration < _iNrIterations; ++iIteration) {
+		// start timer
+		m_ulTimer = CPlatformDepSystemCode::getMSCount();
+
+		if (m_bUseJacobiPreconditioner) {
+			// t = C^-1 p
+			t->copyData(p->getData());
+			*t /= *c;
+		}	
+
+		// w = A*p (or A*t if precondioning)
 		w->setData(0);
 		pForwardProjector->project();
 	
@@ -267,9 +320,16 @@ void CCglsAlgorithm::run(int _iNrIterations)
 		}
 		alpha = gamma / tmp;
 
-		// x = x + alpha*p;
-		for (i = 0; i < m_pReconstruction->getSize(); ++i) {
-			m_pReconstruction->getData()[i] += alpha * p->getData()[i];
+		if (m_bUseJacobiPreconditioner) {
+			// x = x + alpha*t;
+			for (i = 0; i < m_pReconstruction->getSize(); ++i) {
+				m_pReconstruction->getData()[i] += alpha * t->getData()[i];
+			}
+		} else {
+			// x = x + alpha*p;
+			for (i = 0; i < m_pReconstruction->getSize(); ++i) {
+				m_pReconstruction->getData()[i] += alpha * p->getData()[i];
+			}
 		}
 
 		// r = r - alpha*w;
@@ -280,6 +340,12 @@ void CCglsAlgorithm::run(int _iNrIterations)
 		// z = A'*r;
 		z->setData(0.0f);
 		pBackProjector->project();
+
+		// Precondition?
+		if (m_bUseJacobiPreconditioner) {
+			// z = C^-1 C
+			*z /= *c;
+		}
 
 		// CHECKME: should these be here?
 		// This was z. CHECK
@@ -313,6 +379,11 @@ void CCglsAlgorithm::run(int _iNrIterations)
 
 		m_iIteration++;
 	}
+
+	ASTRA_DELETE(pForwardProjector);
+	ASTRA_DELETE(pBackProjector);
+	ASTRA_DELETE(pFirstForwardProjector);
+
 	//if (m_iIteration == 0) {
 	//	// r = b;
 	//	r->copyData(m_pSinogram->getData());

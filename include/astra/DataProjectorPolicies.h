@@ -169,12 +169,14 @@ class TotalPixelWeightPolicy {
 	// Accumulate ones for non-zero weights (instead of the weights)? defaults to false.
 	// Used by BICAV.
 	bool m_bBinary;
+	// Accumulate squares of weights.
+	bool m_bSquare;
 
 public:
 
 	FORCEINLINE TotalPixelWeightPolicy();
 	FORCEINLINE TotalPixelWeightPolicy(CFloat32VolumeData2D* _pPixelWeight,
-		bool _bBinary = false);
+		bool _bBinary = false, bool _bSquare = false);
 	FORCEINLINE ~TotalPixelWeightPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);

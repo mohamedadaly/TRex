@@ -94,6 +94,11 @@ protected:
 	CFloat32VolumeData2D* z;
 	CFloat32VolumeData2D* p;
 
+	// Preconditioning.
+	bool m_bUseJacobiPreconditioner;
+	CFloat32VolumeData2D* t; 
+	CFloat32VolumeData2D* c;
+
 	float32 alpha;
 	float32 beta;
 	float32 gamma;

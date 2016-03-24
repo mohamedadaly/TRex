@@ -295,10 +295,11 @@ TotalPixelWeightPolicy::TotalPixelWeightPolicy()
 }
 //----------------------------------------------------------------------------------------
 TotalPixelWeightPolicy::TotalPixelWeightPolicy(CFloat32VolumeData2D* _pPixelWeight,
-											   bool _bBinary) 
+											   bool _bBinary, bool _bSquare) 
 {
 	m_pPixelWeight = _pPixelWeight;
 	m_bBinary = _bBinary;
+	m_bSquare = _bSquare;
 }
 //----------------------------------------------------------------------------------------	
 TotalPixelWeightPolicy::~TotalPixelWeightPolicy() 
@@ -317,9 +318,16 @@ bool TotalPixelWeightPolicy::pixelPrior(int _iVolumeIndex)
 }
 //----------------------------------------------------------------------------------------	
 void TotalPixelWeightPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
-{
-	m_pPixelWeight->getData()[_iVolumeIndex] += m_bBinary ? 
-		static_cast<float32>(_fWeight > 1e-12) : _fWeight;
+{	
+	if (m_bSquare) {
+		// Square if accumulating squares.
+		_fWeight *= _fWeight;
+	} else if (m_bBinary) {
+		// Binarize.
+		_fWeight = fabs(_fWeight) > 1e-12 ? 1.0f : 0.f;
+	}
+	// Accumulate.
+	m_pPixelWeight->getData()[_iVolumeIndex] += _fWeight;
 	//ASTRA_INFO("PixelWeight ray=%d voxel=%d wt=%f val=%f", _iRayIndex, _iVolumeIndex, _fWeight,
 	//	m_pPixelWeight->getData()[_iVolumeIndex]);
 }
