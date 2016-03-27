@@ -13,7 +13,7 @@ colormap gray
 
 vol_geom = astra_create_vol_geom(256, 256);
 proj_geom = astra_create_proj_geom('parallel', 1.0, 384, ...
-  linspace2(0,pi,30));
+  linspace2(0,pi,180));
 % vol_geom = astra_create_vol_geom(4,4);
 % proj_geom = astra_create_proj_geom('parallel', 1.0, 10, linspace2(0,pi,4));
 
@@ -42,9 +42,9 @@ P_id = astra_mex_data2d('create', '-vol', vol_geom, P);
 % figure(2); imshow(sinogram, []); axis image; axis off;
 % imshow(sinogram, []);
 
-% compare full projection matrix
-sino2 = reshape(proj_mat * reshape(P',[],1), 384, 30)';
-disp(norm(sino2 - sinogram, 'fro'));
+% % compare full projection matrix
+% sino2 = reshape(proj_mat * reshape(P',[],1), 384, 30)';
+% disp(norm(sino2 - sinogram, 'fro'));
 
 % add sinogram noise
 rng('default') 
@@ -106,8 +106,9 @@ alg_params = struct('iter',10, 'nCG',2, 'lambda',0.1, ...
   'prior_type','l1', 'operator','AFD', 'init_fbp',1, 'precon',0);  
 %%
 alg = 'pcg';
+precon = spdiag(1 ./ sum(in_params.A .^ 2, 1));
 alg_params = struct('iter',10, 'beta',0, 'pot_arg',{{'gf1',1,[1 1]}}, ...
-  'reg', 1, 'init_fbp',0, 'pixmax',[0 Inf]);  
+  'reg', 1, 'init_fbp',0, 'pixmax',[-Inf Inf], 'precon',precon);  
 %%
 alg = 'sqs-os';
 alg_params = struct('iter',10, 'beta',1, 'pot_arg',{{'gf1',1,[1 1]}}, ...
@@ -264,7 +265,7 @@ prec_id = astra_mex_data2d('create', '-vol', vol_geom, prec);
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('BICAV-PROX');
+cfg = astra_struct('SART');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
@@ -274,15 +275,15 @@ cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
 cfg.option.ClearRayLength = 1;
-cfg.option.Alpha = 1;
-cfg.option.Lambda = .5e1;
+cfg.option.Alpha = 2;
+cfg.option.Lambda = 1e0;
 cfg.option.ComputeIterationMetrics = 1;
 cfg.option.GTReconstructionId = P_id;
 cfg.option.IterationMetricsId = metrics_id;
 cfg.option.ClearReconstruction = 1;
 cfg.option.PreconditionerId = -1; prec_id;
 cfg.option.UseJacobiPreconditioner = 1;
-cfg.option.UseBSSART = 1;
+cfg.option.UseBSSART = 0;
 % cfg.option.ProjectionOrder = 'random';
 
 % Available algorithms:

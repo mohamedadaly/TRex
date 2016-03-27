@@ -130,7 +130,7 @@ end
 if arg.mom == 2
   % momentum 2 initialization
   t = 1;
-  tsum = 1;
+  tsum = 0;
   v = x;
   z = x;
   vsum = v;

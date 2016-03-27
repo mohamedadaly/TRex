@@ -121,7 +121,7 @@ for iter = 1:arg.niter
 	end
 
 	% preconditioned gradient
-	pregrad = arg.precon * ngrad;
+	pregrad = single(full(arg.precon * double(ngrad)));
 
 	% search direction
 	newinprod = dot_double(conj(ngrad), pregrad);
