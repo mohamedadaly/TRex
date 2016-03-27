@@ -379,13 +379,16 @@ class SartProxBPPolicy {
 	float32 m_fAlpha;
 	float32 m_fSqrt2Lambda;
 
+	// BICAV prox operator?
+	bool m_bBICAV;
+
 public:
 
 	FORCEINLINE SartProxBPPolicy();
 	FORCEINLINE SartProxBPPolicy(CFloat32VolumeData2D* _pReconstruction, CFloat32ProjectionData2D* _pSinogram, 
 		CFloat32VolumeData2D* _pTotalPixelWeight, CFloat32ProjectionData2D* _pTotalRayLength, 
 		CFloat32ProjectionData2D* _pY, CFloat32ProjectionData2D* _pC, 
-		float32 _fAlhpa = 1.0f, float32 _fSqrt2Lambda = 1.0f); 
+		float32 _fAlhpa = 1.0f, float32 _fSqrt2Lambda = 1.0f, bool _bBICAV = false); 
 	FORCEINLINE ~SartProxBPPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);

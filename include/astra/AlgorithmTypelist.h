@@ -37,6 +37,7 @@ $Id$
 #include "SartAlgorithm.h"
 #include "SartProxOperatorAlgorithm.h"
 #include "BicavAlgorithm.h"
+#include "BicavProxOperatorAlgorithm.h"
 #include "BlockSimplifiedSartAlgorithm.h"
 #include "OrderedSubsetSQSAlgorithm.h"
 #include "OrderedSubsetSQSProxOperatorAlgorithm.h"
@@ -68,11 +69,12 @@ using namespace astra;
 
 #include "CudaFilteredBackProjectionAlgorithm.h"
 
-typedef TYPELIST_28(
+typedef TYPELIST_29(
 			CArtAlgorithm,
 			CSartAlgorithm,
 			CSartProxOperatorAlgorithm,
 			CBicavAlgorithm,
+			CBicavProxOperatorAlgorithm,
 			CBlockSimplifiedSartAlgorithm,
 			COrderedSubsetSQSAlgorithm,
 			COrderedSubsetSQSProxOperatorAlgorithm,
@@ -103,9 +105,10 @@ typedef TYPELIST_28(
 	AlgorithmTypeList;
 #else
 
-typedef TYPELIST_12(
+typedef TYPELIST_13(
 			CArtAlgorithm,
 			CBicavAlgorithm,
+			CBicavProxOperatorAlgorithm,
 			CBlockSimplifiedSartAlgorithm,
 			COrderedSubsetSQSAlgorithm,
 			COrderedSubsetSQSProxOperatorAlgorithm,

@@ -49,7 +49,7 @@ disp(norm(sino2 - sinogram, 'fro'));
 % add sinogram noise
 rng('default') 
 rng(123);
-sinogram = sinogram + randn(size(sinogram)) * 0.5;
+sinogram = sinogram + randn(size(sinogram)) * 0.05 * mean(sinogram(:));
 % sinogram = sinogram .* (randn(size(sinogram)) * .1 + 1);
 
 astra_mex_data2d('delete', sinogram_id);
@@ -223,10 +223,17 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
 
 %%    SART
 % --> debug sqs
-alg_params = struct('iter',5, 'alpha',1, 'min_val',0, 'precon',0, ...
-  'wls',0, 'BSSART',0, 'prox','sart', 'lambda',1e0, 'nsubsets',30, 'sqs',0, ...
+alg_params = struct('iter',10, 'alpha',1, 'min_val',0, 'precon',0, ...
+  'wls',0, 'BSSART',1, 'prox','', 'lambda',1e0, 'nsubsets',30, 'sqs',0, ...
   'init_fbp',0);
 [rec, times, snrs, iters] = ma_alg_sart(in_params, alg_params);
+[times snrs iters]
+
+%% BICAV
+alg_params = struct('iter',10, 'alpha',1, 'min_val',0, 'precon',0, ...
+  'wls',0, 'BSSART',1, 'prox',0, 'lambda',1e0, 'nsubsets',30, 'sqs',0, ...
+  'init_fbp',0);
+[rec, times, snrs, iters] = ma_alg_bicav(in_params, alg_params);
 [times snrs iters]
 
 %%    SQS
@@ -257,7 +264,7 @@ prec_id = astra_mex_data2d('create', '-vol', vol_geom, prec);
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('CGLS');
+cfg = astra_struct('BICAV');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
@@ -267,14 +274,15 @@ cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
 cfg.option.ClearRayLength = 1;
-cfg.option.Alpha = 2;
+cfg.option.Alpha = 1;
 cfg.option.Lambda = .5e1;
 cfg.option.ComputeIterationMetrics = 1;
 cfg.option.GTReconstructionId = P_id;
 cfg.option.IterationMetricsId = metrics_id;
 cfg.option.ClearReconstruction = 1;
 cfg.option.PreconditionerId = -1; prec_id;
-cfg.option.UseJacobiPreconditioner = 0;
+cfg.option.UseJacobiPreconditioner = 1;
+cfg.option.UseBSSART = 1;
 % cfg.option.ProjectionOrder = 'random';
 
 % Available algorithms:

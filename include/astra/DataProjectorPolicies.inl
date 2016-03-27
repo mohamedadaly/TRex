@@ -812,7 +812,8 @@ SartProxBPPolicy::SartProxBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 						   CFloat32ProjectionData2D* _pTotalRayLength,
 						   CFloat32ProjectionData2D* _pY, 
 						   CFloat32ProjectionData2D* _pC, 
-						   float32 _fAlhpa, float32 _fSqrt2Lambda) 
+						   float32 _fAlhpa, float32 _fSqrt2Lambda,
+						   bool _bBICAV) 
 {
 	m_pReconstruction = _pReconstruction;
 	m_pSinogram = _pSinogram;
@@ -822,6 +823,7 @@ SartProxBPPolicy::SartProxBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 	m_pC = _pC;
 	m_fAlpha = _fAlhpa;
 	m_fSqrt2Lambda = _fSqrt2Lambda;
+	m_bBICAV = _bBICAV;
 
 	//// init C as a copy from Y
 	//m_pC = new CFloat32ProjectionData2D(m_pY->getGeometry());
@@ -836,17 +838,22 @@ SartProxBPPolicy::~SartProxBPPolicy()
 //----------------------------------------------------------------------------------------	
 bool SartProxBPPolicy::rayPrior(int _iRayIndex) 
 {
-	// denominator
-	float32 fGammaBeta = m_fSqrt2Lambda * m_pTotalRayLength->getData()[_iRayIndex] + 1.f;
-	//// check zero
-	//if (fabsf(fGammaBeta) >= 1e-16f) {
+	if (m_bBICAV) {
+		// denominator
+		float32 fGammaBeta = m_fSqrt2Lambda * m_fSqrt2Lambda * 
+			m_pTotalRayLength->getData()[_iRayIndex] + 1.f;
 		// Update: alpha * C_i
 		m_pC->getData()[_iRayIndex] = m_fAlpha * (m_fSqrt2Lambda * 
-			  m_pSinogram->getData()[_iRayIndex] - m_pY->getData()[_iRayIndex]) 
+				m_pSinogram->getData()[_iRayIndex] - m_pY->getData()[_iRayIndex]) 
 			/ fGammaBeta;
-	//} else {
-	//	m_pC->getData()[_iRayIndex] = 0.f;
-	//}
+	} else {
+		// denominator
+		float32 fGammaBeta = m_fSqrt2Lambda * m_pTotalRayLength->getData()[_iRayIndex] + 1.f;
+		// Update: alpha * C_i
+		m_pC->getData()[_iRayIndex] = m_fAlpha * (m_fSqrt2Lambda * 
+				m_pSinogram->getData()[_iRayIndex] - m_pY->getData()[_iRayIndex]) 
+			/ fGammaBeta;
+	}
 
 	//ASTRA_INFO("RayPrior ray=%d val=%f len=%f", _iRayIndex, 
 	//	m_pC->getData()[_iRayIndex], m_pTotalRayLength->getData()[_iRayIndex]);
@@ -862,13 +869,24 @@ void SartProxBPPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWe
 {  
 	if (_fWeight == 0) return;
 
-	// denominator: (PixelWeight) 
-	float32 fGammaBeta = m_pTotalPixelWeight->getData()[_iVolumeIndex];
-	// check zero
-	if (fabsf(fGammaBeta) >= 1e-16f) {
-		// Update: c_i * weight * sqrt2lambda / pixelweight
-		m_pReconstruction->getData()[_iVolumeIndex] += _fWeight * 
-			m_pC->getData()[_iRayIndex] / fGammaBeta;
+	if (m_bBICAV) {
+		// denominator: (PixelWeight) 
+		float32 fGammaBeta = m_pTotalPixelWeight->getData()[_iVolumeIndex];
+		// check zero
+		if (fabsf(fGammaBeta) >= 1e-16f) {
+			// Update: c_i * weight * sqrt2lambda / pixelweight
+			m_pReconstruction->getData()[_iVolumeIndex] += _fWeight * 
+				m_fSqrt2Lambda * m_pC->getData()[_iRayIndex] / fGammaBeta;
+		}
+	} else {
+		// denominator: (PixelWeight) 
+		float32 fGammaBeta = m_pTotalPixelWeight->getData()[_iVolumeIndex];
+		// check zero
+		if (fabsf(fGammaBeta) >= 1e-16f) {
+			// Update: c_i * weight * sqrt2lambda / pixelweight
+			m_pReconstruction->getData()[_iVolumeIndex] += _fWeight * 
+				m_pC->getData()[_iRayIndex] / fGammaBeta;
+		}
 	}
 	//ASTRA_INFO("AddWeight ray=%d voxel=%d weight=%f gammabeta=%f val=%f", 
 	//	_iRayIndex, _iVolumeIndex, _fWeight, fGammaBeta,

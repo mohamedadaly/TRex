@@ -339,6 +339,9 @@
     <ClCompile Include="src\OrderedSubsetSQSProxOperatorAlgorithm.cpp">
       <Filter>Algorithms\source</Filter>
     </ClCompile>
+    <ClCompile Include="src\BicavProxOperatorAlgorithm.cpp">
+      <Filter>Algorithms\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\astra\Algorithm.h">
@@ -705,6 +708,9 @@
       <Filter>Algorithms\headers</Filter>
     </ClInclude>
     <ClInclude Include="include\astra\OrderedSubsetSQSProxOperatorAlgorithm.h">
+      <Filter>Algorithms\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\astra\BicavProxOperatorAlgorithm.h">
       <Filter>Algorithms\headers</Filter>
     </ClInclude>
   </ItemGroup>
