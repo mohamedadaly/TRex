@@ -54,7 +54,7 @@ void CSartAlgorithm::_clear()
 	m_bIsInitialized = false;
 	m_iIterationCount = 0;
 	m_fAlpha = 1.0f;
-	m_bClearRayLength = true;
+	m_bUseBSSART = false;
 	m_pPreconditioner = NULL;
 }
 
@@ -164,9 +164,9 @@ bool CSartAlgorithm::initialize(const Config& _cfg)
 	m_fAlpha = _cfg.self.getOptionNumerical("Alpha", m_fAlpha);
 	CC.markOptionParsed("Alpha");
 
-	// Clear RaySum after each sweep. Defaults to true.
-	m_bClearRayLength = _cfg.self.getOptionBool("ClearRayLength", m_bClearRayLength);
-	CC.markOptionParsed("ClearRayLength");
+	// BSSART.
+	m_bUseBSSART = _cfg.self.getOptionBool("UseBSSART", m_bUseBSSART);
+	CC.markOptionParsed("UseBSSART");
 
 	// create data objects
 	m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
@@ -302,10 +302,6 @@ void CSartAlgorithm::run(int _iNrIterations)
 	CDataProjectorInterface* pBackProjector;
 	CDataProjectorInterface* pFirstForwardProjector;
 
-	// Init.
-	m_pTotalRayLength->setData(0.0f);
-	m_pTotalPixelWeight->setData(0.0f);
-
 	// Initialize m_pReconstruction to zero.
 	if (m_bClearReconstruction) {
 		m_pReconstruction->setData(0.f);
@@ -321,26 +317,50 @@ void CSartAlgorithm::run(int _iNrIterations)
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 
 
-	// also computes total pixel weight and total ray length
-	pForwardProjector = dispatchDataProjector(
-			m_pProjector, 
-			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
-			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			CombinePolicy<DiffFPPolicy, TotalPixelWeightPolicy>(					// 2 basic operations
+	// If BSSART
+	if (m_bUseBSSART) {
+		// Don't compute PixelWeight at every iteration, since it is computed
+		// at the beginning.
+		pForwardProjector = dispatchDataProjector(
+				m_pProjector, 
+				SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+				ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 				DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, m_pSinogram),								// forward projection with difference calculation
-				TotalPixelWeightPolicy(m_pTotalPixelWeight)),												// calculate the total pixel weights
-			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
-		);
+				m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
+			);
 
-	// first time forward projection data projector,
-	// computes total ray length
-	pFirstForwardProjector = dispatchDataProjector(
-			m_pProjector, 
-			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
-			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			TotalRayLengthPolicy(m_pTotalRayLength),													// calculate the total ray lengths
-			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
-		);
+		// first time forward projection data projector,
+		// If BSSART, compute both RayLength and PixelWeight
+		pFirstForwardProjector = dispatchDataProjector(
+				m_pProjector, 
+				SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+				ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+				CombinePolicy<TotalRayLengthPolicy, TotalPixelWeightPolicy>(
+					TotalRayLengthPolicy(m_pTotalRayLength),													// calculate the total ray lengths
+					TotalPixelWeightPolicy(m_pTotalPixelWeight)),
+				m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
+			);
+	} else {
+		// also computes total pixel weight.
+		pForwardProjector = dispatchDataProjector(
+				m_pProjector, 
+				SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+				ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+				CombinePolicy<DiffFPPolicy, TotalPixelWeightPolicy>(					// 2 basic operations
+					DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, m_pSinogram),								// forward projection with difference calculation
+					TotalPixelWeightPolicy(m_pTotalPixelWeight)),												// calculate the total pixel weights
+				m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
+			);
+
+		// computes total ray length at the start.
+		pFirstForwardProjector = dispatchDataProjector(
+				m_pProjector, 
+				SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
+				ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
+				TotalRayLengthPolicy(m_pTotalRayLength),													// calculate the total ray lengths
+				m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
+			);
+	}
 
 	// Perform the first forward projection to compute ray lengths
 	m_pTotalRayLength->setData(0.0f);
@@ -372,7 +392,10 @@ void CSartAlgorithm::run(int _iNrIterations)
 			//ASTRA_INFO(" Projection %d", iProjection);
 
 			// forward projection and difference calculation
-			m_pTotalPixelWeight->setData(0.0f);
+			if (!m_bUseBSSART) {
+				// Clear PixelWeight if computing it at every iteration.
+				m_pTotalPixelWeight->setData(0.0f);
+			}
 			pForwardProjector->projectSingleProjection(iProjection);
 			// backprojection
 			pBackProjector->projectSingleProjection(iProjection);

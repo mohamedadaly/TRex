@@ -106,8 +106,9 @@ protected:
 	// over/under-relaxation parameter in SART. Defaults to 1.
 	float32 m_fAlpha;
 
-	// Clear TotalRayLength after each sweep. Defaults to true.
-	bool m_bClearRayLength;
+	/// Block Simplified SART i.e. use the column sums from all rows, not just in
+	/// current view.
+	bool m_bUseBSSART;
 
 	// Preconditioner for the volume.
 	CFloat32VolumeData2D* m_pPreconditioner;
