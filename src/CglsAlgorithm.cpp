@@ -258,6 +258,8 @@ void CCglsAlgorithm::run(int _iNrIterations)
 	if (m_bUseJacobiPreconditioner) {
 		c->setData(0.f);
 		pFirstForwardProjector->project();
+		// Compute sqrt
+		c->sqrt();
 	}
 
 	int i;

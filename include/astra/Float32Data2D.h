@@ -398,6 +398,13 @@ public:
 	CFloat32Data2D& clampMax(float32& _fMax);
 
 	/**
+	 * Computes the sqrt of the values inside
+	 *
+	 * @return l-value
+	 */
+	CFloat32Data2D& sqrt();
+
+	/**
 	 * Overloaded Operator: data += data (pointwise)
 	 *
 	 * @param _data r-value

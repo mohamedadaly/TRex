@@ -507,6 +507,14 @@ CFloat32Data2D& CFloat32Data2D::clampMax(float32& _fMax)
 	return (*this);
 }
 
+CFloat32Data2D& CFloat32Data2D::sqrt()
+{
+	ASTRA_ASSERT(m_bInitialized);
+	for (size_t i = 0; i < m_iSize; i++) {
+		m_pfData[i] = sqrtf(m_pfData[i]);
+	}
+	return (*this);
+}
 
 //----------------------------------------------------------------------------------------
 // Operator Overloading 
@@ -635,7 +643,7 @@ float32 CFloat32Data2D::getNorm() const
 		sum += static_cast<float64>(m_pfData[i]) * m_pfData[i];
 	}
 
-	return static_cast<float32>(sqrt(sum));
+	return static_cast<float32>(::sqrt(sum));
 
 }
 
