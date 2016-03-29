@@ -347,15 +347,15 @@ void CSartProxOperatorAlgorithm::run(int _iNrIterations)
 		// end timer
 		m_ulTimer = CPlatformDepSystemCode::getMSCount() - m_ulTimer;
 
-		// Y residual
-		float32 res1 = m_pY->getNorm();
-		// current reconstruction - prox input
-		CFloat32Data2D* pResX = new CFloat32VolumeData2D(*m_pReconstruction);
-		*pResX -= *m_pProxInput;
-		float32 res2 = pResX->getNorm();
-		ASTRA_DELETE(pResX);
-		// Print residuals
-		ASTRA_INFO("norm(y) = %f & norm(z) = %f & lambda=%f", res1, res2, m_fLambda);
+		//// Y residual
+		//float32 res1 = m_pY->getNorm();
+		//// current reconstruction - prox input
+		//CFloat32Data2D* pResX = new CFloat32VolumeData2D(*m_pReconstruction);
+		//*pResX -= *m_pProxInput;
+		//float32 res2 = pResX->getNorm();
+		//ASTRA_DELETE(pResX);
+		//// Print residuals
+		//ASTRA_INFO("norm(y) = %f & norm(z) = %f & lambda=%f", res1, res2, m_fLambda);
 
 		// Compute metrics.
 		computeIterationMetrics(iIteration, _iNrIterations);
