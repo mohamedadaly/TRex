@@ -46,7 +46,7 @@ case 'fan'
   sdd = 949.075;
   sid = sdd * (phan_size/2) / (num_det/2);
   proj_geom = astra_create_proj_geom('fanflat', det_size, num_det, ...
-    linspace2(0,2*pi,num_proj), sid, sdd - sid);
+    linspace2(0,2*pi,num_proj), sid, sdd - sid); %2*pi
 
   % projector
   proj_id = astra_create_projector('line_fanflat', proj_geom, vol_geom);
