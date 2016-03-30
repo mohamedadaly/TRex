@@ -108,12 +108,27 @@ eval(plt);
       sinogram = sinogram + ...
         randn(size(sinogram)) * noise_level * max(sinogram(:));
     case 'poisson'
-      error('poisson');
+      % copied from Fessler's IRT
+      I0 = 1e5; % incident photons; decrease this for "low dose" scans
+      poissonfactor = 0.4; % for generating poissonn noise using rejection method
+	
+      yi = poisson(I0 * exp(-sinogram), 0, 'factor', poissonfactor); % poisson noise for transmission data:
+
+      if any(yi(:) == 0)
+        warn('%d of %d values are 0 in sinogram!', sum(yi(:)==0), length(yi(:)));
+      end
+      sinogram = log(I0 ./ max(yi,1)); % noisy fan-beam sinogram: form of the data in the quadratic approximation to the actual log-likelihood
+
+      %% PWLS weights
+      wi = yi / max(yi(:)); % PWLS weights; gives 0 weight to any ray where yi=0!
+      mxW = max(wi(:));
+      mnW = min(wi(:));
+      
     otherwise
       error(['Unsupported nosie: ' noise_type]);
     end
     % add negative value to make all positive
-    sinogram = sinogram - min(sinogram(:));
+%     sinogram = sinogram - min(sinogram(:));
 
     % delete and recreate
     sinogram_id = astra_mex_data2d('create', '-sino', proj_geom, sinogram);
