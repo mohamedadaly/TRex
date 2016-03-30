@@ -26,14 +26,24 @@ function [rec, times, snrs, iters] = ma_alg_astra(alg, in_params, alg_params)
 %
 
 % create GT id
-gt_vol_id = astra_mex_data2d('create','-vol', in_params.vol_geom, ...
-  in_params.gt_vol);
+if ~isempty(in_params.gt_vol)
+  gt_vol_id = astra_mex_data2d('create','-vol', in_params.vol_geom, ...
+    in_params.gt_vol);
+else gt_vol_id = 0; 
+end
 % create prox id
-prox_in_id = astra_mex_data2d('create','-vol', in_params.vol_geom, ...
-  in_params.prox_in);
+if ~isempty(in_params.prox_in)
+  prox_in_id = astra_mex_data2d('create','-vol', in_params.vol_geom, ...
+    in_params.prox_in);
+else prox_in_id = 0; 
+end
 % rec and copy in fbp for initialization (if available)
-rec_id = astra_mex_data2d('create', '-vol', in_params.vol_geom, ...
-  in_params.fbp);
+if ~isempty(in_params.fbp)
+  rec_id = astra_mex_data2d('create', '-vol', in_params.vol_geom, ...
+    in_params.fbp);
+else
+  rec_id = astra_mex_data2d('create', '-vol', in_params.vol_geom);
+end
 % sino
 sino_id = astra_mex_data2d('create', '-sino', in_params.proj_geom, ...
   in_params.sino);

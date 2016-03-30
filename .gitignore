@@ -36,6 +36,5 @@ bin/*
 *.sdf
 sl.mat
 .*.asv
-*.mat
 *.asv
 lasso_comp.eps
