@@ -236,7 +236,7 @@ void CSirtAlgorithm::run(int _iNrIterations)
 		m_ulTimer = CPlatformDepSystemCode::getMSCount() - m_ulTimer;
 
 		// Compute metrics.
-		computeIterationMetrics(iIteration, _iNrIterations);
+		computeIterationMetrics(iIteration, _iNrIterations, m_pDiffSinogram);
 	}
 
 	ASTRA_DELETE(pForwardProjector);

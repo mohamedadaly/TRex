@@ -70,6 +70,7 @@ void CReconstructionAlgorithm2D::_clear()
 	m_pGTReconstruction = NULL;
 	m_bComputeIterationMetrics = false;
 	m_bClearReconstruction = true;
+	m_bComputeIterationResidual = false;
 	m_pIterationMetics = NULL;
 	m_ulTotalTime = 0;
 }
@@ -181,6 +182,13 @@ bool CReconstructionAlgorithm2D::initialize(const Config& _cfg)
 			m_pGTReconstruction != NULL;
 		CC.markOptionParsed("ComputeIterationMetrics");
 	}
+
+	// Compute residual per iteration.
+	if (_cfg.self.hasOption("ComputeIterationResidual")) {
+		m_bComputeIterationResidual = _cfg.self.getOptionBool(
+			"ComputeIterationResidual", false);
+		CC.markOptionParsed("ComputeIterationResidual");
+	}
 	
 	// Iteration metrics.
 	if (_cfg.self.hasOption("IterationMetricsId")) {
@@ -204,7 +212,8 @@ bool CReconstructionAlgorithm2D::initialize(const Config& _cfg)
 
 
 //----------------------------------------------------------------------------------------
-void CReconstructionAlgorithm2D::computeIterationMetrics(int iIteration, int iNrIterations) 
+void CReconstructionAlgorithm2D::computeIterationMetrics(int iIteration, int iNrIterations,
+														 CFloat32Data2D* pDiffSinogram) 
 {
 	// First iteration? 
 	if (iIteration == 0) {
@@ -213,8 +222,8 @@ void CReconstructionAlgorithm2D::computeIterationMetrics(int iIteration, int iNr
 
 		// Initialize space for metrics
 		if (m_bComputeIterationMetrics && m_pIterationMetics) {
-			// Initalize with 2 cols (time secs, SNR) and 1 row per iteration.
-			CVolumeGeometry2D geo(2, iNrIterations);
+			// Initalize with 3 cols (time secs, SNR, residual) and 1 row per iteration.
+			CVolumeGeometry2D geo(3, iNrIterations);
 			m_pIterationMetics->initialize(&geo);
 			m_pIterationMetics->setData(0.f);
 		}
@@ -228,16 +237,21 @@ void CReconstructionAlgorithm2D::computeIterationMetrics(int iIteration, int iNr
 
 		// SNR.
 		float32 fSNR = m_pReconstruction->getSNR(*m_pGTReconstruction);
+
+		// Residual norm.
+		float32 fResidual = pDiffSinogram != NULL && m_bComputeIterationResidual ? 
+			pDiffSinogram->getNorm() : 0.f;
 			
 		if (m_pIterationMetics && 
 			iIteration < m_pIterationMetics->getHeight()) {
 			// Store [y][x]
 			m_pIterationMetics->getData2D()[iIteration][0] = fTime;
 			m_pIterationMetics->getData2D()[iIteration][1] = fSNR;
+			m_pIterationMetics->getData2D()[iIteration][2] = fResidual;
 		} else {
 			// Print
-			ASTRA_INFO("It %d/%d Time=%fsec SNR=%f", 
-				iIteration, iNrIterations, fTime, fSNR);
+			ASTRA_INFO("It %d/%d Time=%fsec SNR=%f Residual=%f", 
+				iIteration, iNrIterations, fTime, fSNR, fResidual);
 		}
 	}
 }

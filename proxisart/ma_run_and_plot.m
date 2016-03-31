@@ -27,11 +27,11 @@ eval(plt);
 
     % figure file
     pat = sprintf('%s/%s%s-ph_%s-%d_nt_%s-nl_%.3f-np_%d-p_%s', ...
-      arg.path, arg.prefix, plt, phan, phan_size, noise_type, ...
-      noise_level, num_proj, arg.proj_type);
-    fig_file = [pat '.pdf'];
+      arg.path, arg.prefix, plt, arg.phan, arg.phan_size, arg.noise_type, ...
+      arg.noise_level, arg.num_proj, arg.proj_type);
+    fig_file = [pat];
     mat_file = [pat '.mat'];
-
+    
     % geometries
     vol_geom = astra_create_vol_geom(phan_size, phan_size);
     % num_det = ceil(1.1 * phan_size);
@@ -58,7 +58,8 @@ eval(plt);
         linspace2(0,2*pi,num_proj), sid, sdd - sid); %2*pi
 
       % projector
-      proj_id = astra_create_projector('line_fanflat', proj_geom, vol_geom);
+%       proj_id = astra_create_projector('line_fanflat', proj_geom, vol_geom);
+      proj_id = astra_create_projector('strip_fanflat', proj_geom, vol_geom);
 
     case 'mouse'
       det_size = 4/3; 0.16176;
@@ -109,15 +110,18 @@ eval(plt);
         randn(size(sinogram)) * noise_level * max(sinogram(:));
     case 'poisson'
       % copied from Fessler's IRT
-      I0 = 1e5; % incident photons; decrease this for "low dose" scans
+      I0 = 1e5; exp(40); %1e5 % incident photons; decrease this for "low dose" scans
       poissonfactor = 0.4; % for generating poissonn noise using rejection method
-	
-      yi = poisson(I0 * exp(-sinogram), 0, 'factor', poissonfactor); % poisson noise for transmission data:
+      % scale the sinogram to have a max of 10, then scale again after
+      % sampling
+      scale_factor = 10 / max(sinogram(:));
+      yi = poisson(I0 * exp(-sinogram * scale_factor), 0, 'factor', poissonfactor); % poisson noise for transmission data:
 
       if any(yi(:) == 0)
         warn('%d of %d values are 0 in sinogram!', sum(yi(:)==0), length(yi(:)));
       end
-      sinogram = log(I0 ./ max(yi,1)); % noisy fan-beam sinogram: form of the data in the quadratic approximation to the actual log-likelihood
+      
+      sinogram = log(I0 ./ max(yi,1)) / scale_factor; % noisy fan-beam sinogram: form of the data in the quadratic approximation to the actual log-likelihood
 
       %% PWLS weights
       wi = yi / max(yi(:)); % PWLS weights; gives 0 weight to any ray where yi=0!
@@ -154,6 +158,11 @@ eval(plt);
 
   % Plot SNR per iteration
   function per_iter
+    
+    % figure file
+    snr_file = [fig_file '-snr'];
+    resid_file = [fig_file '-resid'];
+    
     fprintf('Fig %s\n', fig_file);
 
     % loop and compute
@@ -172,8 +181,10 @@ eval(plt);
           % run
           fprintf('Alg %s\n', alg.name);
           alg.alg_params.iter = arg.iter;
+          % residual
+          alg.alg_params.option.ComputeIterationResidual = arg.plot_resid;          
 
-          [rec, tt, ss, it] = ma_alg_astra(alg.alg, in_params, ...
+          [rec, tt, ss, it, rs] = ma_alg_astra(alg.alg, in_params, ...
             alg.alg_params);
         case 'irt'
         end
@@ -183,6 +194,7 @@ eval(plt);
         results{a}.times = tt;
         results{a}.snrs = ss;
         results{a}.iter = it;
+        results{a}.resid = rs;
       end
 
       % save
@@ -194,27 +206,43 @@ eval(plt);
     end
 
     % plot
-    hfig = figure('Name',fig_file, 'Position',[1, 1, 800, 800]);
-    hold on;
+    snr_fig = figure('Name',fig_file, 'Position',[1, 1, 800, 800]);
+    resid_fig = figure('Name',fig_file, 'Position',[1, 1, 800, 800]);
+    
     legends = cell(size(results));
     for a = 1:length(algs)
       res = results{a};
       alg = algs{a};
-
+      
+      figure(snr_fig);
+      hold on;
       plot(res.iter, res.snrs, 'Color',alg.clr, ...
         'LineStyle',alg.lstyle, 'Marker', alg.marker, ...
-        'LineWidth',2);
+        'LineWidth',1);
+      
+      figure(resid_fig)
+      plot(res.iter, res.resid, 'Color',alg.clr, ...
+        'LineStyle',alg.lstyle, 'Marker', alg.marker, ...
+        'LineWidth',1);
+      
       legends{a} = alg.name;
     end
-    hold off;
 %     title(sprintf('Phantom %s', phan));
+    figure(snr_fig)
     xlabel('Iteration');
     ylabel('SNR (db)');
     xlim([1 arg.iter]);
     legend(legends, 'Location','SouthEast');
+    
+    figure(resid_fig)
+    xlabel('Iteration');
+    ylabel('Residual (db)');
+    xlim([1 arg.iter]);
+    legend(legends, 'Location','NorthEast');    
 
     % save figure
-    save_fig(fig_file, hfig, 'pdf');
+    save_fig(snr_file, snr_fig, 'pdf');
+    save_fig(resid_file, resid_fig, 'pdf');
   end
 
   % Plot SNR per number of projections

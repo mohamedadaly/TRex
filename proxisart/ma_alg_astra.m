@@ -1,4 +1,5 @@
-function [rec, times, snrs, iters] = ma_alg_astra(alg, in_params, alg_params)
+function [rec, times, snrs, iters, resids] = ma_alg_astra(...
+  alg, in_params, alg_params)
 % MA_ALG_ASTRA a wrapper around running ASTRA methods.
 %
 % INPUT
@@ -22,6 +23,7 @@ function [rec, times, snrs, iters] = ma_alg_astra(alg, in_params, alg_params)
 % - times: the running times
 % - snr: the SNR corresponding to iterations
 % - iters: the inner iterations 
+% - resids: residuals from each iteration (norm of projection error)
 %
 %
 
@@ -75,6 +77,7 @@ metrics = astra_mex_data2d('get', metrics_id);
 times = metrics(:, 1);
 snrs =  metrics(:, 2);
 iters = (1:length(times))';
+resids =  metrics(:, 3);
 
 % Get rec
 rec = astra_mex_data2d('get', rec_id);

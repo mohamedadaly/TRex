@@ -23,6 +23,13 @@ save phantoms/mod-sl-512.mat P
 % 		'mu', [0 0.05 0.2 0.4 0.4 0.2]/0.2*1000); % True highres NCAT
 % 	imgBig = single(imgBig) / single(max(imgBig(:))) * 0.4; % convert to 1/cm units
 
+scale = 512;
+P = read_ncat('nx', scale, 'ny', scale, 'marrow', true, ...
+  'mu', [0 0.05 0.2 0.4 0.4 0.2]/0.2*1000); % True highres NCAT
+P = single(P) / single(max(P(:))) * 0.4; % convert to 1/cm units
+
+save(sprintf('phantoms/ncat-%d.mat', scale), 'P')
+%%
 load phantoms/ncat-1024.mat
 figure(1), imshow(P, [])
 
@@ -252,10 +259,10 @@ algs = {
       'UseBSSART',0)))      
   };
 
-phantoms = {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
-num_projs = [15, 30, 60, 90, 180]; 
-noise_type = 'poisson'; {'gauss'}
-noise_levels = 0; %[0, .005, .01, .05, .1]; %.001
+phantoms = {'mod-sl'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
+num_projs = 90; [15, 30, 60, 90, 180]; 
+noise_type = 'gauss'; 'poisson'; {'gauss'};
+noise_levels = 0.005; %[0, .005, .01, .05, .1]; %.001
 proj_types = {'fan'}; %{'fan', 'parallel', 'mouse'};
 iter = 30;
 prefix = '';

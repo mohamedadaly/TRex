@@ -174,7 +174,8 @@ public:
 	/** Compute iteration metrics for the specific iteration 
 	 *  and store or print out.
 	 */
-	virtual void computeIterationMetrics(int iIteration, int iNrIterations);
+	virtual void computeIterationMetrics(int iIteration, int iNrIterations,
+		CFloat32Data2D* pDiffSinogram = NULL);
 
 protected:
 	
@@ -226,6 +227,9 @@ protected:
 	//< Total time for timing operations.
 	unsigned long m_ulTotalTime;
 	unsigned long m_ulTimer;
+
+	//< Compute residual in metrics.
+	bool m_bComputeIterationResidual;
 
 	//< Whether to clear the input reconstruction volume before starting, or
 	// keep it. Default = true.
