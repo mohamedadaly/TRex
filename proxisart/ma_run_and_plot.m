@@ -228,7 +228,12 @@ eval(plt);
     xlabel('Iteration');
     ylabel('SNR (db)');
     xlim([1 arg.iter]);
-    legend(legends, 'Location','SouthEast');
+    hleg = columnlegend(arg.legend_cols, legends, 'boxon',...
+      'Location','SouthEast');
+%     set(hleg, 'box','off');
+%     legHdl = gridLegend(gca, arg.legend_cols, legends, ...
+%       'Location','SouthEast'); 
+
     
     % save figure
     save_fig(snr_file, snr_fig, 'pdf');
@@ -252,7 +257,7 @@ eval(plt);
       xlabel('Iteration');
       ylabel('Residual (db)');
       xlim([1 arg.iter]);
-      legend(legends, 'Location','NorthEast');    
+      columnlegend(arg.legend_cols, legends, 'Location','NorthEast');    
 
       save_fig(resid_file, resid_fig, 'pdf');
     end    
@@ -339,7 +344,7 @@ eval(plt);
       legends{a} = alg.name;
     end
 %     title(sprintf('Phantom %s', phan));
-    xlabel('Iteration');
+    xlabel('Number of Projections');
     ylabel('SNR (db)');
 %     xlim([1 arg.iter]);
     legend(legends, 'Location','NorthWest');
