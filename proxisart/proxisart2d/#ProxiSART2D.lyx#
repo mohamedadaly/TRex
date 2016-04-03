@@ -1370,7 +1370,7 @@ x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{1}{\sum_{i}a_{ij}}\sum_{i=1}^{m}\fra
 
 \end_inset
 
- In matrix form thsi becomes 
+ In matrix form this becomes 
 \begin_inset Formula 
 \[
 x^{(t+1)}=x^{(t)}+\alpha CA^{T}R\left(p-Ax^{(t)}\right)
@@ -1395,10 +1395,38 @@ x^{(t+1)}=x^{(t)}+\alpha CA^{T}R\left(p-Ax^{(t)}\right)
 \end_inset
 
  and 
-\begin_inset Formula $R=$
+\begin_inset Formula $R=\diag(r_{i}^{-1})$
 \end_inset
 
+ where 
+\begin_inset Formula $r_{i}=\sum_{j}a_{ij}$
+\end_inset
 
+ is the sum of row 
+\begin_inset Formula $i$
+\end_inset
+
+ of 
+\begin_inset Formula $A$
+\end_inset
+
+.
+ It has been shown that 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "censor2002block,jiang2003convergence"
+
+\end_inset
+
+ that SIRT converges to a solution of the WLS problem 
+\begin_inset Formula 
+\[
+x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{R}^{2}=\min_{x}(Ax-p)^{T}R(Ax-p).
+\]
+
+\end_inset
+
+ It has 
 \end_layout
 
 \begin_layout Standard

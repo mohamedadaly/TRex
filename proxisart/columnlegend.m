@@ -116,29 +116,32 @@ end
 %unfortunately, it is not possible to force the box to be smaller than the
 %original height, therefore, turn it off and set background color to none
 %so that it no longer appears
-set(legend_h, 'Color', 'None', 'Box', 'off');
+% set(legend_h, 'Color', 'None', 'Box', 'off');
+set(legend_h, 'Box', 'off');
 
 %let's put it where you want it
 pos = get(legend_h, 'position');
 fig_pos = get(gca, 'position');
+new_pos = pos;
 switch lower(location),
     case {'northeast'}
-        set(legend_h, 'position', [pos(1)+fig_pos(3)-pos(3) pos(2) pos(3) pos(4)]);
+        new_pos = [pos(1)+fig_pos(3)-pos(3) pos(2) pos(3) pos(4)];
     case {'northwest'}
-        set(legend_h, 'position', [fig_pos(1) pos(2) pos(3) pos(4)]);    
+        new_pos = [fig_pos(1) pos(2) pos(3) pos(4)];
     case {'southeast'}
+        new_pos = [pos(1)+fig_pos(3)-pos(3)-.01, fig_pos(2)-pos(4)/numlines * (numlines - numpercolumn)+.01, pos(3), pos(4)];
 %         set(legend_h, 'position', [pos(1)+fig_pos(3)-pos(3) fig_pos(2)-pos(4)/2+pos(4)/4 pos(3) pos(4)]);
 %         set(legend_h, 'position', [pos(1)+fig_pos(3)-pos(3) fig_pos(2)-(pos(4)*(numcolumns-1)/numcolumns)+.01 pos(3) pos(4)]);
-        set(legend_h, 'position', [pos(1)+fig_pos(3)-pos(3)-.01, fig_pos(2)-pos(4)/numlines * (numlines - numpercolumn)+.01, pos(3), pos(4)]);
     case {'southwest'}
+        new_pos = [fig_pos(1), fig_pos(2)-pos(4)/numlines * (numlines - numpercolumn)+.01, pos(3), pos(4)];
 %         set(legend_h, 'position', [fig_pos(1) fig_pos(2)-pos(4)/2+pos(4)/4 pos(3) pos(4)]);
-        set(legend_h, 'position', [fig_pos(1), fig_pos(2)-pos(4)/numlines * (numlines - numpercolumn)+.01, pos(3), pos(4)]);
         
 end
 
 % display box around legend
 if boxon,
-    pos = get(legend_h, 'position');
+%     pos = get(legend_h, 'position');
+    pos = new_pos;
     orgHeight = pos(4);
     % old
 %     pos(4) = orgHeight/numlines*numpercolumn;
@@ -149,5 +152,8 @@ if boxon,
     pos(3) = pos(3) + .01;
     pos(2)=pos(2) + orgHeight-pos(4);
     pos(1) = pos(1);
-    annotation('rectangle',pos)
+    annotation('rectangle',pos);
 end
+
+% put into position after putting the box
+set(legend_h, 'position', new_pos);

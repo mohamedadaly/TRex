@@ -214,11 +214,12 @@ eval(plt);
     hold on;
     
     legends = cell(size(results));
+    handles = [];
     for a = 1:length(algs)
       res = results{a};
       alg = algs{a};
       
-      plot(res.iter, res.snrs, 'Color',alg.clr, ...
+      handles(a) = plot(res.iter, res.snrs, 'Color',alg.clr, ...
         'LineStyle',alg.lstyle, 'Marker', alg.marker, ...
         'LineWidth',1);
             
@@ -228,15 +229,18 @@ eval(plt);
     xlabel('Iteration');
     ylabel('SNR (db)');
     xlim([1 arg.iter]);
-    hleg = columnlegend(arg.legend_cols, legends, 'boxon',...
-      'Location','SouthEast');
+    hleg = legendflex(handles, legends, 'anchor',{'se','se'}, ...
+      'ref',gca, 'buffer',[-10 2], 'ncol',arg.legend_cols, ...
+      'box','on', 'padding',[2, 1, 6]);
+%     hleg = columnlegend(arg.legend_cols, legends, 'boxon',...
+%       'Location','SouthEast');
 %     set(hleg, 'box','off');
 %     legHdl = gridLegend(gca, arg.legend_cols, legends, ...
 %       'Location','SouthEast'); 
 
     
     % save figure
-    save_fig(snr_file, snr_fig, 'pdf');
+    save_fig(snr_file, snr_fig, 'pdf', '-fonts');
 
     % Residual plot
     if arg.plot_resid
