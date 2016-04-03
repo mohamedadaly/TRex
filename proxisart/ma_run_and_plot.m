@@ -351,7 +351,10 @@ eval(plt);
     xlabel('Number of Projections');
     ylabel('SNR (db)');
 %     xlim([1 arg.iter]);
-    legend(legends, 'Location','NorthWest');
+%     legend(legends, 'Location','NorthWest');
+    hleg = legendflex(legends, 'anchor',{'nw','nw'}, ...
+      'ref',gca, 'buffer',[2 -2], 'ncol',arg.legend_cols, ...
+      'box','on', 'padding',[2, 1, 6]);
 
     % save figure
     save_fig(snr_file, snr_fig, 'pdf');
