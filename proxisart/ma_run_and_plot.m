@@ -175,23 +175,8 @@ eval(plt);
       for a = 1:length(algs)
         alg = algs{a};
 
-
-        switch alg.type
-        case 'astra'
-          % input params
-          in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
-            'gt_vol',P, 'sino',sinogram, 'proj_id',proj_id, ...
-            'wi',ones(size(sinogram)), 'fbp',fbp, 'prox_in',zeros(size(P)));
-          % run
-          fprintf('Alg %s\n', alg.name);
-          alg.alg_params.iter = arg.iter;
-          % residual
-          alg.alg_params.option.ComputeIterationResidual = arg.plot_resid;          
-
-          [rec, tt, ss, it, rs] = ma_alg_astra(alg.alg, in_params, ...
-            alg.alg_params);
-        case 'irt'
-        end
+        % run
+        [rec, tt, ss, it, rs] = run_alg(alg);
 
         % put results
       %   results{a}.rec = rec;
@@ -301,22 +286,8 @@ eval(plt);
         for a = 1:length(algs)
           alg = algs{a};          
 
-          switch alg.type
-          case 'astra'
-            % input params
-            in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
-              'gt_vol',P, 'sino',sinogram, 'proj_id',proj_id, ...
-              'wi',ones(size(sinogram)), 'fbp',fbp, 'prox_in',zeros(size(P)));
-            % run
-            fprintf('Alg %s\n', alg.name);
-            alg.alg_params.iter = arg.iter;
-            % residual
-            alg.alg_params.option.ComputeIterationResidual = arg.plot_resid;          
-
-            [rec, tt, ss, it, rs] = ma_alg_astra(alg.alg, in_params, ...
-              alg.alg_params);
-          case 'irt'
-          end
+          % run
+          [rec, tt, ss, it, rs] = run_alg(alg);
 
           % put results
           results{a}.snrs(end+1) = ss(end);
@@ -355,34 +326,111 @@ eval(plt);
     hleg = legendflex(legends, 'anchor',{'nw','nw'}, ...
       'ref',gca, 'buffer',[2 -2], 'ncol',arg.legend_cols, ...
       'box','on', 'padding',[2, 1, 6]);
+    set(gca, 'xtick',arg.num_projs);
 
     % save figure
     save_fig(snr_file, snr_fig, 'pdf');
-
-%     % Residual plot
-%     if arg.plot_resid
-%       resid_fig = figure('Name',resid_file, 'Position',[1, 1, 800, 800]);    
-%       hold on;
-%       legends = cell(size(results));
-%       for a = 1:length(algs)
-%         res = results{a};
-%         alg = algs{a};
-% 
-%         hold on;
-%         plot(res.iter, 20*log10(res.resid), 'Color',alg.clr, ...
-%           'LineStyle',alg.lstyle, 'Marker', alg.marker, ...
-%           'LineWidth',1);
-% 
-%         legends{a} = alg.name;
-%       end
-%       xlabel('Iteration');
-%       ylabel('Residual (db)');
-%       xlim([1 arg.iter]);
-%       legend(legends, 'Location','NorthEast');    
-% 
-%       save_fig(resid_file, resid_fig, 'pdf');
-%     end          
-%     end
   end
+
+  % Plot SNR per number of projections
+  function per_noise_level
+    % figure file
+    pat = sprintf('%s/%s%s-ph_%s-%d_nt_%s-it_%d-np_%d-p_%s', ...
+      arg.path, arg.prefix, plt, arg.phan, arg.phan_size, arg.noise_type, ...
+      arg.iter, arg.num_proj, arg.proj_type);
+    fig_file = [pat];
+    mat_file = [pat '.mat'];
+    
+    % figure file
+    snr_file = [fig_file '-snr'];
+    resid_file = [fig_file '-resid'];
+
+    fprintf('Fig %s\n', fig_file);
+    
+    results = cell(size(algs));
+
+    if arg.recompute
+      % init structure
+      for a = 1:length(algs)
+        results{a} = struct('snrs',[], 'resid',[]);
+      end
+
+      % loop over num_proj
+      for n=1:length(arg.noise_levels)
+        % put in arg
+        arg.noise_level = arg.noise_levels(n);
+        % init
+        init;
+        
+        % loop over algorithms
+        for a = 1:length(algs)
+          alg = algs{a};          
+
+          % run
+          [rec, tt, ss, it, rs] = run_alg(alg);
+
+          % put results
+          results{a}.snrs(end+1) = ss(end);
+          results{a}.resid(end+1) = rs(end);
+        end
+      end
+
+      % save
+      save(mat_file, 'results', 'algs'); 
+    else
+      rr = load(mat_file);
+      results = rr.results;
+      algs = rr.algs;
+    end
+
+    % SNR plot
+    snr_fig = figure('Name',snr_file, 'Position',[1, 1, 800, 800]);
+    hold on;
+
+    legends = cell(size(results));
+    for a = 1:length(algs)
+      res = results{a};
+      alg = algs{a};
+
+      plot(arg.noise_levels * 100, res.snrs, 'Color',alg.clr, ...
+        'LineStyle',alg.lstyle, 'Marker', alg.marker, ...
+        'LineWidth',1);
+
+      legends{a} = alg.name;
+    end
+%     title(sprintf('Phantom %s', phan));
+    xlabel('Noise Level \sigma (%)');
+    ylabel('SNR (db)');
+%     xlim([1 arg.iter]);
+%     legend(legends, 'Location','NorthWest');
+    hleg = legendflex(legends, 'anchor',{'nw','nw'}, ...
+      'ref',gca, 'buffer',[2 -2], 'ncol',arg.legend_cols, ...
+      'box','on', 'padding',[2, 1, 6]);
+    set(gca, 'xtick',arg.num_projs);
+
+    % save figure
+    save_fig(snr_file, snr_fig, 'pdf');
+  end
+
+  % run the algorithm
+  function [rec, tt, ss, it, rs] = run_alg(alg)
+    switch alg.type
+    case 'astra'
+      % input params
+      in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
+        'gt_vol',P, 'sino',sinogram, 'proj_id',proj_id, ...
+        'wi',ones(size(sinogram)), 'fbp',fbp, 'prox_in',zeros(size(P)));
+      % run
+      fprintf('Alg %s\n', alg.name);
+      alg.alg_params.iter = arg.iter;
+      % residual
+      alg.alg_params.option.ComputeIterationResidual = arg.plot_resid;          
+
+      [rec, tt, ss, it, rs] = ma_alg_astra(alg.alg, in_params, ...
+        alg.alg_params);
+    case 'irt'
+    end
+  end
+
 end
 

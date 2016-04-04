@@ -13,7 +13,10 @@
 \DeclareMathOperator{\prox}{prox}
 \DeclareMathOperator{\diag}{diag}
 
-
+% Stretch cells vertically
+\usepackage{array}
+\renewcommand*\arraystretch{1.5}
+%\setlength{\extrarowheight}{2pt}
 
 \usepackage{babel}
 \end_preamble
@@ -729,6 +732,10 @@ name "sec:Iterative-Algorithms"
 
 \end_layout
 
+\begin_layout Subsection
+Overview
+\end_layout
+
 \begin_layout Standard
 The tomography problem can be simplified to solving a linear system 
 \begin_inset CommandInset citation
@@ -816,14 +823,14 @@ reference "tab:Iterative-Methods"
 
 \end_inset
 
- has a summary of the comparison.
+ provides a summary of their important properties.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float table
 wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -841,8 +848,8 @@ center
 
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="4">
-<features rotate="0" tabularvalignment="middle">
-<column alignment="center" valignment="top">
+<features rotate="0" booktabs="true" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -878,7 +885,7 @@ Solved Problem
 \begin_inset Text
 
 \begin_layout Plain Layout
-Convergence
+Convergent
 \end_layout
 
 \end_inset
@@ -905,13 +912,13 @@ key "gordon1970algebraic"
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\begin{array}{ccc}
-x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{p_{i}-\sum_{k}a_{ik}x_{k}^{(t)}}{\sum_{k}a_{ik}^{2}}a_{ij}\\
-x^{(t+1)} & = & x^{(t)}+\alpha A_{i}^{T}R\left(p-A_{i}x^{(t)}\right)
-\end{array}$
+\begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{p_{i}-\sum_{k}a_{ik}x_{k}^{(t)}}{\sum_{k}a_{ik}^{2}}a_{ij}\\
+x^{(t+1)} & =x^{(t)}+\alpha A_{i}^{T}R^{-1}\left(p-A_{i}x^{(t)}\right)
+\end{aligned}
+$
 \end_inset
 
- 
+
 \end_layout
 
 \end_inset
@@ -920,7 +927,10 @@ x^{(t+1)} & = & x^{(t)}+\alpha A_{i}^{T}R\left(p-A_{i}x^{(t)}\right)
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\mbox{ s.t. }Ax=p.$
+\begin_inset Formula $\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
+ & \mbox{s.t. }Ax=p
+\end{aligned}
+$
 \end_inset
 
 
@@ -932,7 +942,7 @@ x^{(t+1)} & = & x^{(t)}+\alpha A_{i}^{T}R\left(p-A_{i}x^{(t)}\right)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Yes.
+Yes
 \end_layout
 
 \end_inset
@@ -959,6 +969,12 @@ key "gilbert1972iterative"
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i=1}^{m}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
+x^{(t+1)} & =x^{(t)}+\alpha C^{-1}A^{T}R^{-1}\left(p-Ax^{(t)}\right)
+\end{aligned}
+$
+\end_inset
+
 
 \end_layout
 
@@ -968,6 +984,9 @@ key "gilbert1972iterative"
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset Formula $x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{R^{-1}}^{2}$
+\end_inset
+
 
 \end_layout
 
@@ -977,7 +996,7 @@ key "gilbert1972iterative"
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Yes
 \end_layout
 
 \end_inset
@@ -1004,6 +1023,12 @@ key "andersen1984simultaneous,andersen1989algebraic"
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i\in S}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
+x^{(t+1)} & =x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
+\end{aligned}
+$
+\end_inset
+
 
 \end_layout
 
@@ -1013,6 +1038,12 @@ key "andersen1984simultaneous,andersen1989algebraic"
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}x^{\star}\approx & \argmin_{x}\Vert x\Vert_{2}^{2}\\
+ & \mbox{s.t. }Ax=p
+\end{aligned}
+$
+\end_inset
+
 
 \end_layout
 
@@ -1022,7 +1053,7 @@ key "andersen1984simultaneous,andersen1989algebraic"
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+No
 \end_layout
 
 \end_inset
@@ -1049,6 +1080,12 @@ key "censor2002block"
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
+x^{(t+1)} & =x^{(t)}+\alpha C^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
+\end{aligned}
+$
+\end_inset
+
 
 \end_layout
 
@@ -1058,6 +1095,12 @@ key "censor2002block"
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
+ & \mbox{s.t. }Ax=p
+\end{aligned}
+$
+\end_inset
+
 
 \end_layout
 
@@ -1067,7 +1110,7 @@ key "censor2002block"
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Yes
 \end_layout
 
 \end_inset
@@ -1094,6 +1137,12 @@ key "censor2001bicav"
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i\in S}\{a_{ij}\ne0\}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}^{2}}a_{ij}\\
+x^{(t+1)} & =x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
+\end{aligned}
+$
+\end_inset
+
 
 \end_layout
 
@@ -1103,6 +1152,12 @@ key "censor2001bicav"
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
+ & \mbox{s.t. }Ax=p
+\end{aligned}
+$
+\end_inset
+
 
 \end_layout
 
@@ -1112,7 +1167,7 @@ key "censor2001bicav"
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Yes
 \end_layout
 
 \end_inset
@@ -1139,6 +1194,12 @@ key "erdogan1999ordered"
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{\left(\sum_{k=1}^{m}a_{kj}\sum_{i=1}^{n}a_{ki}\right)}\sum_{i\in S}\left(p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}\right)a_{ij}\\
+x^{(t+1)} & =x^{(t)}+\alpha sC^{-1}A_{S}^{T}\left(p-A_{S}x^{(t)}\right)
+\end{aligned}
+$
+\end_inset
+
 
 \end_layout
 
@@ -1148,6 +1209,9 @@ key "erdogan1999ordered"
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset Formula $x^{\star}\approx\Vert Ax-p\Vert_{2}^{2}$
+\end_inset
+
 
 \end_layout
 
@@ -1157,7 +1221,7 @@ key "erdogan1999ordered"
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+No
 \end_layout
 
 \end_inset
@@ -1174,14 +1238,24 @@ key "erdogan1999ordered"
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Iterative Methods
+Summary of iterative methods and their properties.
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:Iterative-Methods"
 
 \end_inset
 
+ The first line in the update step is voxel-based, while the second is the
+ matrix formulation.
+ See Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Iterative-Algorithms"
 
+\end_inset
+
+ for details.
 \end_layout
 
 \end_inset
@@ -1303,7 +1377,7 @@ x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\mbox{ s.t. }Ax=p.
  In matrix notation, this can be also expressed as 
 \begin_inset Formula 
 \[
-x^{(t+1)}=x^{(t)}+\alpha A_{i}^{T}R\left(p-A_{i}x^{(t)}\right),
+x^{(t+1)}=x^{(t)}+\alpha A_{i}^{T}R^{-1}\left(p-A_{i}x^{(t)}\right)
 \]
 
 \end_inset
@@ -1321,7 +1395,7 @@ th row of
 \end_inset
 
  and 
-\begin_inset Formula $R\in\mathbb{R}^{m\times m}=\diag(r_{i}^{-1})$
+\begin_inset Formula $R\in\mathbb{R}^{m\times m}=\diag(r_{i})$
 \end_inset
 
  is a diagonal matrix where 
@@ -1365,21 +1439,21 @@ i.e.
  The update equation becomes 
 \begin_inset Formula 
 \begin{eqnarray*}
-x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{1}{\sum_{i}a_{ij}}\sum_{i=1}^{m}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}.
+x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i=1}^{m}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}.
 \end{eqnarray*}
 
 \end_inset
 
- In matrix form thsi becomes 
+ In matrix form this becomes 
 \begin_inset Formula 
 \[
-x^{(t+1)}=x^{(t)}+\alpha CA^{T}R\left(p-Ax^{(t)}\right)
+x^{(t+1)}=x^{(t)}+\alpha C^{-1}A^{T}R^{-1}\left(p-Ax^{(t)}\right)
 \]
 
 \end_inset
 
  where 
-\begin_inset Formula $C\in\mathbb{R}^{n\times n}=\diag(c_{j}^{-1})$
+\begin_inset Formula $C\in\mathbb{R}^{n\times n}=\diag(c_{j})$
 \end_inset
 
  is a diagonal matrix whore 
@@ -1395,7 +1469,7 @@ x^{(t+1)}=x^{(t)}+\alpha CA^{T}R\left(p-Ax^{(t)}\right)
 \end_inset
 
  and 
-\begin_inset Formula $R=\diag(r_{i}^{-1})$
+\begin_inset Formula $R=\diag(r_{i})$
 \end_inset
 
  where 
@@ -1411,7 +1485,21 @@ x^{(t+1)}=x^{(t)}+\alpha CA^{T}R\left(p-Ax^{(t)}\right)
 \end_inset
 
 .
- It has been shown that 
+ In each iteration, SIRT performs a full forward projection 
+\begin_inset Formula $Ax^{(t)}$
+\end_inset
+
+, computes the residual, and then backprojects it.
+ The diagonal matrices 
+\begin_inset Formula $R$
+\end_inset
+
+ and 
+\begin_inset Formula $C$
+\end_inset
+
+ perform scaling for the relevant entries.
+ It has been shown 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "censor2002block,jiang2003convergence"
@@ -1421,82 +1509,429 @@ key "censor2002block,jiang2003convergence"
  that SIRT converges to a solution of the WLS problem 
 \begin_inset Formula 
 \[
-x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{R}^{2}=\min_{x}(Ax-p)^{T}R(Ax-p).
+x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{R^{-1}}^{2}=\min_{x}(Ax-p)^{T}R^{-1}(Ax-p)
 \]
 
 \end_inset
 
- 
+for 
+\begin_inset Formula $0<\alpha<2$
+\end_inset
+
+.
+ SIRT has been shown 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gregor2015comparison"
+
+\end_inset
+
+ to be closely related, and in fact quite equivalent in terms of convergence
+ properties, to the OS-SQS method.
+ It has also been shown to converge best for 
+\begin_inset Formula $\alpha=2-\epsilon$
+\end_inset
+
+ for a small 
+\begin_inset Formula $0<\epsilon\ll1$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
-SART has been shown to provide better reconstruction quality, and is amenable
- to parallelization using graphics hardware 
+
+\series bold
+SART 
+\series default
+
 \begin_inset CommandInset citation
 LatexCommand cite
-key "mueller1999fast,mueller2000rapid"
+key "andersen1984simultaneous,andersen1989algebraic"
+
+\end_inset
+
+ is a tradeoff between ART and SIRT, in that it updates the volume after
+ processing all the rows in a particular projection view.
+ The update equation becomes 
+\begin_inset Formula 
+\begin{eqnarray*}
+x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{1}{\sum_{i\in S}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}
+\end{eqnarray*}
+
+\end_inset
+
+for 
+\begin_inset Formula $S\in\mathcal{S}$
+\end_inset
+
+ where the summation 
+\begin_inset Formula $i\in S$
+\end_inset
+
+ is across all rows (rays) in projection view 
+\begin_inset Formula $S$
+\end_inset
+
+ for all views 
+\begin_inset Formula $\mathcal{S}$
+\end_inset
+
+.
+ This has been shown to provide faster convergence than ART and better reconstru
+ction results than SIRT 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "mueller2000rapid,mueller1999fast"
 
 \end_inset
 
 .
- It also has the advantage of having an intuitive geometric interpretation
- for the update equation (see Eq.
+ In matrix form 
+\begin_inset Formula 
+\[
+x^{(t+1)}=x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
+\]
+
+\end_inset
+
+ where 
+\begin_inset Formula $A_{S}\in\mathbb{R}^{s\times n}$
+\end_inset
+
+ contains the 
+\begin_inset Formula $s$
+\end_inset
+
+ rows in projection 
+\begin_inset Formula $S$
+\end_inset
+
+, 
+\begin_inset Formula $R$
+\end_inset
+
+ contains the row sums as in SIRT, while 
+\begin_inset Formula $C_{S}=\diag(c_{j}^{S})$
+\end_inset
+
+ contains the column sums restricted to the rows in 
+\begin_inset Formula $S$
+\end_inset
+
+ i.e.
  
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:SART-update"
+\begin_inset Formula $c_{j}^{S}=\sum_{i\in S}a_{ij}$
+\end_inset
+
+.
+ There is still no proof of convergence for SART in the literature, but
+ there are proofs for variants of SART, such as BSSART and BICAV below,
+ that converge to a minimum-norm solution like ART.
+ This motivates us to assume that SART solves approximately the minimum-norm
+ solution 
+\begin_inset Formula 
+\[
+x^{\star}\approx\argmin_{x}\Vert x\Vert_{2}^{2}\mbox{ s.t. }Ax=p.
+\]
 
 \end_inset
 
-).
- SART is based on ART, an iterative method dating back to Kaczmarz in 1937
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+BSSART
+\series default
  
 \begin_inset CommandInset citation
 LatexCommand cite
-key "kaczmarz1937angenaherte"
+key "censor2002block"
 
 \end_inset
 
-.
- n 
-\begin_inset Formula $x^{\star}$
-\end_inset
-
- of minimum norm to the linear system above 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "tanabe1971projection"
-
-\end_inset
-
-.
- In SART, instead of performing the update for each row of 
+ is a slight simplification of SART, where the column sums in the update
+ equation are done over 
+\emph on
+all
+\emph default
+ the rows of 
 \begin_inset Formula $A$
 \end_inset
 
-, the updates of a subset of the rows are aggregated and applied 
-\emph on
-simultaneously
-\emph default
- at the same time.
- This provides more stability against noise and faster convergence for SART
+ instead of just over the rows in the current view, which is quite similar
+ to SIRT.
+ The update equation becomes 
+\begin_inset Formula 
+\begin{eqnarray*}
+x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}
+\end{eqnarray*}
+
+\end_inset
+
+ for 
+\begin_inset Formula $S\in\mathcal{S}$
+\end_inset
+
+ , which provides a slight speedup since the column sums are now independent
+ of the iteration.
+ The matrix formulation becomes 
+\begin_inset Formula 
+\[
+x^{(t+1)}=x^{(t)}+\alpha C^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
+\]
+
+\end_inset
+
+ where the diagonal matrices are both indepdendent of the projection view
+ 
+\begin_inset Formula $S$
+\end_inset
+
+ as in SIRT.
+ This has been shown 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "censor2002block"
+
+\end_inset
+
+ to converge to the minimum norm solution 
+\begin_inset Formula 
+\[
+x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\mbox{ s.t. }Ax=p
+\]
+
+\end_inset
+
+ as ART for 
+\begin_inset Formula $0<\alpha<2$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+BICAV
+\series default
  
 \begin_inset CommandInset citation
 LatexCommand cite
-key "mueller2000rapid,andersen1989algebraic"
+key "censor2001bicav,censor2002block"
 
 \end_inset
 
+ is another closely-related algorithm to SART.
+ It updates the volume after each projection view according to 
+\begin_inset Formula 
+\begin{eqnarray*}
+x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{1}{c_{j}^{S}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}^{2}}a_{ij}
+\end{eqnarray*}
+
+\end_inset
+
+for 
+\begin_inset Formula $S\in\mathcal{S}$
+\end_inset
+
+ where 
+\begin_inset Formula $c_{j}^{S}=\sum_{i\in S}\{a_{ij}\ne0\}$
+\end_inset
+
+ and 
+\begin_inset Formula $\{a_{ij}\ne0\}=1$
+\end_inset
+
+ when 
+\begin_inset Formula $a_{ij}$
+\end_inset
+
+ is non-zero is 0 otherwise.
+ The difference from SART is that it computes the squared norm of the rows
+ of 
+\begin_inset Formula $A$
+\end_inset
+
+ and counts the number of non-zero entries in the columns of 
+\begin_inset Formula $A$
+\end_inset
+
 .
- This is also related to another class of algorithms called Ordered Subset
- algorithms 
+ The matrix formulation is 
+\begin_inset Formula 
+\[
+x^{(t+1)}=x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
+\]
+
+\end_inset
+
+ where now 
+\begin_inset Formula $r_{i}=\sum_{j}a_{ij}^{2}=\Vert A_{i}\Vert_{2}^{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $C_{S}=\diag(c_{j}^{S})$
+\end_inset
+
+.
+ It is shown 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "hudson1994accelerated,erdogan1999ordered,kim2013ordered,nien2015fast"
+key "censor2002block"
 
 \end_inset
 
+ that BICAV converges to the minimum-norm solution 
+\begin_inset Formula 
+\[
+\min_{x}\Vert x\Vert^{2}\mbox{ s.t. }Ax=p
+\]
+
+\end_inset
+
+ for 
+\begin_inset Formula $0<\alpha<2$
+\end_inset
+
 .
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+OS-SQS 
+\series default
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "erdogan1999ordered,kim2013accelerating,kim2015combining,nien2015fast"
+
+\end_inset
+
+ is closely related to SART.
+ It is usually derived from a majorization-minimization perspective 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "depierro1994modified,erdogan1999ordered,kim2013accelerating,kim2015combining"
+
+\end_inset
+
+, but with a specific choice of surrogate functions and parameters 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kim2013accelerating"
+
+\end_inset
+
+ the update equation becomes
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{s}{c_{j}}\sum_{i\in S}\left(p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}\right)a_{ij}
+\end{eqnarray*}
+
+\end_inset
+
+for 
+\begin_inset Formula $S\in\mathcal{S}$
+\end_inset
+
+ where 
+\begin_inset Formula $s$
+\end_inset
+
+ is the number of subsets 
+\begin_inset Formula $S$
+\end_inset
+
+ in 
+\begin_inset Formula $\mathcal{S}$
+\end_inset
+
+ (number of inner iterations), 
+\begin_inset Formula $c_{j}=\left(\sum_{k=1}^{m}a_{kj}\sum_{i=1}^{n}a_{ki}\right)$
+\end_inset
+
+, and in general the set 
+\begin_inset Formula $S$
+\end_inset
+
+ can contain more than one projection view.
+ In matrix form it becomes 
+\begin_inset Formula 
+\[
+x^{(t+1)}=x^{(t)}+\alpha sC^{-1}A_{S}^{T}\left(p-A_{S}x^{(t)}\right)
+\]
+
+\end_inset
+
+ where the matrix 
+\begin_inset Formula $C=\diag(A^{T}A\mathbf{1}_{m})=\diag(c_{j})$
+\end_inset
+
+ where 
+\begin_inset Formula $\mathbf{1}_{m}$
+\end_inset
+
+ is the vector of 
+\begin_inset Formula $m$
+\end_inset
+
+ ones.
+ OS-SQS is a special case of the SQS method, which processes all the rows
+ of 
+\begin_inset Formula $A$
+\end_inset
+
+ at once like SIRT.
+ SQS has been shown 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "erdogan1999ordered"
+
+\end_inset
+
+ to converge to a least square solution 
+\begin_inset Formula 
+\[
+x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{2}^{2},
+\]
+
+\end_inset
+
+ however, the OS-SQS is not known to converge.
+ Therefore, like SART, we assume that it solves the LS problem above approximate
+ly.
+ 
+\end_layout
+
+\begin_layout Subsection
+Experimental Comparison
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Section
+SART Proximal Operator
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:SART-Proximal-Operator"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1556,17 +1991,6 @@ where
 tion terms e.g.
  smoothing norms or sparsity inducing norms, which otherwise is not generally
  easy.
-\end_layout
-
-\begin_layout Section
-SART Proximal Operator
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:SART-Proximal-Operator"
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsection
