@@ -290,8 +290,12 @@ eval(plt);
           [rec, tt, ss, it, rs] = run_alg(alg);
 
           % put results
-          results{a}.snrs(end+1) = ss(end);
-          results{a}.resid(end+1) = rs(end);
+          if arg.max_snr 
+            results{a}.snrs(end+1) = max(ss);
+          else
+            results{a}.snrs(end+1) = ss(end);
+          end
+%           results{a}.resid(end+1) = rs(end);
         end
       end
 
@@ -403,13 +407,44 @@ eval(plt);
     ylabel('SNR (db)');
 %     xlim([1 arg.iter]);
 %     legend(legends, 'Location','NorthWest');
-    hleg = legendflex(legends, 'anchor',{'nw','nw'}, ...
-      'ref',gca, 'buffer',[2 -2], 'ncol',arg.legend_cols, ...
+    hleg = legendflex(legends, 'anchor',{'ne','ne'}, ...
+      'ref',gca, 'buffer',[-2 -2], 'ncol',arg.legend_cols, ...
       'box','on', 'padding',[2, 1, 6]);
-    set(gca, 'xtick',arg.num_projs);
+    set(gca, 'xtick',arg.noise_levels * 100);
 
     % save figure
     save_fig(snr_file, snr_fig, 'pdf');
+  end
+
+  % Plot Phantom image 
+  function phantom
+    % phantom and size
+    phan = arg.phan;
+    phan_size = arg.phan_size;
+    phan_file = sprintf('phantoms/%s-%d.mat', phan, phan_size);
+
+    % figure file
+    pat = sprintf('%s/%s%s-ph_%s-%d', ...
+      arg.path, arg.prefix, plt, arg.phan, arg.phan_size);
+    fig_file = [pat];
+
+    % load phantom
+    switch phan
+    case {'sl', 'mod-sl', 'ncat'}
+      P = load(phan_file);
+      P = P.P;
+
+    case 'mouse'
+      pp = load(phan_file);
+      P = pp.P;
+    end
+    
+    % plot
+    figh = figure('Name',fig_file, 'Position',[1, 1, 800, 800]);
+    imshow(P, arg.range); colorbar;
+    
+    save_fig(fig_file, figh, 'pdf');
+    
   end
 
   % run the algorithm
