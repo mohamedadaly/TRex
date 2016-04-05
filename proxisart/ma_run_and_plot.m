@@ -161,7 +161,7 @@ eval(plt);
     pat = sprintf('%s/%s%s-ph_%s-%d_nt_%s-nl_%.3f-np_%d-p_%s', ...
       arg.path, arg.prefix, plt, arg.phan, arg.phan_size, arg.noise_type, ...
       arg.noise_level, arg.num_proj, arg.proj_type);
-    fig_file = pat; if arg.per_iter, fig_file = [fig_file '_t-1']; end
+    fig_file = pat; if arg.per_time, fig_file = [fig_file '_t-1']; end
     mat_file = [pat '.mat'];
     
     % initialize
@@ -468,6 +468,10 @@ eval(plt);
       in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
         'gt_vol',P, 'sino',sinogram, 'proj_id',proj_id, ...
         'wi',ones(size(sinogram)), 'fbp',fbp, 'prox_in',zeros(size(P)));
+      % put fbp in prox input?
+      if isfield(arg,'prox_fbp') && arg.prox_fbp
+        in_params.prox_in = fbp;
+      end
       % run
       fprintf('Alg %s\n', alg.name);
       alg.alg_params.iter = arg.iter;

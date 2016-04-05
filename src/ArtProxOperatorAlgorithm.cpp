@@ -119,7 +119,7 @@ CArtProxOperatorAlgorithm::~CArtProxOperatorAlgorithm()
 bool CArtProxOperatorAlgorithm::initialize(const Config& _cfg)
 {
 	assert(_cfg.self);
-	ConfigStackCheck<CAlgorithm> CC("BicavProxOperator", this, _cfg);
+	ConfigStackCheck<CAlgorithm> CC("ArtProxOperator", this, _cfg);
 	
 	// if already initialized, clear first
 	if (m_bIsInitialized) {

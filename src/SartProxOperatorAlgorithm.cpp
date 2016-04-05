@@ -118,7 +118,7 @@ CSartProxOperatorAlgorithm::~CSartProxOperatorAlgorithm()
 bool CSartProxOperatorAlgorithm::initialize(const Config& _cfg)
 {
 	assert(_cfg.self);
-	ConfigStackCheck<CAlgorithm> CC("PSartAlgorithm", this, _cfg);
+	ConfigStackCheck<CAlgorithm> CC("SartProxOperator", this, _cfg);
 	
 	// if already initialized, clear first
 	if (m_bIsInitialized) {
@@ -174,7 +174,7 @@ bool CSartProxOperatorAlgorithm::initialize(const Config& _cfg)
 
 	// Input volume
 	XMLNode node = _cfg.self.getSingleNode("ProxInputDataId");
-	ASTRA_CONFIG_CHECK(node, "PSART", "No Proximal Input tag specified.");
+	ASTRA_CONFIG_CHECK(node, "SartProxOperator", "No Proximal Input tag specified.");
 	int id = boost::lexical_cast<int>(node.getContent());
 	m_pProxInput = dynamic_cast<CFloat32VolumeData2D*>(CData2DManager::getSingleton().get(id));
 	CC.markNodeParsed("ProxInputDataId");
@@ -196,7 +196,8 @@ bool CSartProxOperatorAlgorithm::initialize(const Config& _cfg)
 bool CSartProxOperatorAlgorithm::_check()
 {
 	// check base class
-	ASTRA_CONFIG_CHECK(CSartAlgorithm::_check(), "PSART", "Error in ReconstructionAlgorithm2D initialization");
+	ASTRA_CONFIG_CHECK(CSartAlgorithm::_check(), "SartProxOperator",
+		"Error in ReconstructionAlgorithm2D initialization");
 
 	return true;
 }
