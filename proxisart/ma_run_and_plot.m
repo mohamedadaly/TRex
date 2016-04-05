@@ -152,12 +152,16 @@ eval(plt);
 
   % Plot SNR per iteration
   function per_iter
+    % plot per time or per iteration
+    if ~isfield(arg,'per_time') 
+      arg.per_time = 0;
+    end
     
     % figure file
     pat = sprintf('%s/%s%s-ph_%s-%d_nt_%s-nl_%.3f-np_%d-p_%s', ...
       arg.path, arg.prefix, plt, arg.phan, arg.phan_size, arg.noise_type, ...
       arg.noise_level, arg.num_proj, arg.proj_type);
-    fig_file = [pat];
+    fig_file = pat; if arg.per_iter, fig_file = [fig_file '_t-1']; end
     mat_file = [pat '.mat'];
     
     % initialize
@@ -204,16 +208,25 @@ eval(plt);
       res = results{a};
       alg = algs{a};
       
-      handles(a) = plot(res.iter, res.snrs, 'Color',alg.clr, ...
+      if arg.per_time
+        xs = res.times;
+      else
+        xs = res.iter;
+      end
+      handles(a) = plot(xs, res.snrs, 'Color',alg.clr, ...
         'LineStyle',alg.lstyle, 'Marker', alg.marker, ...
         'LineWidth',1);
             
       legends{a} = alg.name;
     end
 %     title(sprintf('Phantom %s', phan));
-    xlabel('Iteration');
-    ylabel('SNR (db)');
-    xlim([1 arg.iter]);
+    if arg.per_time
+      xlabel('Time (sec)');
+    else
+      xlabel('Iteration');
+      xlim([1 arg.iter]);
+    end
+    ylabel('SNR (db)');    
     hleg = legendflex(handles, legends, 'anchor',{'se','se'}, ...
       'ref',gca, 'buffer',[-10 2], 'ncol',arg.legend_cols, ...
       'box','on', 'padding',[2, 1, 6]);
@@ -327,8 +340,8 @@ eval(plt);
     ylabel('SNR (db)');
 %     xlim([1 arg.iter]);
 %     legend(legends, 'Location','NorthWest');
-    hleg = legendflex(legends, 'anchor',{'nw','nw'}, ...
-      'ref',gca, 'buffer',[2 -2], 'ncol',arg.legend_cols, ...
+    hleg = legendflex(legends, 'anchor',{'se','se'}, ...
+      'ref',gca, 'buffer',[-2 2], 'ncol',arg.legend_cols, ...
       'box','on', 'padding',[2, 1, 6]);
     set(gca, 'xtick',arg.num_projs);
 

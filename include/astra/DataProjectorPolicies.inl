@@ -813,7 +813,9 @@ SartProxBPPolicy::SartProxBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 						   CFloat32ProjectionData2D* _pY, 
 						   CFloat32ProjectionData2D* _pC, 
 						   float32 _fAlhpa, float32 _fSqrt2Lambda,
-						   bool _bBICAV) 
+						   bool _bBICAV,						   
+						   bool _bUseMinConstraint, float32 _fMinConstraintVal,
+						   bool _bUseMaxConstraint, float32 _fMaxConstraintVal) 
 {
 	m_pReconstruction = _pReconstruction;
 	m_pSinogram = _pSinogram;
@@ -824,6 +826,10 @@ SartProxBPPolicy::SartProxBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 	m_fAlpha = _fAlhpa;
 	m_fSqrt2Lambda = _fSqrt2Lambda;
 	m_bBICAV = _bBICAV;
+	m_bUseMinConstraint = _bUseMinConstraint;
+	m_fMinConstraintVal = _fMinConstraintVal;
+	m_bUseMaxConstraint = _bUseMaxConstraint;
+	m_fMaxConstraintVal = _fMaxConstraintVal;
 
 	//// init C as a copy from Y
 	//m_pC = new CFloat32ProjectionData2D(m_pY->getGeometry());
@@ -903,7 +909,17 @@ void SartProxBPPolicy::rayPosterior(int _iRayIndex)
 //----------------------------------------------------------------------------------------
 void SartProxBPPolicy::pixelPosterior(int _iVolumeIndex) 
 {
-	// nothing
+	// Quick check to quit early.
+	if (!m_bUseMaxConstraint && !m_bUseMinConstraint) return;
+
+	float32* pfVoxel = &(m_pReconstruction->getData()[_iVolumeIndex]);
+	// Check limits.
+	if (m_bUseMinConstraint && *pfVoxel < m_fMinConstraintVal) {
+		*pfVoxel = m_fMinConstraintVal;
+	}
+	if (m_bUseMaxConstraint && *pfVoxel > m_fMaxConstraintVal) {
+		*pfVoxel = m_fMaxConstraintVal;
+	}
 }
 //----------------------------------------------------------------------------------------
 

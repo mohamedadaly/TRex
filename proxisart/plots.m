@@ -245,15 +245,15 @@ algs = {
   };
 
 %%
-phantoms = {'ncat', 'mod-sl'}; {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
-num_projs = 5; [15, 90]; [15, 30, 60, 90, 180]; 
+phantoms = {'mouse'}; {'ncat', 'mod-sl'}; {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
+num_projs = 90; [15, 90]; [15, 30, 60, 90, 180]; 
 noises = { 
-%   struct('noise_type', 'poisson', 'noise_levels',[1e5]), ... 5e4 1e4]), ...
-  struct('noise_type', 'gauss', 'noise_levels',[0.001])}; %.005 .01 .05 .1])}; %0.001 .003 .005 .01]) 
+%   struct('noise_type', 'poisson', 'noise_levels',[1e5])}; %, ... 5e4 1e4]), ...
+  struct('noise_type', 'gauss', 'noise_levels',[0.0])}; %.005 .01 .05 .1])}; %0.001 .003 .005 .01]) 
   
 % noise_type = 'poisson'; 'poisson'; {'gauss'};
 % noise_levels = 1e5; %[0, .005, .01, .05, .1]; %.001  1e5 for poisson
-proj_types = {'fan'}; %{'fan', 'parallel', 'mouse'};
+proj_types = {'mouse'}; %{'fan', 'parallel', 'mouse'};
 iter = 30;
 prefix = '';
 plt = 'per_iter';
@@ -267,9 +267,9 @@ for phantom = phantoms
           % put args
           arg = struct('phan',phantom, 'phan_size',512, 'path','./plots', ...
             'noise_type',noise_type, 'noise_level',noise_level, ...
-            'num_proj',num_proj, 'iter',iter, 'recompute',1, ...
+            'num_proj',num_proj, 'iter',iter, 'recompute',0, ...
             'proj_type',proj_type, 'prefix',prefix, 'plot_resid',0, ...
-            'legend_cols',2);
+            'legend_cols',2, 'per_time',1);
           % call
           ma_run_and_plot(plt, arg, algs);
         end
@@ -280,11 +280,11 @@ end
 
 %% Per proj
 
-phantoms = {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
+phantoms =  {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
 num_projs = [15, 30, 60, 90, 180]; 
 noises = { 
-  struct('noise_type', 'poisson', 'noise_levels',[1e5]), ... 5e4 1e4]), ...
-%   struct('noise_type', 'gauss', 'noise_levels',[0.01 ])}; %.001 .003 .005 .01]) 
+  struct('noise_type', 'poisson', 'noise_levels',[1e5])}; %, ... 5e4 1e4]), ...
+%   struct('noise_type', 'gauss', 'noise_levels',[0.0 ])}; %.001 .003 .005 .01]) 
   
 % noise_type = 'poisson'; 'poisson'; {'gauss'};
 % noise_levels = 1e5; %[0, .005, .01, .05, .1]; %.001  1e5 for poisson
@@ -301,7 +301,7 @@ for phantom = phantoms
         % put args
         arg = struct('phan',phantom, 'phan_size',512, 'path','./plots', ...
           'noise_type',noise_type, 'noise_level',noise_level, ...
-          'num_projs',num_projs, 'iter',iter, 'recompute',1, ...
+          'num_projs',num_projs, 'iter',iter, 'recompute',0, ...
           'proj_type',proj_type, 'prefix',prefix, 'plot_resid',0, ...
           'legend_cols',2, 'max_snr',1);
         % call

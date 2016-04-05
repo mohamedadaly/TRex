@@ -1927,7 +1927,24 @@ x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{2}^{2},
 
 \end_inset
 
- however, the OS-SQS is not known to converge.
+ and special case of 
+\emph on
+relaxed
+\emph default
+ OS-SQS converges, where the relaxation parameter becomes iteration-dependent
+ and decreases over time 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ahn2003globally"
+
+\end_inset
+
+.
+ However, OS-SQS with fixed 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ is not known to converge.
  Therefore, like SART, we assume that it solves the LS problem above approximate
 ly.
  
@@ -1988,7 +2005,10 @@ key "segars2002study"
 \end_inset
 
  mm.
- A zero-mean Gaussian noise of 0.1% of the maximum sinogram value was added
+ We assumed Poisson measurement noise with emitted intensity count 
+\begin_inset Formula $I_{0}=10^{5}$
+\end_inset
+
  to generate the noisy projections used.
 \end_layout
 
@@ -2013,9 +2033,10 @@ target "http://www.exxim-cc.com/"
 \end_inset
 
 .
- The data contains 194 projections of a fan beam geometry with 512 detectors
- of size 0.16176 mm, source-to-detector distance of 529.29 mm, source-to-isocenter
- distance of 395.73 mm, and reconstructed volume of 
+ The data contains 194 projections (over 194 degrees) of a fan beam geometry
+ with 512 detectors of size 0.16176 mm, source-to-detector distance of 529.29
+ mm, source-to-isocenter distance of 395.73 mm, and reconstructed volume
+ of 
 \begin_inset Formula $512\times512$
 \end_inset
 
@@ -2053,7 +2074,7 @@ ground truth
 \begin_inset Float figure
 wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -2253,23 +2274,39 @@ key "bjorck1996numerical"
 \end_inset
 
  at the end of each inner iteration (i.e.
- after each update step) for all methods used.
+ after each update step) using this function 
+\begin_inset Formula 
+\[
+\mbox{clip}(x)=\max(0,x)
+\]
+
+\end_inset
+
+ to get rid of negative voxel values.
  We set the number of subsets in OS-SQS to the number of projections to
  have a fair comparison with SART, since we noticed that increasing the
  number of subsets increases the convergence rate.
- We compare convergence per iteration since all methods are roughly equal
- in runtime since each outer iteration contains roughly one forward and
- one backward projection.
+ All experiments in this section are run using ASTRA running on one core
+ of an Intel Xeon E5-280 2.7 GHz with 64 GB RAM.
  We compare different values of 
 \begin_inset Formula $\alpha$
 \end_inset
 
 , namely 0.1, 1, and 1.99.
- For OS-SQS we don't report results for 
-\begin_inset Formula $\alpha=1.99$
+ We compare convergence per iteration since all methods are roughly equal
+ in runtime, as each outer iteration contains (roughly) one forward and
+ one backward projection.
+ This is confirmed in Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SNR-per-time-iterative"
+
 \end_inset
 
- because they were very bad.
+.
+ Note that our implementation is not optimized for any of the methods, and
+ the processing time is just an indication.
 \end_layout
 
 \begin_layout Standard
@@ -2290,31 +2327,51 @@ reference "fig:SNR-per-num-proj-iterative"
 
 \end_inset
 
- shows the the SNR at the end of iteration 30 for different number of projection
-s from 15 to 180.
+ shows the the maximum SNR over 30 iterations for different number of equally
+ distributed projections from 15 to 180.
  From the figures, we make the following conclusions:
 \end_layout
 
 \begin_layout Itemize
-Effect of relaxation parameter: Higher values for 
-\begin_inset Formula $\alpha$
-\end_inset
-
- increase convergence with fewer projection, except with more noisy situations
- like the mouse dataset.
- This is true for ART, SART, BICAV, and OS-SQS.
- BSSART and SIRT don't work well with 
-\begin_inset Formula $\alpha=0.1$
-\end_inset
-
- or 1.
+The simulated projections closely resemble the results from the real dataset,
+ which suggests that the measurement noise model is reflective of real data.
 \end_layout
 
 \begin_layout Itemize
-Convergence: SART provides the fastest convergence, specially with fewer
- projections, for all datasets.
- For the mouse dataset, and with more projections, ART and OS-SQS get better
- accuracy.
+With fewer projections (15 or 30 projections), using larger values 
+\begin_inset Formula $\alpha=1.99$
+\end_inset
+
+ gives faster and better convergence.
+ 
+\end_layout
+
+\begin_layout Itemize
+With many projections, moderate values 
+\begin_inset Formula $\alpha=1$
+\end_inset
+
+ produces a fast convergence that then falls off and is overtaken by 
+\begin_inset Formula $\alpha=0.1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+SART provides the fastest convergence within a handful of iterations, and
+ is consistently better for fewer projections.
+ However, it is overtaken by ART and others for many projections.
+ This provides the motivation to use it in the proximal framework, since
+ typically the tomography solver is invoked for only a few iterations per
+ outer iteration of ADMM for example 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ramani2012splitting"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Itemize
@@ -2328,8 +2385,8 @@ reference "fig:SNR-per-iteration-iterative"
 
 (c), we notice that the SNR for a few methods go up and then down.
  This doesn't mean, however, that they are not converging.
- The objective function is the residual, and we confirmed it is in fact
- improving even though the SNR is decreasing.
+ The objective function is the projection error, and we confirmed it is
+ in fact improving even though the SNR is decreasing.
  This can be explained by the fact of the presence of noise, and that at
  some point the algorithm starts fitting the noise in the measurements 
 \begin_inset CommandInset citation
@@ -2342,28 +2399,28 @@ key "herman2009fundamentals"
 \end_layout
 
 \begin_layout Itemize
-Even though BICAV and BSSART have formal proofs of convergence, their convergenc
-e speed per iteration is in fact much lower than SART or OS-SQS.
+Even though BICAV, SIRT, and BSSART have formal proofs of convergence, their
+ convergence speed per iteration is in fact much lower than SART or OS-SQS.
  
 \end_layout
 
 \begin_layout Itemize
 Using plain iterative methods does not give acceptable results with fewer
- projections, and thus we focus next on using priors and regularizers using
- proximal operators.
+ projections, and thus we focus next on using regularizers in the proximal
+ framework.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
 wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -2381,7 +2438,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/per_iter-ph_mod-sl-512_nt_gauss-nl_0.001-np_15-p_fan-snr.pdf
+	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -2392,7 +2449,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/per_iter-ph_mod-sl-512_nt_gauss-nl_0.001-np_90-p_fan-snr.pdf
+	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -2438,11 +2495,11 @@ width "33text%"
 special "none"
 height "1in"
 height_special "totalheight"
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/per_iter-ph_ncat-512_nt_gauss-nl_0.001-np_15-p_fan-snr.pdf
+	filename plots/per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -2453,7 +2510,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/per_iter-ph_ncat-512_nt_gauss-nl_0.001-np_90-p_fan-snr.pdf
+	filename plots/per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -2588,7 +2645,7 @@ Top row is for 15 projections, and bottom row is for 90 projections.
 \begin_inset Float figure
 wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -2612,7 +2669,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/per_num_proj-ph_mod-sl-512_nt_gauss-nl_0.001-it_10-p_fan-snr.pdf
+	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan_t1-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -2662,7 +2719,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/per_num_proj-ph_ncat-512_nt_gauss-nl_0.001-it_10-p_fan-snr.pdf
+	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse_t1-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -2712,7 +2769,200 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/per_num_proj-ph_mouse-512_nt_gauss-nl_0.000-it_30-p_mouse-snr.pdf
+	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse_t1-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mouse
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SNR per running time for 90 projections.
+ Compare with Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SNR-per-iteration-iterative"
+
+\end_inset
+
+ (bottom row).
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SNR-per-time-iterative"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/max-snr-per_num_proj-ph_mod-sl-512_nt_poisson-nl_100000.000-it_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Modified Shepp-Logan
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/max-snr-per_num_proj-ph_ncat-512_nt_poisson-nl_100000.000-it_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NCAT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/max-snr-per_num_proj-ph_mouse-512_nt_gauss-nl_0.000-it_30-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -2748,7 +2998,8 @@ Mouse
 
 \begin_layout Plain Layout
 Effect of the number of projections.
- Plots show SNR (at the 30th iteration) per number of projections used.
+ Plots show the maximum SNR achieved over 30 iterations per number of projection
+s used.
  
 \begin_inset CommandInset label
 LatexCommand label

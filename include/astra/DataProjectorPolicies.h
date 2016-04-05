@@ -382,13 +382,19 @@ class SartProxBPPolicy {
 	// BICAV prox operator?
 	bool m_bBICAV;
 
+	// Clamping parameters. Defaults to off.
+	bool m_bUseMinConstraint, m_bUseMaxConstraint;
+	float32 m_fMinConstraintVal, m_fMaxConstraintVal;
+
 public:
 
 	FORCEINLINE SartProxBPPolicy();
 	FORCEINLINE SartProxBPPolicy(CFloat32VolumeData2D* _pReconstruction, CFloat32ProjectionData2D* _pSinogram, 
 		CFloat32VolumeData2D* _pTotalPixelWeight, CFloat32ProjectionData2D* _pTotalRayLength, 
 		CFloat32ProjectionData2D* _pY, CFloat32ProjectionData2D* _pC, 
-		float32 _fAlhpa = 1.0f, float32 _fSqrt2Lambda = 1.0f, bool _bBICAV = false); 
+		float32 _fAlhpa = 1.0f, float32 _fSqrt2Lambda = 1.0f, bool _bBICAV = false,
+		bool _bUseMinConstraint = false, float32 _fMinConstraintVal = 0.0f, 
+		bool _bUseMaxConstraint = false, float32 _fMaxConstraintVal = 0.0f); 
 	FORCEINLINE ~SartProxBPPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);

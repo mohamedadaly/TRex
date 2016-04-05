@@ -342,6 +342,9 @@
     <ClCompile Include="src\BicavProxOperatorAlgorithm.cpp">
       <Filter>Algorithms\source</Filter>
     </ClCompile>
+    <ClCompile Include="src\ArtProxOperatorAlgorithm.cpp">
+      <Filter>Algorithms\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\astra\Algorithm.h">
@@ -711,6 +714,9 @@
       <Filter>Algorithms\headers</Filter>
     </ClInclude>
     <ClInclude Include="include\astra\BicavProxOperatorAlgorithm.h">
+      <Filter>Algorithms\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\astra\ArtProxOperatorAlgorithm.h">
       <Filter>Algorithms\headers</Filter>
     </ClInclude>
   </ItemGroup>

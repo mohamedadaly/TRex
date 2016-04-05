@@ -152,7 +152,7 @@ if boxon,
     pos(3) = pos(3) + .01;
     pos(2)=pos(2) + orgHeight-pos(4);
     pos(1) = pos(1);
-    annotation('rectangle',pos);
+    annotation('rectangle',pos, 'FaceAlpha',1);
 end
 
 % put into position after putting the box
