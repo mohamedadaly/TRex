@@ -22,6 +22,13 @@ end
 sino = in_params.sino';
 [ndet, nviews] = size(sino);
 
+% WLS solution for Poisson noise: multiply both sinogram and A by wi
+if alg_params.wls
+  in_params.wi = sqrt(in_params.wi');
+  in_params.A = bsxfun(@(x,y)(x .* y), in_params.A, in_params.wi(:));
+  sino = in_params.wi .* sino;
+end
+
 % initialize for proxisart
 if alg_params.prox
   rec = in_params.prox_in;

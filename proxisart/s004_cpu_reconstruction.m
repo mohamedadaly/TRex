@@ -239,15 +239,14 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
 %%    SART
 % --> debug sqs
 alg_params = struct('iter',5, 'alpha',1, 'min_val',0, 'precon',0, ...
-  'wls',0, 'BSSART',0, 'prox','sart', 'lambda',1e0, 'nsubsets',30, 'sqs',0, ...
+  'wls',1, 'BSSART',0, 'prox','sart', 'lambda',1e0, 'nsubsets',30, 'sqs',0, ...
   'init_fbp',0);
 [rec, times, snrs, iters] = ma_alg_sart(in_params, alg_params);
 [times snrs iters]
 
 %% BICAV
-alg_params = struct('iter',10, 'alpha',1, 'min_val',0, 'precon',0, ...
-  'wls',0, 'BSSART',1, 'prox',1, 'lambda',1e0, 'nsubsets',30, 'sqs',0, ...
-  'init_fbp',0);
+alg_params = struct('iter',5, 'alpha',1, 'min_val',0, 'precon',0, ...
+  'wls',0, 'prox',1, 'lambda',1e0, 'nsubsets',30, 'init_fbp',0);
 [rec, times, snrs, iters] = ma_alg_bicav(in_params, alg_params);
 [times snrs iters]
 
@@ -301,7 +300,7 @@ cfg.option.ClearReconstruction = 1;
 cfg.option.PreconditionerId = -1; prec_id;
 cfg.option.UseJacobiPreconditioner = 1;
 cfg.option.UseBSSART = 0;
-cfg.option.WlsWeightDataId = -1; wi_id;
+cfg.option.WlsWeightDataId = wi_id;
 % cfg.option.ProjectionOrder = 'random';
 
 % Available algorithms:
