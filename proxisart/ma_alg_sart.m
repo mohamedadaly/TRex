@@ -125,8 +125,11 @@ for it = 1:alg_params.iter
       case 'sqs'
         diff = (sino(:,scols) - Ax) ./ reshape(sum_rows(arows), ndet, []);          
         % backproject and add
-        bp = 2 * alg_params.lambda * (in_params.A(arows,:)' * diff(:)) + ...
-          (in_params.prox_in(:) - rec(:)) * alg_params.nu;
+        bp = 2 * alg_params.lambda * (in_params.A(arows,:)' * diff(:));
+        % subset from volume to update 
+        vsubset = ceil(length(rec(:)) / inner_iter);
+        vids = (vsubset * (v-1) + 1 : min(length(rec(:)),vsubset*v))';
+        bp(vids) = bp(vids) + (in_params.prox_in(vids) - rec(vids)) * alg_params.nu;
         % divide
         bp = bp ./ sum_cols;
 

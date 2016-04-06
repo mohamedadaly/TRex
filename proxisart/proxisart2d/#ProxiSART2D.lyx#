@@ -972,6 +972,26 @@ status collapsed
 
 
 \backslash
+State
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $x^{(t+1)}=\mbox{clip}(x^{(t+1)})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
 EndFor
 \end_layout
 
@@ -1110,14 +1130,14 @@ reference "alg:Iterative-Algorithm"
 \end_inset
 
  is typically a function of (a subset of) the forward projection error 
-\begin_inset Formula $p-Ax^{(t)}$
+\begin_inset Formula $p_{S}-A_{S}x^{(t)}$
 \end_inset
 
  that is then backprojected with some normalization procedure.
  It can take the form 
 \begin_inset Formula 
 \[
-\Delta x^{(t)}=\Phi\left(A^{T},p-Ax^{(t)}\right)
+\Delta x^{(t)}=\Phi\left(A_{S}^{T},p_{S}-A_{S}x^{(t)}\right)
 \]
 
 \end_inset
@@ -1126,26 +1146,31 @@ where the function
 \begin_inset Formula $\Phi(\cdot)$
 \end_inset
 
- computes the update given the current projection error and the backprojection
- operator 
-\begin_inset Formula $A^{T}$
+ computes the required update, see below.
+ This can be seen as an approximation to the actual gradient 
+\begin_inset Formula $A^{T}(p-Ax)$
 \end_inset
 
-.
- So typically this step involves performing a (partial) foward projection,
- or multiplication by (a subset of the rows of) 
-\begin_inset Formula $A$
+ of the least square objective 
+\begin_inset Formula 
+\[
+\argmin_{x}\Vert Ax-p\Vert_{2}^{2}
+\]
+
 \end_inset
 
-, to get an estimate of the projection error, that is then backprojected
- by multiplying by (a subset of the rows of) 
-\begin_inset Formula $A^{T}$
+ and so these algorithms can be veiwed as variations of (stochastic) gradient
+ descent 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kim2015combining"
+
 \end_inset
 
-.
- Thus all these algorithms take roughly the same time per outer iteration
- i.e.
- per full sweep over the rows of 
+ where they differ on how they approximate the gradient.
+ We also notice that the inner loop in step 3 for all these algorithms takes
+ roughly the same time, since it involves one full sweep over the rows of
+ 
 \begin_inset Formula $A$
 \end_inset
 
@@ -1184,10 +1209,11 @@ center
 
 
 \begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="4">
+<lyxtabular version="3" rows="8" columns="5">
 <features rotate="0" booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
+<column alignment="center" valignment="middle" width="3text%">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -1209,6 +1235,15 @@ Update Step
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Subset
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -1222,7 +1257,7 @@ Solved Problem
 \begin_inset Text
 
 \begin_layout Plain Layout
-Convergent
+Converges
 \end_layout
 
 \end_inset
@@ -1250,12 +1285,21 @@ key "gordon1970algebraic"
 
 \begin_layout Plain Layout
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{p_{i}-\sum_{k}a_{ik}x_{k}^{(t)}}{\sum_{k}a_{ik}^{2}}a_{ij}\\
-x^{(t+1)} & =x^{(t)}+\alpha A_{i}^{T}R^{-1}\left(p-A_{i}x^{(t)}\right)
+x^{(t+1)} & =x^{(t)}+\alpha A_{i}^{T}R^{-1}\left(p_{i}-A_{i}x^{(t)}\right)
 \end{aligned}
 $
 \end_inset
 
 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+one ray
 \end_layout
 
 \end_inset
@@ -1317,6 +1361,15 @@ $
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+all rays
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -1371,6 +1424,15 @@ $
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+one view
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -1418,12 +1480,21 @@ key "censor2002block"
 
 \begin_layout Plain Layout
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
-x^{(t+1)} & =x^{(t)}+\alpha C^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
+x^{(t+1)} & =x^{(t)}+\alpha C^{-1}A_{S}^{T}R^{-1}\left(p_{S}-A_{S}x^{(t)}\right)
 \end{aligned}
 $
 \end_inset
 
 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+one view
 \end_layout
 
 \end_inset
@@ -1475,12 +1546,21 @@ key "censor2001bicav"
 
 \begin_layout Plain Layout
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i\in S}\{a_{ij}\ne0\}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}^{2}}a_{ij}\\
-x^{(t+1)} & =x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
+x^{(t+1)} & =x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p_{S}-A_{S}x^{(t)}\right)
 \end{aligned}
 $
 \end_inset
 
 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+one view
 \end_layout
 
 \end_inset
@@ -1511,7 +1591,7 @@ Yes
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1527,12 +1607,12 @@ key "erdogan1999ordered"
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{\left(\sum_{k=1}^{m}a_{kj}\sum_{i=1}^{n}a_{ki}\right)}\sum_{i\in S}\left(p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}\right)a_{ij}\\
-x^{(t+1)} & =x^{(t)}+\alpha sC^{-1}A_{S}^{T}\left(p-A_{S}x^{(t)}\right)
+\begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\frac{\alpha s}{\left(\sum_{k=1}^{m}a_{kj}\sum_{i=1}^{n}a_{ki}\right)}\sum_{i\in S}\left(p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}\right)a_{ij}\\
+x^{(t+1)} & =x^{(t)}+\alpha sC^{-1}A_{S}^{T}\left(p_{S}-A_{S}x^{(t)}\right)
 \end{aligned}
 $
 \end_inset
@@ -1542,7 +1622,16 @@ $
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+one view
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1554,11 +1643,71 @@ $
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 No
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CGLS 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "bjorck1996numerical,fessler1999conjugate"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $x^{(t+1)}=x^{(t)}+\alpha_{t}\Phi\left(A^{T}(p-Ax^{(t)})\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+all rays
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $x^{\star}=\Vert Ax-p\Vert_{2}^{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Yes
 \end_layout
 
 \end_inset
@@ -1705,16 +1854,16 @@ key "tanabe1971projection"
  i.e.
  it solves 
 \begin_inset Formula 
-\[
-x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\mbox{ s.t. }Ax=p.
-\]
+\begin{equation}
+x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\mbox{ s.t. }Ax=p.\label{eq:least-norm-problem}
+\end{equation}
 
 \end_inset
 
  In matrix notation, this can be also expressed as 
 \begin_inset Formula 
 \[
-x^{(t+1)}=x^{(t)}+\alpha A_{i}^{T}R^{-1}\left(p-A_{i}x^{(t)}\right)
+x^{(t+1)}=x^{(t)}+\alpha A_{i}^{T}R^{-1}\left(p_{i}-A_{i}x^{(t)}\right)
 \]
 
 \end_inset
@@ -1927,7 +2076,7 @@ key "mueller2000rapid,mueller1999fast"
  In matrix form 
 \begin_inset Formula 
 \[
-x^{(t+1)}=x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
+x^{(t+1)}=x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p_{S}-A_{S}x^{(t)}\right)
 \]
 
 \end_inset
@@ -1945,6 +2094,14 @@ x^{(t+1)}=x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
 \end_inset
 
 , 
+\begin_inset Formula $p_{S}$
+\end_inset
+
+ contains the corresponding 
+\begin_inset Formula $s$
+\end_inset
+
+ rays from the projection measurements, 
 \begin_inset Formula $R$
 \end_inset
 
@@ -2017,7 +2174,7 @@ x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i\in S
  The matrix formulation becomes 
 \begin_inset Formula 
 \[
-x^{(t+1)}=x^{(t)}+\alpha C^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
+x^{(t+1)}=x^{(t)}+\alpha C^{-1}A_{S}^{T}R^{-1}\left(p_{S}-A_{S}x^{(t)}\right)
 \]
 
 \end_inset
@@ -2101,7 +2258,7 @@ for
  The matrix formulation is 
 \begin_inset Formula 
 \[
-x^{(t+1)}=x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
+x^{(t+1)}=x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p_{S}-A_{S}x^{(t)}\right)
 \]
 
 \end_inset
@@ -2203,7 +2360,7 @@ for
  In matrix form it becomes 
 \begin_inset Formula 
 \[
-x^{(t+1)}=x^{(t)}+\alpha sC^{-1}A_{S}^{T}\left(p-A_{S}x^{(t)}\right)
+x^{(t+1)}=x^{(t)}+\alpha sC^{-1}A_{S}^{T}\left(p_{S}-A_{S}x^{(t)}\right)
 \]
 
 \end_inset
@@ -2289,7 +2446,29 @@ x^{(t+1)}=x^{(t)}+\alpha_{t}\Phi(A^{T}(p-Ax^{(t)}))
 
 \end_inset
 
- where the update step is a function
+ where the update step is a function of the backprojection of the projection
+ error, and the parameter 
+\begin_inset Formula $\alpha_{t}$
+\end_inset
+
+ depends on the specific version of CGLS (here we use the Fletcher-Reeves
+ update rule
+\begin_inset CommandInset citation
+LatexCommand cite
+key "bjorck1996numerical"
+
+\end_inset
+
+).
+ CGLS is proven to be convergent to the solution of the LS problem 
+\begin_inset Formula 
+\[
+x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}.
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -2602,16 +2781,7 @@ name "fig:Phantoms"
 \end_layout
 
 \begin_layout Standard
-We compare the different iterative methods discussed above together with
- CGLS 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "bjorck1996numerical"
-
-\end_inset
-
-, a version of CG that solves the normal equations of the LS problem directly.
- We clip the reconstruction estimate 
+We clip the reconstruction estimate 
 \begin_inset Formula $x$
 \end_inset
 
@@ -3371,10 +3541,10 @@ name "fig:SNR-per-num-proj-iterative"
 \end_layout
 
 \begin_layout Section
-SART Proximal Operator
+Proximal Operators
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:SART-Proximal-Operator"
+name "sec:Proximal-Operators"
 
 \end_inset
 
@@ -3438,620 +3608,32 @@ where
 tion terms e.g.
  smoothing norms or sparsity inducing norms, which otherwise is not generally
  easy.
+ We will derive proximal operators for SART, ART, BICAV, and OS-SQS.
 \end_layout
 
 \begin_layout Subsection
-ART and SART
+SART, ART, and BICAV
 \end_layout
 
 \begin_layout Standard
-We begin by describing the SART algorithm 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "andersen1984simultaneous,andersen1989algebraic,mueller1999fast"
-
-\end_inset
-
-, see Algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "alg:standard-SART"
-
-\end_inset
-
-.
- SART is an iterative algorithm, where at each iteration the current estimate
- of the reconstructed volume is updated based on how well it fits the input
- projections.
- In particular, the update equation for each voxel 
-\begin_inset Formula $x_{j}$
-\end_inset
-
- in the volume 
-\begin_inset Formula $x$
-\end_inset
-
- is: 
-\begin_inset Formula 
-\begin{equation}
-x_{j}^{(t+1)}=x_{j}^{(t)}+\alpha\frac{\sum_{i\in\mathcal{S}}c_{i}^{(t)}a_{ij}}{\sum_{i\in\mathcal{S}}a_{ij}},\label{eq:SART-update}
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula 
-\begin{equation}
-c_{i}^{(t)}=\frac{p_{i}-\hat{p}_{i}^{(t)}}{\sum_{k}a_{ik}}\label{eq:residual}
-\end{equation}
-
-\end_inset
-
-is the normalized correction factor for ray 
-\begin_inset Formula $i$
-\end_inset
-
- that measures the residual between the measured projection value 
-\begin_inset Formula $p_{i}$
-\end_inset
-
- and the current estimate at iteration 
-\begin_inset Formula $t$
-\end_inset
-
-: 
-\begin_inset Formula 
-\begin{equation}
-\hat{p}_{i}^{(t)}=\sum_{k}a_{ik}x_{k}^{(t)},\label{eq:forwardprojection}
-\end{equation}
-
-\end_inset
-
-
-\begin_inset Formula $\alpha$
-\end_inset
-
- is a relaxation parameter usually 
-\begin_inset Formula $0<\alpha<2$
-\end_inset
-
-, 
-\begin_inset Formula $\mathcal{S}$
-\end_inset
-
- is a set of projection rays under consideration, and 
-\begin_inset Formula $a_{ij}$
-\end_inset
-
- is the element in row 
-\begin_inset Formula $i$
-\end_inset
-
- and column 
-\begin_inset Formula $j$
-\end_inset
-
- of the system matrix 
-\begin_inset Formula $A$
-\end_inset
-
- and defines the contribution to ray sum 
-\begin_inset Formula $i$
-\end_inset
-
- from voxel 
-\begin_inset Formula $j$
-\end_inset
-
-.
- Basically the equation can be decomposed into three steps 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "mueller1999fast"
-
-\end_inset
-
-: 
-\end_layout
-
-\begin_layout Enumerate
-
-\series bold
-Forward projection
-\series default
-: computes the estimated projection 
-\begin_inset Formula $\hat{p}_{i}^{(t)}$
-\end_inset
-
- for each ray 
-\begin_inset Formula $i$
-\end_inset
-
- from the current volume 
-\begin_inset Formula $x^{(t)}$
-\end_inset
-
- (Equation
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:forwardprojection"
-
-\end_inset
-
-).
- This corresponds to a volume rendering operation.
- 
-\end_layout
-
-\begin_layout Enumerate
-
-\series bold
-Correction
-\series default
-: computes 
-\begin_inset Formula $c_{i}^{(t)}$
-\end_inset
-
-, the normalized deviation of this estimate from the true projection 
-\begin_inset Formula $p_{i}$
-\end_inset
-
-, where the correction is normalized by the contribution of this ray to
- all the voxels it goes through (Eq
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:residual"
-
-\end_inset
-
-).
- 
-\end_layout
-
-\begin_layout Enumerate
-
-\series bold
-Backprojection
-\series default
-: where this correction factor is distributed back to all the voxels that
- contribute to this ray sum (Eq.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:SART-update"
-
-\end_inset
-
-).
- 
-\end_layout
-
-\begin_layout Standard
-SART is an improvement to the original ART algorithm 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "gordon1970algebraic,gordon1971reconstruction"
-
-\end_inset
-
-.
- Unlike ART where a single iteration processes only one projection line
- 
-\begin_inset Formula $p_{i}$
-\end_inset
-
- and performs the three steps above, SART combines the projection lines
- from a single projection image and applies the correction simultaneously.
- This provides faster convergence, better noise resilience, and faster computati
-ons 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "andersen1989algebraic,mueller1999fast"
-
-\end_inset
-
-.
- In the case where the linear system is under-determined i.e.
- there are fewer equations than unknowns (
-\begin_inset Formula $m<n$
-\end_inset
-
-), ART has been shown to converge to a minimum norm solution of the linear
- system describing the tomography problem 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "tanabe1971projection"
-
-\end_inset
-
-.
- In particular, the solution provided by ART is equivalent to the optimal
- solution of the following problem 
-\begin_inset Formula 
-\begin{eqnarray}
-\min_{x}\left\Vert x\right\Vert _{2}^{2}\mbox{ subject to }Ax & = & p.\label{eq:ART-solution}
-\end{eqnarray}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-There has been no convergence proof for SART, although there have been proofs
- for a simplified version of SART 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "censor2002block,jiang2003convergence"
-
-\end_inset
-
- that establish its convergence to a weighted least squares solution.
- In this work, we use the original SART, and assume it solves the original
- problem as ART i.e.
- it solves the minimum norm problem as defined in Eq.
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:ART-solution"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float algorithm
-placement h
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-protect
-\end_layout
-
-\end_inset
-
-
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "alg:standard-SART"
-
-\end_inset
-
-Standard SART
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{algorithmic}[1]
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-Require
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Formula $A\in\mathbb{R}{}^{m\times n}$
-\end_inset
-
-,
-\begin_inset Formula $\alpha\in\mathbb{R}$
-\end_inset
-
-, 
-\begin_inset Formula $p\in\mathbb{R}{}^{m}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-State
-\end_layout
-
-\end_inset
-
- Initialize: 
-\begin_inset Formula $x^{(0)}=\mathbf{0}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-ForAll
-\end_layout
-
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\end_inset
-
-
-\begin_inset Formula $t=1\ldots T$
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-ForAll
-\end_layout
-
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\end_inset
-
- projection images 
-\begin_inset Formula $\mathcal{S}\in\mathcal{S}_{1}\ldots\mathcal{S}_{N}$
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\end_inset
-
- 
+ART, SART, and BICAV (approximately) solve the least-norm problem 
 \begin_inset Formula 
 \[
-\hat{p}_{i}^{(t)}=\sum_{k}a_{ik}x_{k}^{(t)}
+x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\mbox{ s.t. }Ax=p.
 \]
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\[
-c_{i}^{(t)}=\frac{p_{i}-\hat{p}_{i}^{(t)}}{\sum_{k}a_{ik}}
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\begin{eqnarray*}
-x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{\sum_{i\in\mathcal{S}}c_{i}^{(t)}a_{ij}}{\sum_{i\in\mathcal{S}}a_{ij}}\mbox{ for }j=1\ldots n,
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-EndFor
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-EndFor
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-Return
-\end_layout
-
-\end_inset
-
- volume reconstruction 
-\begin_inset Formula $x\in\mathbb{R}{}^{n}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{algorithmic}
-\end_layout
-
-\end_inset
-
+ What we want is a solver for LS proejction error i.e.
  
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Proximal Operator
-\end_layout
-
-\begin_layout Standard
-In this work we are interested in finding the volume that minimizes the
- squared fit error 
-\begin_inset Formula $h(x)=\Vert Ax-p\Vert_{2}^{2}$
-\end_inset
-
- i.e.
- that solves the minimization problem 
-\begin_inset Formula 
-\[
-\min_{x}\Vert Ax-p\Vert_{2}^{2}.
-\]
-
-\end_inset
-
-This is the standard goodness-of-fit measure for tomography reconstruction
- problems, and is more general and handles cases where the system is over-
- or under-determined.
- The proximal operator for 
-\begin_inset Formula $h(x)$
-\end_inset
-
- is defined as 
 \begin_inset Formula 
 \begin{equation}
-\mbox{prox}_{\lambda h}(u)=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-1}
+\mbox{prox}_{\lambda h}(u)=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-1-1}
 \end{equation}
 
 \end_inset
 
-We will use SART to solve this optimization problem.
- Recall that SART solves a minimum norm problem as in Eq.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:ART-solution"
-
-\end_inset
-
-.
- Eq.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:SART-prox-1"
-
-\end_inset
-
- is equivalent to solving the following problem 
+ This is equivalent to solving 
 \begin_inset Formula 
 \begin{equation}
 \min_{x}2\lambda\Vert Ax-p\Vert_{2}^{2}+\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-2}
@@ -4059,7 +3641,7 @@ reference "eq:SART-prox-1"
 
 \end_inset
 
-We will introduce new variables as follows: let 
+Now introduce new variables as follows: let 
 \begin_inset Formula $y=\sqrt{2\lambda}(p-Ax)$
 \end_inset
 
@@ -4068,7 +3650,7 @@ We will introduce new variables as follows: let
 \end_inset
 
 .
- The problem now becomes 
+ The problem becomes 
 \begin_inset Formula 
 \begin{eqnarray}
 \min_{y,z} & \Vert y\Vert_{2}^{2}+\Vert z\Vert_{2}^{2}\nonumber \\
@@ -4123,20 +3705,9 @@ where
 \end_inset
 
 .
- This is now an under-determined linear system, and can be solved using
- SART as in Eq.
+ This is now a consistent under-determined linear system, and can be solved
+ using either ART, SART, or BICAV.
  
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:ART-solution"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsection
-Algorithm
 \end_layout
 
 \begin_layout Standard
@@ -4156,13 +3727,13 @@ Although we introduced new variables
 \begin_inset Formula $n+m$
 \end_inset
 
-, we can solve the modified SART efficiently with very little computational
+, we can solve the modified algorithm efficiently with very little computational
  overhead.
- Instead of solving SART explicitly for the optimal 
+ Instead of solving explicitly for the optimal 
 \begin_inset Formula $y^{\star}$
 \end_inset
 
-and 
+ and 
 \begin_inset Formula $z^{\star}$
 \end_inset
 
@@ -4170,19 +3741,11 @@ and
 \begin_inset Formula $x^{\star}.$
 \end_inset
 
- In particular, the Eq.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:SART-update"
-
+ For example, for SART, the initialization and update equation for 
+\begin_inset Formula $\tilde{x}$
 \end_inset
 
- for the augmented system 
-\begin_inset Formula $\tilde{A}\tilde{x}=\tilde{p}$
-\end_inset
-
- becomes (by substituting all variables) 
+ become 
 \begin_inset Formula 
 \begin{eqnarray}
 \tilde{x}_{j}^{(0)} & = & \mathbf{0},\nonumber \\
@@ -4206,6 +3769,8 @@ which can be expanded in terms of
  as 
 \begin_inset Formula 
 \begin{eqnarray*}
+y^{(0)} & = & \mathbf{0}_{m}\\
+z^{(0)} & = & \mathbf{0}_{n}\\
 y_{j}^{(t+1)} & = & y_{j}^{(t)}+\frac{\alpha\sum_{i\in\mathcal{S}}\frac{\tilde{p}_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}z_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\delta_{ij}}{1},\\
 z_{j}^{(t+1)} & = & z_{j}^{(t)}+\alpha\frac{\sum_{i\in\mathcal{S}}\frac{\tilde{p}_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}z_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\sqrt{2\lambda}a_{ij}}{\sqrt{2\lambda}\sum_{i\in S}a_{ij}},
 \end{eqnarray*}
@@ -4225,9 +3790,15 @@ where
 \begin_inset Formula $z=x-u$
 \end_inset
 
+ and 
+\begin_inset Formula $\tilde{p}_{i}=\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}u_{k}$
+\end_inset
+
  and simplifying we arrive at 
 \begin_inset Formula 
 \begin{eqnarray*}
+y^{(0)} & = & \mathbf{0}_{m}\\
+x^{(0)} & = & u\\
 y_{j}^{(t+1)} & = & y_{j}^{(t)}+\alpha\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\delta_{ij},\\
 x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\sqrt{2\lambda}a_{ij}}{\sqrt{2\lambda}\sum_{i\in S}a_{ij}}.
 \end{eqnarray*}
@@ -4238,69 +3809,142 @@ x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_
 \end_layout
 
 \begin_layout Standard
-Algorithm 
+Following the same line of reasoning, we can arrive at similar update formulas
+ for both ART and BICAV.
+ The steps are summarized in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "alg:SART-Proximal-Operator"
+reference "tab:Prox-Operators"
 
-\end_inset
-
- summarizes the steps for the modified SART to solve the proximal operator.
- We note the following: 
-\end_layout
-
-\begin_layout Enumerate
-The initialization is different since we need to initialize 
-\begin_inset Formula $y$
-\end_inset
-
- and 
-\begin_inset Formula $x$
 \end_inset
 
 .
- 
 \end_layout
 
-\begin_layout Enumerate
-The update for 
-\begin_inset Formula $y$
-\end_inset
-
- is very fast because only one index 
-\begin_inset Formula $y_{j}$
-\end_inset
-
- is updated for every projection pixel 
-\begin_inset Formula $i=j$
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Enumerate
-The update for 
-\begin_inset Formula $x$
-\end_inset
-
- is very similar to standard SART with the exception of the term 
-\begin_inset Formula $y_{i}^{(t)}$
-\end_inset
-
- in the formula for 
-\begin_inset Formula $c_{i}^{(t)}.$
-\end_inset
-
- 
+\begin_layout Subsection
+OS-SQS
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float algorithm
-placement h
-wide false
+We want to express the proximal operator problem in Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:SART-prox-1-1"
+
+\end_inset
+
+ in the form of a the LS problem that can be solved (approximately) by OS-SQS:
+ 
+\begin_inset Formula 
+\[
+x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}.
+\]
+
+\end_inset
+
+ Rewrite in the form 
+\begin_inset Formula 
+\begin{equation}
+\argmin_{x}2\lambda\Vert Ax-p\Vert_{2}^{2}+\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-2-1}
+\end{equation}
+
+\end_inset
+
+which is equivalent to 
+\begin_inset Formula 
+\begin{eqnarray*}
+\argmin_{x}\left\Vert \left[\begin{array}{c}
+\sqrt{2\lambda}A\\
+I
+\end{array}\right]x-\left[\begin{array}{c}
+\sqrt{2\lambda}p\\
+u
+\end{array}\right]\right\Vert ^{2} & = & \argmin_{x}\left\Vert \tilde{A}x-\tilde{p}\right\Vert ^{2}
+\end{eqnarray*}
+
+\end_inset
+
+ where 
+\begin_inset Formula 
+\begin{eqnarray*}
+\tilde{A} & = & \left[\begin{array}{c}
+\sqrt{2\lambda}A\\
+I
+\end{array}\right]\in\mathbb{R}^{m+n\times n}\\
+\tilde{p} & = & \left[\begin{array}{c}
+\sqrt{2\lambda}p\\
+u
+\end{array}\right]\in\mathbb{R}^{m+n}.
+\end{eqnarray*}
+
+\end_inset
+
+The weighting matrix 
+\begin_inset Formula $\tilde{C}\in\mathbb{R}^{n\times n}$
+\end_inset
+
+ now becomes now becomes 
+\begin_inset Formula 
+\begin{eqnarray*}
+\tilde{C} & = & \mbox{diag}(\tilde{A}^{T}\tilde{A}\mathbf{1})\\
+ & = & \mbox{diag}\left((2\lambda A^{T}A+I)\mathbf{1}\right)\\
+ & = & \mbox{diag}\left(2\lambda A^{T}A\mathbf{1}+\mathbf{1}\right)
+\end{eqnarray*}
+
+\end_inset
+
+ and its diagonal entries are 
+\begin_inset Formula 
+\[
+\tilde{c}_{j}=2\lambda c_{j}+1
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Write the matrix update equation in terms of 
+\begin_inset Formula $\tilde{A}$
+\end_inset
+
+ and 
+\begin_inset Formula $\tilde{p}$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\begin{eqnarray*}
+x^{(t+1)} & = & x^{(t)}+\alpha s\tilde{C}^{-1}\tilde{A}_{S}^{T}\left(\tilde{p_{S}}-\tilde{A}_{S}x^{(t)}\right)\\
+ & = & x^{(t)}+\tilde{C}^{-1}\left[\begin{array}{cc}
+\sqrt{2\lambda}A_{S}^{T} & I\end{array}\right]\left(\left[\begin{array}{c}
+\sqrt{2\lambda}(p_{S}-A_{S}x^{(t)})\\
+u-x^{(t)}
+\end{array}\right]\right)\\
+ & = & x^{(t)}+\tilde{C}^{-1}\left(2\lambda A_{S}^{T}(p_{S}-A_{S}x^{(t)})+u-x^{(t)}\right)\\
+ & = & (I-\tilde{C}^{-1})x^{(t)}+\tilde{C}^{-1}\left(2\lambda A_{S}^{T}(p_{S}-A_{S}x^{(t)})+u\right)
+\end{eqnarray*}
+
+\end_inset
+
+ and in component form 
+\begin_inset Formula 
+\begin{eqnarray*}
+x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{s}{\tilde{c}_{j}}\left(2\lambda\sum_{i\in S}(p_{j}-\sum_{k}a_{ik}x_{k}^{(t)})a_{ij}+u_{j}-x_{j}^{(t)}\right).
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -4310,337 +3954,201 @@ status collapsed
 
 
 \backslash
-protect
+center
 \end_layout
 
 \end_inset
 
 
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features rotate="0" booktabs="true" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Method
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Update Step
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ART 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gordon1970algebraic"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\mbox{ for }i\in S\\
+x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\sqrt{2\lambda}a_{ij}\mbox{ for}j=1\ldots n
+\end{aligned}
+$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SART 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "andersen1984simultaneous,andersen1989algebraic"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\mbox{ for }i\in S\\
+x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\sqrt{2\lambda}a_{ij}}{\sqrt{2\lambda}\sum_{i\in S}a_{ij}}\mbox{ for}j=1\ldots n
+\end{aligned}
+$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BICAV 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "censor2001bicav"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{j}-\sqrt{2\lambda}\sum_{k}a_{jk}x_{k}^{(t)}-y_{j}^{(t)}}{2\lambda\sum_{k}a_{jk}^{2}+1}\mbox{ for }i\in S\\
+x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\sqrt{2\lambda}a_{ij}}{\sum_{i\in S}\{a_{ij}\ne0\}}\mbox{ for}j=1\ldots n
+\end{aligned}
+$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+OS-SQS 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "erdogan1999ordered"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}y_{i}^{(t+1)} & =y_{j}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\mbox{ for }i\in S\\
+x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\sqrt{2\lambda}a_{ij}}{\sqrt{2\lambda}\sum_{i\in S}a_{ij}}\mbox{ for}j=1\ldots n
+\end{aligned}
+$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
+Summary of the proximal operators update steps.
 \begin_inset CommandInset label
 LatexCommand label
-name "alg:SART-Proximal-Operator"
+name "tab:Prox-Operators"
 
 \end_inset
 
-SART Proximal Operator
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{algorithmic}[1]
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-Require
-\end_layout
-
-\end_inset
-
+ See Sec.
  
-\begin_inset Formula $A\in\mathbb{R}{}^{m\times n}$
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Proximal-Operators"
+
 \end_inset
 
-, 
-\begin_inset Formula $u\in\mathbb{R}{}^{n}$
-\end_inset
-
-, 
-\begin_inset Formula $\lambda\in\mathbb{R}$
-\end_inset
-
-, 
-\begin_inset Formula $\alpha\in\mathbb{R}$
-\end_inset
-
-, 
-\begin_inset Formula $p\in\mathbb{R}{}^{m}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-State
+ for details.
 \end_layout
 
 \end_inset
 
 
-\begin_inset Formula $p=\sqrt{2\lambda}p$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-State
-\end_layout
-
-\end_inset
-
-
-\begin_inset Formula $A=\sqrt{2\lambda}A$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-State
-\end_layout
-
-\end_inset
-
- Initialize 
-\begin_inset Formula 
-\begin{eqnarray*}
-y^{(0)} & = & 0\\
-x^{(0)} & = & u
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-ForAll
-\end_layout
-
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\end_inset
-
-
-\begin_inset Formula $t=1\ldots T$
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-ForAll
-\end_layout
-
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\end_inset
-
- projections 
-\begin_inset Formula $\mathcal{S}\in\mathcal{S}_{1}\ldots\mathcal{S}_{N}$
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Formula 
-\[
-y_{j}^{(t+1)}=y_{j}^{(t)}+\alpha c_{j}^{(t)}\mbox{ for }j\in\mathcal{S}
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\[
-\hat{p}_{i}^{(t)}=\sum_{k}a_{ik}x_{k}^{(t)}+y_{i}^{(t)}
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\[
-c_{i}^{(t)}=\frac{p_{i}-\hat{p}_{i}^{(t)}}{\sum_{k}a_{ik}+1}
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\begin{eqnarray*}
-x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{\sum_{i\in\mathcal{S}}c_{i}^{(t)}a_{ij}}{\sum_{i\in\mathcal{S}}a_{ij}}\mbox{ for }j=1\ldots n,
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-EndFor
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-EndFor
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-Return
-\end_layout
-
-\end_inset
-
- volume reconstruction 
-\begin_inset Formula $x\in\mathbb{R}{}^{n}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{algorithmic}
-\end_layout
-
-\end_inset
-
- 
 \end_layout
 
 \end_inset
@@ -4928,7 +4436,7 @@ Using different regularization functions
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
