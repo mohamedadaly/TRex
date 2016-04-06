@@ -78,10 +78,14 @@ class DefaultBPPolicy {
 	CFloat32ProjectionData2D* m_pProjectionData;
 	//< Volume Data
 	CFloat32VolumeData2D* m_pVolumeData;
+	// Weights for WLS.
+	CFloat32ProjectionData2D* m_pW;
 
 public:
 	FORCEINLINE DefaultBPPolicy();
-	FORCEINLINE DefaultBPPolicy(CFloat32VolumeData2D* _pVolumeData, CFloat32ProjectionData2D* _pProjectionData);
+	FORCEINLINE DefaultBPPolicy(CFloat32VolumeData2D* _pVolumeData, 
+		CFloat32ProjectionData2D* _pProjectionData,
+		CFloat32ProjectionData2D* _pW = NULL);
 	FORCEINLINE ~DefaultBPPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);
@@ -350,12 +354,16 @@ class SIRTBPPolicy {
 	// Preconditioner.
 	CFloat32VolumeData2D* m_pPreconditioner;
 
+	// Weights for WLS.
+	CFloat32ProjectionData2D* m_pW;
+
 public:
 
 	FORCEINLINE SIRTBPPolicy();
 	FORCEINLINE SIRTBPPolicy(CFloat32VolumeData2D* _pReconstruction, CFloat32ProjectionData2D* _pSinogram, 
 		CFloat32VolumeData2D* _pTotalPixelWeight, CFloat32ProjectionData2D* _pTotalRayLength, 
 		CFloat32VolumeData2D* _pPreconditioner,	float32 _fAlhpa = 1.0f,
+		CFloat32ProjectionData2D* _pW = NULL,
 		bool _bUseMinConstraint = false, float32 _fMinConstraintVal = 0.0f, 
 		bool _bUseMaxConstraint = false, float32 _fMaxConstraintVal = 0.0f); 
 	FORCEINLINE ~SIRTBPPolicy();

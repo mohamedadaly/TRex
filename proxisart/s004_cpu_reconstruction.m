@@ -65,6 +65,8 @@ end
 sinogram = log(I0 ./ max(yi,1)) / scale_factor; % noisy fan-beam sinogram: form of the data in the quadratic approximation to the actual log-likelihood
 % PWLS weights
 wi = yi / max(yi(:)); %
+% wi
+wi_id = astra_mex_data2d('create', '-sino', proj_geom, wi);
 
 astra_mex_data2d('delete', sinogram_id);
 
@@ -246,14 +248,14 @@ alg_params = struct('iter',5, 'alpha',1, 'min_val',0, 'precon',0, ...
 
 %% BICAV
 alg_params = struct('iter',5, 'alpha',1, 'min_val',0, 'precon',0, ...
-  'wls',0, 'prox',1, 'lambda',1e0, 'nsubsets',30, 'init_fbp',0);
+  'wls',1, 'prox',1, 'lambda',1e0, 'nsubsets',30, 'init_fbp',0);
 [rec, times, snrs, iters] = ma_alg_bicav(in_params, alg_params);
 [times snrs iters]
 
 %%    SQS
 % --> debug sqs
 alg_params = struct('iter',5, 'alpha',1, 'min_val',0, 'precon',0, ...
-  'wls',0, 'BSSART',0, 'prox','sqs', 'lambda',1e0, 'nsubsets',30, 'sqs',1, ...
+  'wls',1, 'BSSART',0, 'prox','sqs', 'lambda',1e0, 'nsubsets',30, 'sqs',1, ...
   'init_fbp',0, 'nu',1);
 [rec, times, snrs, iters] = ma_alg_sart(in_params, alg_params);
 [times snrs iters]
@@ -267,21 +269,18 @@ alg_params = struct('iter',10, 'alpha',2, 'min_val',0, 'precon',0, ...
 % figure(1), imshow(rec, [])
 %%
 
-% preconditioner
-prec = ones(size(P));
-prec(128,128)=1;
-prec = reshape(proj_mat' * (proj_mat * prec(:)), 256, 256);
-% prec(prec < 1e-16) = 1;
-% prec = 1;
-prec_id = astra_mex_data2d('create', '-vol', vol_geom, prec);
-
-% wi
-wi_id = astra_mex_data2d('create', '-sino', proj_geom, wi);
+% % preconditioner
+% prec = ones(size(P));
+% prec(128,128)=1;
+% prec = reshape(proj_mat' * (proj_mat * prec(:)), 256, 256);
+% % prec(prec < 1e-16) = 1;
+% % prec = 1;
+% prec_id = astra_mex_data2d('create', '-vol', vol_geom, prec);
 
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('SART-PROX');
+cfg = astra_struct('BICAV-PROX');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
@@ -290,7 +289,6 @@ cfg.option.UseMinConstraint = 1;
 cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
-cfg.option.ClearRayLength = 1;
 cfg.option.Alpha = 1;
 cfg.option.Lambda = 1e0;
 cfg.option.ComputeIterationMetrics = 1;
@@ -300,7 +298,7 @@ cfg.option.ClearReconstruction = 1;
 cfg.option.PreconditionerId = -1; prec_id;
 cfg.option.UseJacobiPreconditioner = 1;
 cfg.option.UseBSSART = 0;
-cfg.option.WlsWeightDataId = wi_id;
+cfg.option.WlsWeightDataId = -1; wi_id;
 % cfg.option.ProjectionOrder = 'random';
 
 % Available algorithms:
@@ -317,7 +315,6 @@ if cfg.option.ClearReconstruction == 0
   fbp = astra_mex_data2d('get',rec_id);
 end
 
-
 % Create the algorithm object from the configuration structure
 alg_id = astra_mex_algorithm('create', cfg);
 
@@ -333,6 +330,8 @@ metrics = astra_mex_data2d('get', metrics_id)
 
 % Get the result
 rec = astra_mex_data2d('get', rec_id);
+astra_mex_data2d('get', rec_id)
+
 % figure(3); imshow(rec, []); axis image; axis off; %, []);
 fprintf('%s SNR=%f\n', cfg.type, snr(P, (P-rec)));
 

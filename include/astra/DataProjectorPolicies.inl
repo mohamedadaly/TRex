@@ -88,10 +88,12 @@ DefaultBPPolicy::DefaultBPPolicy()
 }
 //----------------------------------------------------------------------------------------
 DefaultBPPolicy::DefaultBPPolicy(CFloat32VolumeData2D* _pVolumeData, 
-								 CFloat32ProjectionData2D* _pProjectionData) 
+								 CFloat32ProjectionData2D* _pProjectionData,
+								 CFloat32ProjectionData2D* _pW)
 {
 	m_pProjectionData = _pProjectionData;
 	m_pVolumeData = _pVolumeData;
+	m_pW = _pW;
 }
 //----------------------------------------------------------------------------------------
 DefaultBPPolicy::~DefaultBPPolicy() 
@@ -113,7 +115,13 @@ bool DefaultBPPolicy::pixelPrior(int _iVolumeIndex)
 //----------------------------------------------------------------------------------------	
 void DefaultBPPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
 {
-	m_pVolumeData->getData()[_iVolumeIndex] += m_pProjectionData->getData()[_iRayIndex] * _fWeight;
+	// Apply WLS weight.
+	if (m_pW) {
+		_fWeight *= m_pW->getData()[_iRayIndex];
+	}
+
+	m_pVolumeData->getData()[_iVolumeIndex] += 
+		m_pProjectionData->getData()[_iRayIndex] * _fWeight;
 }
 //----------------------------------------------------------------------------------------
 void DefaultBPPolicy::rayPosterior(int _iRayIndex) 
@@ -156,7 +164,10 @@ DiffFPPolicy::~DiffFPPolicy()
 //----------------------------------------------------------------------------------------	
  bool DiffFPPolicy::rayPrior(int _iRayIndex) 
 {
-	m_pDiffProjectionData->getData()[_iRayIndex] = m_pBaseProjectionData->getData()[_iRayIndex];
+
+	m_pDiffProjectionData->getData()[_iRayIndex] = m_pW == NULL ?
+		m_pBaseProjectionData->getData()[_iRayIndex] :
+		m_pBaseProjectionData->getData()[_iRayIndex] * m_pW->getData()[_iRayIndex];
 	return true;
 }
 //----------------------------------------------------------------------------------------
@@ -748,7 +759,8 @@ SIRTBPPolicy::SIRTBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 						   CFloat32ProjectionData2D* _pSinogram, 
 						   CFloat32VolumeData2D* _pTotalPixelWeight, 
 						   CFloat32ProjectionData2D* _pTotalRayLength,
-						   CFloat32VolumeData2D* _pPreconditioner, float32 _fAlhpa,						   
+						   CFloat32VolumeData2D* _pPreconditioner, float32 _fAlhpa,	
+						   CFloat32ProjectionData2D* _pW,
 						   bool _bUseMinConstraint, float32 _fMinConstraintVal,
 						   bool _bUseMaxConstraint, float32 _fMaxConstraintVal) 
 {
@@ -762,6 +774,7 @@ SIRTBPPolicy::SIRTBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 	m_bUseMaxConstraint = _bUseMaxConstraint;
 	m_fMaxConstraintVal = _fMaxConstraintVal;
 	m_pPreconditioner = _pPreconditioner;
+	m_pW = _pW;
 }
 //----------------------------------------------------------------------------------------	
 SIRTBPPolicy::~SIRTBPPolicy() 
@@ -781,6 +794,11 @@ bool SIRTBPPolicy::pixelPrior(int _iVolumeIndex)
 //----------------------------------------------------------------------------------------	
 void SIRTBPPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
 {
+	// Apply WLS weight.
+	if (m_pW) {
+		_fWeight *= m_pW->getData()[_iRayIndex];
+	}
+
 	float32 fGammaBeta = m_pTotalPixelWeight->getData()[_iVolumeIndex] * 
 		m_pTotalRayLength->getData()[_iRayIndex];
 	// preconditioner

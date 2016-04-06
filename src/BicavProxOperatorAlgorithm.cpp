@@ -301,13 +301,14 @@ void CBicavProxOperatorAlgorithm::run(int _iNrIterations)
 			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
 		);
 
-	//WLS?
-	if (m_pW != NULL) {
-		// Take square root to prepare
-		m_pW->sqrt();
-		// Scale sinogram
-		*m_pSinogram *= *m_pW;
-	}
+	// We assume the input weights are already square-rooted.
+	////WLS?
+	//if (m_pW != NULL) {
+	//	// Take square root to prepare
+	//	m_pW->sqrt();
+	//	// Scale sinogram
+	//	*m_pSinogram *= *m_pW;
+	//}
 
 	// Perform the first forward projection to compute ray lengths
 	m_pTotalRayLength->setData(0.0f);

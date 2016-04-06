@@ -305,7 +305,7 @@ void CArtAlgorithm::run(int _iNrIterations)
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 			SIRTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
-				m_pTotalPixelWeight, m_pTotalRayLength, NULL, m_fAlpha,
+				m_pTotalPixelWeight, m_pTotalRayLength, NULL, m_fAlpha, NULL,
 				m_bUseMinConstraint, m_fMinValue, m_bUseMaxConstraint, m_fMaxValue),  // SIRT backprojection
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 

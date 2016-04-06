@@ -34,7 +34,7 @@ $Id$
 
 #include "Algorithm.h"
 //#include "ReconstructionAlgorithm2D.h"
-#include "SartAlgorithm.h"
+#include "SartProxOperatorAlgorithm.h"
 
 #include "Projector2D.h"
 #include "Float32ProjectionData2D.h"
@@ -83,7 +83,7 @@ namespace astra {
  *		astra_mex_algorithm('delete'\, alg_id);\n
  * }
  */
-class _AstraExport COrderedSubsetSQSProxOperatorAlgorithm : public CSartAlgorithm {
+class _AstraExport COrderedSubsetSQSProxOperatorAlgorithm : public CSartProxOperatorAlgorithm{
 
 protected:
 
@@ -99,11 +99,11 @@ protected:
      */
     virtual bool _check();
 
-    /// Proximal operator parameter
-    float32 m_fLambda;
+    ///// Proximal operator parameter
+    //float32 m_fLambda;
 
-    /// Proximal input volume
-    CFloat32VolumeData2D* m_pProxInput;
+    ///// Proximal input volume
+    //CFloat32VolumeData2D* m_pProxInput;
 
 	/// Temp volume to accumulate update.
 	CFloat32VolumeData2D* m_pTempVol;

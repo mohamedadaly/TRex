@@ -50,8 +50,8 @@ std::string COrderedSubsetSQSProxOperatorAlgorithm::type = "OS-SQS-PROX";
 void COrderedSubsetSQSProxOperatorAlgorithm::_clear()
 {
 	//CReconstructionAlgorithm2D::_clear();
-	CSartAlgorithm::_clear();
-	m_fLambda = 1.0f;
+	CSartProxOperatorAlgorithm::_clear();
+	//m_fLambda = 1.0f;
 	m_pTempVol = NULL;
 }
 
@@ -60,7 +60,7 @@ void COrderedSubsetSQSProxOperatorAlgorithm::_clear()
 void COrderedSubsetSQSProxOperatorAlgorithm::clear()
 {
 	//CReconstructionAlgorithm2D::clear();
-	CSartAlgorithm::clear();
+	CSartProxOperatorAlgorithm::clear();
 
 	ASTRA_DELETE(m_pTempVol);
 	//if (m_piProjectionOrder) {
@@ -87,7 +87,7 @@ COrderedSubsetSQSProxOperatorAlgorithm::COrderedSubsetSQSProxOperatorAlgorithm(C
 							   CFloat32VolumeData2D* _pReconstruction) 
 {
 	_clear();
-	CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction);
+	CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm(_pProjector, _pSinogram, _pReconstruction);
 	//initialize(_pProjector, _pSinogram, _pReconstruction);
 }
 
@@ -100,7 +100,7 @@ COrderedSubsetSQSProxOperatorAlgorithm::COrderedSubsetSQSProxOperatorAlgorithm(C
 							   int _iProjectionCount)
 {
 	_clear();
-	CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction, 
+	CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm(_pProjector, _pSinogram, _pReconstruction, 
 		_piProjectionOrder, _iProjectionCount);
 	//initialize(_pProjector, _pSinogram, _pReconstruction, _piProjectionOrder, _iProjectionCount);
 }
@@ -125,7 +125,7 @@ bool COrderedSubsetSQSProxOperatorAlgorithm::initialize(const Config& _cfg)
 	}
 
 	// initialization of parent class
-	if (!CSartAlgorithm::initialize(_cfg)) {
+	if (!CSartProxOperatorAlgorithm::initialize(_cfg)) {
 		return false;
 	}
 
@@ -159,9 +159,9 @@ bool COrderedSubsetSQSProxOperatorAlgorithm::initialize(const Config& _cfg)
 	//	CC.markOptionParsed("ProjectionOrderList");
 	//}
 
-	// Lambda
-	m_fLambda = _cfg.self.getOptionNumerical("Lambda", m_fLambda);
-	CC.markOptionParsed("Lambda");
+	//// Lambda
+	//m_fLambda = _cfg.self.getOptionNumerical("Lambda", m_fLambda);
+	//CC.markOptionParsed("Lambda");
 
 	//// Alpha
 	//m_fAlpha = _cfg.self.getOptionNumerical("Alpha", m_fAlpha);
@@ -171,12 +171,12 @@ bool COrderedSubsetSQSProxOperatorAlgorithm::initialize(const Config& _cfg)
 	//m_bClearRayLength = _cfg.self.getOptionBool("ClearRayLength", m_bClearRayLength);
 	//CC.markOptionParsed("ClearRayLength");
 
-	// Input volume
-	XMLNode node = _cfg.self.getSingleNode("ProxInputDataId");
-	ASTRA_CONFIG_CHECK(node, "PSART", "No Proximal Input tag specified.");
-	int id = boost::lexical_cast<int>(node.getContent());
-	m_pProxInput = dynamic_cast<CFloat32VolumeData2D*>(CData2DManager::getSingleton().get(id));
-	CC.markNodeParsed("ProxInputDataId");
+	//// Input volume
+	//XMLNode node = _cfg.self.getSingleNode("ProxInputDataId");
+	//ASTRA_CONFIG_CHECK(node, "PSART", "No Proximal Input tag specified.");
+	//int id = boost::lexical_cast<int>(node.getContent());
+	//m_pProxInput = dynamic_cast<CFloat32VolumeData2D*>(CData2DManager::getSingleton().get(id));
+	//CC.markNodeParsed("ProxInputDataId");
 
 	// create data objects
 	m_pTempVol = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
@@ -194,7 +194,7 @@ bool COrderedSubsetSQSProxOperatorAlgorithm::initialize(const Config& _cfg)
 bool COrderedSubsetSQSProxOperatorAlgorithm::_check()
 {
 	// check base class
-	ASTRA_CONFIG_CHECK(CSartAlgorithm::_check(), "OS-SQS-PROX", "Error in ReconstructionAlgorithm2D initialization");
+	ASTRA_CONFIG_CHECK(CSartProxOperatorAlgorithm::_check(), "OS-SQS-PROX", "Error in ReconstructionAlgorithm2D initialization");
 
 	return true;
 }
@@ -249,7 +249,7 @@ void COrderedSubsetSQSProxOperatorAlgorithm::run(int _iNrIterations)
             ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 			SIRTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
 				m_pTotalPixelWeight, m_pTotalRayLength, m_pPreconditioner, 
-				m_fAlpha * m_fLambda * 2),  // OS-SQS Prox backprojection
+				m_fAlpha * m_fLambda * 2, m_pW),  // OS-SQS Prox backprojection
             m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
         ); 
 
@@ -258,7 +258,8 @@ void COrderedSubsetSQSProxOperatorAlgorithm::run(int _iNrIterations)
             m_pProjector, 
             SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
             ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-            DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, m_pSinogram),								// forward projection with difference calculation
+            DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, 
+			  m_pSinogram, m_pW),								// forward projection with difference calculation
             m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
         );
 
@@ -268,7 +269,7 @@ void COrderedSubsetSQSProxOperatorAlgorithm::run(int _iNrIterations)
             m_pProjector, 
             SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
             ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-            TotalRayLengthPolicy(m_pTotalRayLength, false),
+            TotalRayLengthPolicy(m_pTotalRayLength, false, m_pW),
             m_bUseSinogramMask, m_bUseReconstructionMask, true 											 // options on/off
         );
 
@@ -277,11 +278,20 @@ void COrderedSubsetSQSProxOperatorAlgorithm::run(int _iNrIterations)
             m_pProjector, 
             SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
             ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			DefaultBPPolicy(m_pTotalPixelWeight, m_pTotalRayLength),
+			DefaultBPPolicy(m_pTotalPixelWeight, m_pTotalRayLength, m_pW),
             m_bUseSinogramMask, m_bUseReconstructionMask, true 											 // options on/off
         );
 
-    // Perform the first forward projection to compute ray lengths.
+	// We assume the input weights are already square-rooted.
+	////WLS?
+	//if (m_pW != NULL) {
+	//	// Take square root to prepare
+	//	m_pW->sqrt();
+	//	// Scale sinogram
+	//	*m_pSinogram *= *m_pW;
+	//}
+
+	// Perform the first forward projection to compute ray lengths.
 	m_pTotalRayLength->setData(0.0f);    
     pFirstForwardProjector->project();
 
@@ -297,7 +307,7 @@ void COrderedSubsetSQSProxOperatorAlgorithm::run(int _iNrIterations)
 	// The row sums are just set to 1, and untouched again.
 	m_pTotalRayLength->setData(1.0f);
 
-    //// end of init.
+	//// end of init.
     //ttime = CPlatformDepSystemCode::getMSCount() - timer;
 
 	// Number of voxels to update per projection for the second term (u - x)
