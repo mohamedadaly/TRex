@@ -140,11 +140,13 @@ DiffFPPolicy::DiffFPPolicy()
 //----------------------------------------------------------------------------------------
 DiffFPPolicy::DiffFPPolicy(CFloat32VolumeData2D* _pVolumeData, 
 						   CFloat32ProjectionData2D* _pDiffProjectionData, 
-						   CFloat32ProjectionData2D* _pBaseProjectionData) 
+						   CFloat32ProjectionData2D* _pBaseProjectionData,
+						   CFloat32ProjectionData2D* _pW) 
 {
 	m_pDiffProjectionData = _pDiffProjectionData;
 	m_pBaseProjectionData = _pBaseProjectionData;
 	m_pVolumeData = _pVolumeData;
+	m_pW = _pW;
 }
 //----------------------------------------------------------------------------------------
 DiffFPPolicy::~DiffFPPolicy() 
@@ -165,6 +167,11 @@ bool DiffFPPolicy::pixelPrior(int _iVolumeIndex)
 //----------------------------------------------------------------------------------------	
 void DiffFPPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
 {
+	// Apply WLS weight.
+	if (m_pW) {
+		_fWeight *= m_pW->getData()[_iRayIndex];
+	}
+
 	m_pDiffProjectionData->getData()[_iRayIndex] -= m_pVolumeData->getData()[_iVolumeIndex] * _fWeight;
 }
 //----------------------------------------------------------------------------------------
@@ -295,11 +302,13 @@ TotalPixelWeightPolicy::TotalPixelWeightPolicy()
 }
 //----------------------------------------------------------------------------------------
 TotalPixelWeightPolicy::TotalPixelWeightPolicy(CFloat32VolumeData2D* _pPixelWeight,
-											   bool _bBinary, bool _bSquare) 
+											   bool _bBinary, bool _bSquare,
+											   CFloat32ProjectionData2D* _pW)
 {
 	m_pPixelWeight = _pPixelWeight;
 	m_bBinary = _bBinary;
 	m_bSquare = _bSquare;
+	m_pW = _pW;
 }
 //----------------------------------------------------------------------------------------	
 TotalPixelWeightPolicy::~TotalPixelWeightPolicy() 
@@ -319,6 +328,11 @@ bool TotalPixelWeightPolicy::pixelPrior(int _iVolumeIndex)
 //----------------------------------------------------------------------------------------	
 void TotalPixelWeightPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
 {	
+	// Apply WLS weight.
+	if (m_pW) {
+		_fWeight *= m_pW->getData()[_iRayIndex];
+	}
+
 	if (m_bSquare) {
 		// Square if accumulating squares.
 		_fWeight *= _fWeight;
@@ -355,10 +369,12 @@ TotalRayLengthPolicy::TotalRayLengthPolicy()
 }
 //----------------------------------------------------------------------------------------
 TotalRayLengthPolicy::TotalRayLengthPolicy(CFloat32ProjectionData2D* _pRayLength,
-										   bool _bSquare) 
+										   bool _bSquare, 
+										   CFloat32ProjectionData2D* _pW) 
 {
 	m_pRayLength = _pRayLength;
 	m_bSquare = _bSquare;
+	m_pW = _pW;
 }
 //----------------------------------------------------------------------------------------	
 TotalRayLengthPolicy::~TotalRayLengthPolicy() 
@@ -378,6 +394,11 @@ bool TotalRayLengthPolicy::pixelPrior(int _iVolumeIndex)
 //----------------------------------------------------------------------------------------	
 void TotalRayLengthPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
 {
+	// Apply WLS weight.
+	if (m_pW) {
+		_fWeight *= m_pW->getData()[_iRayIndex];
+	}
+
 	m_pRayLength->getData()[_iRayIndex] += m_bSquare ? _fWeight * _fWeight : _fWeight; 
 	//ASTRA_INFO("RayLength ray=%d voxel=%d wt=%f val=%f", _iRayIndex, _iVolumeIndex, _fWeight, 
 	//	m_pRayLength->getData()[_iRayIndex]);
@@ -813,7 +834,7 @@ SartProxBPPolicy::SartProxBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 						   CFloat32ProjectionData2D* _pY, 
 						   CFloat32ProjectionData2D* _pC, 
 						   float32 _fAlhpa, float32 _fSqrt2Lambda,
-						   bool _bBICAV,						   
+						   bool _bBICAV, CFloat32ProjectionData2D* _pW,
 						   bool _bUseMinConstraint, float32 _fMinConstraintVal,
 						   bool _bUseMaxConstraint, float32 _fMaxConstraintVal) 
 {
@@ -823,6 +844,7 @@ SartProxBPPolicy::SartProxBPPolicy(CFloat32VolumeData2D* _pReconstruction,
 	m_pTotalRayLength = _pTotalRayLength;
 	m_pY = _pY;
 	m_pC = _pC;
+	m_pW = _pW;
 	m_fAlpha = _fAlhpa;
 	m_fSqrt2Lambda = _fSqrt2Lambda;
 	m_bBICAV = _bBICAV;
@@ -874,6 +896,11 @@ bool SartProxBPPolicy::pixelPrior(int _iVolumeIndex)
 void SartProxBPPolicy::addWeight(int _iRayIndex, int _iVolumeIndex, float32 _fWeight) 
 {  
 	if (_fWeight == 0) return;
+
+	// Apply WLS weight.
+	if (m_pW) {
+		_fWeight *= m_pW->getData()[_iRayIndex];
+	}
 
 	if (m_bBICAV) {
 		// denominator: (PixelWeight) 

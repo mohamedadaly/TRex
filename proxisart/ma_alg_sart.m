@@ -16,11 +16,17 @@ if alg_params.init_fbp
   rec = in_params.fbp;
 end
 
-
 % take transpose to make row major because the projection matrix assumes
 % row-major sinogram, and gives row-major volume
 sino = in_params.sino';
 [ndet, nviews] = size(sino);
+
+% WLS solution for Poisson noise: multiply both sinogram and A by wi
+if alg_params.wls
+  in_params.wi = sqrt(in_params.wi');
+  in_params.A = bsxfun(@(x,y)(x .* y), in_params.A, in_params.wi(:));
+  sino = in_params.wi .* sino;
+end
 
 % precondition
 if alg_params.precon
@@ -34,16 +40,16 @@ if alg_params.precon
   
 end
 
-% scale matrix and sinogram by sum_rows to solve a least-square instead of
-% a weighted least-square
-if alg_params.wls
-  % sum of rows
-  sum_rows = sum(in_params.A, 2);
-  sum_rows(abs(sum_rows)<1e-16) = 1;
-  % scale
-  in_params.A = bsxfun(@(a,b)(a.*b), in_params.A, sum_rows);
-  sino = reshape(sum_rows .* sino(:), ndet, nviews);
-end
+% % scale matrix and sinogram by sum_rows to solve a least-square instead of
+% % a weighted least-square
+% if alg_params.wls
+%   % sum of rows
+%   sum_rows = sum(in_params.A, 2);
+%   sum_rows(abs(sum_rows)<1e-16) = 1;
+%   % scale
+%   in_params.A = bsxfun(@(a,b)(a.*b), in_params.A, sum_rows);
+%   sino = reshape(sum_rows .* sino(:), ndet, nviews);
+% end
 
 % initialize for proxisart
 switch alg_params.prox

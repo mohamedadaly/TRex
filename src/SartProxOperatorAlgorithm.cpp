@@ -54,6 +54,7 @@ void CSartProxOperatorAlgorithm::_clear()
 	m_fLambda = 1.0f;
 	m_pC = NULL;
 	m_pY = NULL;
+	m_pW = NULL;
 }
 
 //---------------------------------------------------------------------------------------
@@ -179,6 +180,11 @@ bool CSartProxOperatorAlgorithm::initialize(const Config& _cfg)
 	m_pProxInput = dynamic_cast<CFloat32VolumeData2D*>(CData2DManager::getSingleton().get(id));
 	CC.markNodeParsed("ProxInputDataId");
 
+	// WLS weights
+	id = static_cast<int>(_cfg.self.getOptionNumerical("WlsWeightDataId", -1));
+	m_pW = dynamic_cast<CFloat32ProjectionData2D*>(CData2DManager::getSingleton().get(id));
+	CC.markOptionParsed("WlsWeightDataId");
+
 	// create data objects
 	//m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 	//m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
@@ -277,7 +283,8 @@ void CSartProxOperatorAlgorithm::run(int _iNrIterations)
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 			SartProxBPPolicy(m_pReconstruction, m_pDiffSinogram, 
 						 m_pTotalPixelWeight, m_pTotalRayLength, 
-						 m_pY, m_pC, m_fAlpha, fSqrt2Lambda),			// PSART backprojection
+						 m_pY, m_pC, m_fAlpha, fSqrt2Lambda, false, 
+						 m_pW),			// PSART backprojection
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 
 
@@ -288,8 +295,10 @@ void CSartProxOperatorAlgorithm::run(int _iNrIterations)
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 			CombinePolicy<DiffFPPolicy, TotalPixelWeightPolicy>(					// 3 basic operations
-				DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, m_pSinogram),								// forward projection with difference calculation
-				TotalPixelWeightPolicy(m_pTotalPixelWeight)),												// calculate the total pixel weights
+				DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, 
+					m_pSinogram, m_pW),								// forward projection with difference calculation
+				TotalPixelWeightPolicy(m_pTotalPixelWeight, false, 
+					false, m_pW)),												// calculate the total pixel weights
 			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
 		);
 
@@ -299,9 +308,17 @@ void CSartProxOperatorAlgorithm::run(int _iNrIterations)
 			m_pProjector, 
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			TotalRayLengthPolicy(m_pTotalRayLength),													// calculate the total ray lengths
+			TotalRayLengthPolicy(m_pTotalRayLength, false, m_pW),													// calculate the total ray lengths
 			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
 		);
+
+	//WLS?
+	if (m_pW != NULL) {
+		// Take square root to prepare
+		m_pW->sqrt();
+		// Scale sinogram
+		*m_pSinogram *= *m_pW;
+	}
 
 	// Perform the first forward projection to compute ray lengths
 	m_pTotalRayLength->setData(0.0f);
@@ -341,8 +358,6 @@ void CSartProxOperatorAlgorithm::run(int _iNrIterations)
 				m_pReconstruction->clampMin(m_fMinValue);
 			if (m_bUseMaxConstraint)
 				m_pReconstruction->clampMax(m_fMaxValue);
-
-
 		}
 
 		// end timer

@@ -49,8 +49,22 @@ P_id = astra_mex_data2d('create', '-vol', vol_geom, P);
 % add sinogram noise
 rng('default') 
 rng(123);
-sinogram = sinogram + randn(size(sinogram)) * 0.05 * mean(sinogram(:));
+% sinogram = sinogram + randn(size(sinogram)) * 0.05 * mean(sinogram(:));
 % sinogram = sinogram .* (randn(size(sinogram)) * .1 + 1);
+      
+% copied from Fessler's IRT
+I0 = 1e5;  %1e5 % incident photons; decrease this for "low dose" scans
+poissonfactor = 0.4; % for generating poissonn noise using rejection method
+% scale the sinogram to have a max of 10, then scale again after
+% sampling
+scale_factor = 10 / max(sinogram(:));
+yi = poisson(I0 * exp(-sinogram * scale_factor), 0, 'factor', poissonfactor); % poisson noise for transmission data:
+if any(yi(:) == 0)
+  warn('%d of %d values are 0 in sinogram!', sum(yi(:)==0), length(yi(:)));
+end
+sinogram = log(I0 ./ max(yi,1)) / scale_factor; % noisy fan-beam sinogram: form of the data in the quadratic approximation to the actual log-likelihood
+% PWLS weights
+wi = yi / max(yi(:)); %
 
 astra_mex_data2d('delete', sinogram_id);
 
@@ -220,12 +234,12 @@ profile viewer
 %% Matrix Experimental SART
 in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
   'gt_vol',P, 'sino',sinogram, 'proj_id',proj_id, ...
-  'wi',ones(size(sinogram)), 'fbp',fbp, 'A',proj_mat, 'prox_in',fbp*0);
+  'wi',wi, 'fbp',fbp, 'A',proj_mat, 'prox_in',fbp*0);
 
 %%    SART
 % --> debug sqs
-alg_params = struct('iter',10, 'alpha',1, 'min_val',0, 'precon',0, ...
-  'wls',0, 'BSSART',1, 'prox','', 'lambda',1e0, 'nsubsets',30, 'sqs',0, ...
+alg_params = struct('iter',5, 'alpha',1, 'min_val',0, 'precon',0, ...
+  'wls',0, 'BSSART',0, 'prox','sart', 'lambda',1e0, 'nsubsets',30, 'sqs',0, ...
   'init_fbp',0);
 [rec, times, snrs, iters] = ma_alg_sart(in_params, alg_params);
 [times snrs iters]
@@ -262,10 +276,13 @@ prec = reshape(proj_mat' * (proj_mat * prec(:)), 256, 256);
 % prec = 1;
 prec_id = astra_mex_data2d('create', '-vol', vol_geom, prec);
 
+% wi
+wi_id = astra_mex_data2d('create', '-sino', proj_geom, wi);
+
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('ART-PROX');
+cfg = astra_struct('SART-PROX');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
@@ -284,6 +301,7 @@ cfg.option.ClearReconstruction = 1;
 cfg.option.PreconditionerId = -1; prec_id;
 cfg.option.UseJacobiPreconditioner = 1;
 cfg.option.UseBSSART = 0;
+cfg.option.WlsWeightDataId = -1; wi_id;
 % cfg.option.ProjectionOrder = 'random';
 
 % Available algorithms:

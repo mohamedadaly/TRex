@@ -109,6 +109,9 @@ protected:
     // Proximal input volume
     CFloat32VolumeData2D* m_pProxInput;
 
+	// Weights for WLS
+	CFloat32ProjectionData2D* m_pW;
+
 public:
     
     // type of the algorithm, needed to register with CAlgorithmFactory

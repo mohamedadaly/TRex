@@ -101,10 +101,13 @@ class DiffFPPolicy {
 	CFloat32ProjectionData2D* m_pDiffProjectionData;
 	CFloat32ProjectionData2D* m_pBaseProjectionData;
 	CFloat32VolumeData2D* m_pVolumeData;
+	// WLS weights.
+	CFloat32ProjectionData2D* m_pW;
 public:
 
 	FORCEINLINE DiffFPPolicy();
-	FORCEINLINE DiffFPPolicy(CFloat32VolumeData2D* _vol_data, CFloat32ProjectionData2D* _proj_data, CFloat32ProjectionData2D* _proj_data_base);
+	FORCEINLINE DiffFPPolicy(CFloat32VolumeData2D* _vol_data, CFloat32ProjectionData2D* _proj_data, 
+		CFloat32ProjectionData2D* _proj_data_base, CFloat32ProjectionData2D* _pW = NULL);
 	FORCEINLINE ~DiffFPPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);
@@ -150,7 +153,8 @@ class TotalPixelWeightBySinogramPolicy {
 public:
 
 	FORCEINLINE TotalPixelWeightBySinogramPolicy();
-	FORCEINLINE TotalPixelWeightBySinogramPolicy(CFloat32ProjectionData2D* _pSinogram, CFloat32VolumeData2D* _pPixelWeight);
+	FORCEINLINE TotalPixelWeightBySinogramPolicy(CFloat32ProjectionData2D* _pSinogram, 
+		CFloat32VolumeData2D* _pPixelWeight);
 	FORCEINLINE ~TotalPixelWeightBySinogramPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);
@@ -171,12 +175,14 @@ class TotalPixelWeightPolicy {
 	bool m_bBinary;
 	// Accumulate squares of weights.
 	bool m_bSquare;
+	// WLS weights.
+	CFloat32ProjectionData2D* m_pW;
 
 public:
 
 	FORCEINLINE TotalPixelWeightPolicy();
 	FORCEINLINE TotalPixelWeightPolicy(CFloat32VolumeData2D* _pPixelWeight,
-		bool _bBinary = false, bool _bSquare = false);
+		bool _bBinary = false, bool _bSquare = false, CFloat32ProjectionData2D* _pW = NULL);
 	FORCEINLINE ~TotalPixelWeightPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);
@@ -195,12 +201,14 @@ class TotalRayLengthPolicy {
 	// Accumulate the weights squared instead? defaults to false.
 	// This is used by BICAV.
 	bool m_bSquare;
+	// WLS weights.
+	CFloat32ProjectionData2D* m_pW;
 
 public:
 
 	FORCEINLINE TotalRayLengthPolicy();
 	FORCEINLINE TotalRayLengthPolicy(CFloat32ProjectionData2D* _pRayLength, 
-		bool bSquare = false);
+		bool bSquare = false, CFloat32ProjectionData2D* _pW = NULL);
 	FORCEINLINE ~TotalRayLengthPolicy();
 
 	FORCEINLINE bool rayPrior(int _iRayIndex);
@@ -386,6 +394,9 @@ class SartProxBPPolicy {
 	bool m_bUseMinConstraint, m_bUseMaxConstraint;
 	float32 m_fMinConstraintVal, m_fMaxConstraintVal;
 
+	// WLS Weights.
+	CFloat32ProjectionData2D* m_pW;
+
 public:
 
 	FORCEINLINE SartProxBPPolicy();
@@ -393,6 +404,7 @@ public:
 		CFloat32VolumeData2D* _pTotalPixelWeight, CFloat32ProjectionData2D* _pTotalRayLength, 
 		CFloat32ProjectionData2D* _pY, CFloat32ProjectionData2D* _pC, 
 		float32 _fAlhpa = 1.0f, float32 _fSqrt2Lambda = 1.0f, bool _bBICAV = false,
+		CFloat32ProjectionData2D* _pW = NULL,
 		bool _bUseMinConstraint = false, float32 _fMinConstraintVal = 0.0f, 
 		bool _bUseMaxConstraint = false, float32 _fMaxConstraintVal = 0.0f); 
 	FORCEINLINE ~SartProxBPPolicy();

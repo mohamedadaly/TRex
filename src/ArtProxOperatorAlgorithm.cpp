@@ -275,7 +275,7 @@ void CArtProxOperatorAlgorithm::run(int _iNrIterations)
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 			SartProxBPPolicy(m_pReconstruction, m_pDiffSinogram, 
 						 m_pTotalPixelWeight, m_pTotalRayLength, 
-						 m_pY, m_pC, m_fAlpha, fSqrt2Lambda, true,
+						 m_pY, m_pC, m_fAlpha, fSqrt2Lambda, true, NULL, 
 						 m_bUseMinConstraint, m_fMinValue, m_bUseMaxConstraint, m_fMaxValue),			// PSART backprojection
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 
