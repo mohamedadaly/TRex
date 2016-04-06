@@ -255,7 +255,7 @@ alg_params = struct('iter',5, 'alpha',1, 'min_val',0, 'precon',0, ...
 %%    SQS
 % --> debug sqs
 alg_params = struct('iter',5, 'alpha',1, 'min_val',0, 'precon',0, ...
-  'wls',1, 'BSSART',0, 'prox','sqs', 'lambda',1e0, 'nsubsets',30, 'sqs',1, ...
+  'wls',0, 'BSSART',0, 'prox','sqs', 'lambda',1e0, 'nsubsets',30, 'sqs',1, ...
   'init_fbp',0, 'nu',1);
 [rec, times, snrs, iters] = ma_alg_sart(in_params, alg_params);
 [times snrs iters]
@@ -280,7 +280,7 @@ alg_params = struct('iter',10, 'alpha',2, 'min_val',0, 'precon',0, ...
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('BICAV-PROX');
+cfg = astra_struct('ART-PROX');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
@@ -290,15 +290,16 @@ cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
 cfg.option.Alpha = 1;
-cfg.option.Lambda = 1e0;
+cfg.option.Lambda = 1e3;
 cfg.option.ComputeIterationMetrics = 1;
 cfg.option.GTReconstructionId = P_id;
 cfg.option.IterationMetricsId = metrics_id;
 cfg.option.ClearReconstruction = 1;
-cfg.option.PreconditionerId = -1; prec_id;
+cfg.option.PreconditionerId = -1; %prec_id;
 cfg.option.UseJacobiPreconditioner = 1;
 cfg.option.UseBSSART = 0;
-cfg.option.WlsWeightDataId = -1; wi_id;
+astra_mex_data2d('set', wi_id, sqrt(wi)); %ones(size(wi)));
+cfg.option.WlsWeightDataId = -1;wi_id;
 % cfg.option.ProjectionOrder = 'random';
 
 % Available algorithms:

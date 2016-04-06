@@ -54,7 +54,7 @@ void CArtProxOperatorAlgorithm::_clear()
 	m_fLambda = 1.0f;
 	m_pC = NULL;
 	m_pY = NULL;
-
+	m_pW = NULL;
 }
 
 //---------------------------------------------------------------------------------------
@@ -180,6 +180,11 @@ bool CArtProxOperatorAlgorithm::initialize(const Config& _cfg)
 	m_pProxInput = dynamic_cast<CFloat32VolumeData2D*>(CData2DManager::getSingleton().get(id));
 	CC.markNodeParsed("ProxInputDataId");
 
+	// WLS weights
+	id = static_cast<int>(_cfg.self.getOptionNumerical("WlsWeightDataId", -1));
+	m_pW = dynamic_cast<CFloat32ProjectionData2D*>(CData2DManager::getSingleton().get(id));
+	CC.markOptionParsed("WlsWeightDataId");
+
 	// create data objects
 	//m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
 	//m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
@@ -275,7 +280,7 @@ void CArtProxOperatorAlgorithm::run(int _iNrIterations)
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 			SartProxBPPolicy(m_pReconstruction, m_pDiffSinogram, 
 						 m_pTotalPixelWeight, m_pTotalRayLength, 
-						 m_pY, m_pC, m_fAlpha, fSqrt2Lambda, true, NULL, 
+						 m_pY, m_pC, m_fAlpha, fSqrt2Lambda, true, m_pW, 
 						 m_bUseMinConstraint, m_fMinValue, m_bUseMaxConstraint, m_fMaxValue),			// PSART backprojection
 			m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
 		); 
@@ -285,7 +290,7 @@ void CArtProxOperatorAlgorithm::run(int _iNrIterations)
 			m_pProjector, 
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, m_pSinogram),								// forward projection with difference calculation
+			DiffFPPolicy(m_pReconstruction, m_pDiffSinogram, m_pSinogram, m_pW),								// forward projection with difference calculation
 			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
 		);
 
@@ -295,7 +300,7 @@ void CArtProxOperatorAlgorithm::run(int _iNrIterations)
 			m_pProjector, 
 			SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
 			ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
-			TotalRayLengthPolicy(m_pTotalRayLength, true),													// calculate the total ray lengths
+			TotalRayLengthPolicy(m_pTotalRayLength, true, m_pW),													// calculate the total ray lengths
 			m_bUseSinogramMask, m_bUseReconstructionMask, true											 // options on/off
 		);
 

@@ -109,6 +109,9 @@ protected:
     // Proximal input volume
     CFloat32VolumeData2D* m_pProxInput;
 
+	// Weights for WLS that multiply the sinogram and the projection matrix.
+	// Should be the sqrt of the WLS matrix.
+	CFloat32ProjectionData2D* m_pW;
 public:
     
     // type of the algorithm, needed to register with CAlgorithmFactory
