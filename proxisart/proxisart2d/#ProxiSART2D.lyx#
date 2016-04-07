@@ -13,6 +13,7 @@
 \DeclareMathOperator*{\st}{s.t.\,}
 \DeclareMathOperator{\prox}{prox}
 \DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\sign}{sign}
 
 % Stretch cells vertically
 \usepackage{array}
@@ -4000,7 +4001,7 @@ x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{\tilde{c}_{j}}{\scriptstyle \left(2\
 \begin_inset Float table
 wide true
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -4360,12 +4361,23 @@ and maximizing
  norm data term
 \begin_inset Formula 
 \begin{equation}
-f_{2}(x)=\Vert Ax-p\Vert_{2}^{2}=\sum_{i=1}^{m}(A_{i}^{T}x-p_{i})^{2}.\label{eq:gaussian-data-term}
+f_{G}(x)=\Vert Ax-p\Vert_{2}^{2}=\sum_{i=1}^{m}(A_{i}^{T}x-p_{i})^{2}.\label{eq:gaussian-data-term}
 \end{equation}
 
 \end_inset
 
+We can solve proximal operator 
+\begin_inset Formula $\prox_{\lambda f_{G}}(\cdot)$
+\end_inset
 
+ directly using any of the algorithms from Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Prox-Operators"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -4494,7 +4506,7 @@ x\sim\mbox{Poisson}(\lambda)\equiv P(x=X)=\frac{e^{-\lambda}\lambda^{x}}{x!}.
  
 \begin_inset Formula 
 \[
-I_{t}^{i}\sim\mathbb{P}(I_{o}^{i}e^{-p_{i}})=\mathbb{P}(I_{o}^{i}e^{-A_{i}^{T}x}).
+I_{t}^{i}\sim\mathbb{P}(I_{o}^{i}e^{-p_{i}})\approx\mathbb{P}(I_{o}^{i}e^{-A_{i}^{T}x}).
 \]
 
 \end_inset
@@ -4597,7 +4609,6 @@ reference "eq:Poisson-log-likelihood-full"
 \end_inset
 
  i.e.
- 
 \begin_inset Formula 
 \[
 w_{i}\propto I_{t}^{i}.
@@ -4605,26 +4616,8 @@ w_{i}\propto I_{t}^{i}.
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-Maximizing the likelihood is equivalent to minimizing the Poisson data term
+Maximizing the likelihood is equivalent to minimizing the WLS data term
  
-\begin_inset Formula $f_{P}(\cdot)$
-\end_inset
-
- from Equation 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:Poisson-data-term"
-
-\end_inset
-
-.
- In short, using a Poisson model and assuming monochromatic X-ray photons,
- maximizing the likelihood is equivalent to solving a weighted least squares
- problem.
 \end_layout
 
 \begin_layout Standard
@@ -4636,26 +4629,611 @@ f_{P}(x)=\Vert Ax-p\Vert_{W}^{2}=\sum_{i=1}^{m}w_{i}(a_{i}^{T}x-p_{i})^{2}\label
 \end_inset
 
  where 
-\begin_inset Formula $\Vert\cdot\Vert_{W}^{2}=x^{T}Wx$
+\begin_inset Formula $\Vert x\Vert_{W}=x^{T}Wx$
 \end_inset
 
  and 
-\begin_inset Formula $W=\mbox{diag}(w_{i})\in\mathbb{R}^{m\times m}$
+\begin_inset Formula $W=\diag(w_{i})\in\mathbb{R}^{m\times m}$
 \end_inset
 
  is a diagonal matrix containing weights for each measurement.
- It is an approximation of maximum likelihood estimation with Poisson measuremen
-t noise 
+ 
+\end_layout
+
+\begin_layout Standard
+We can solve the proximal operator 
+\begin_inset Formula 
+\begin{equation}
+\prox_{\lambda f_{P}}(u)=\min_{x}\Vert Ax-p\Vert_{W}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.\label{eq:Poisson-data-term-proximal-operator-initial}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+as follows.
+ Define 
+\begin_inset Formula $\tilde{p}\in\mathbb{R}^{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $\tilde{A}\in\mathbb{R}^{m\times n}$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\begin{eqnarray*}
+\tilde{p} & = & W^{\frac{1}{2}}p\\
+\tilde{A} & = & W^{\frac{1}{2}}A
+\end{eqnarray*}
+
+\end_inset
+
+ where 
+\begin_inset Formula 
+\[
+W^{\frac{1}{2}}=\diag\left(\sqrt{w_{i}}\right).
+\]
+
+\end_inset
+
+We now get 
+\begin_inset Formula 
+\begin{eqnarray*}
+\Vert\tilde{A}x-\tilde{p}\Vert_{2}^{2} & = & (\tilde{A}x-\tilde{p})^{T}(\tilde{A}x-\tilde{p})\\
+ & = & \left(W^{\frac{1}{2}}(Ax-p)\right)^{T}\left(W^{\frac{1}{2}}(Ax-p)\right)\\
+ & = & (Ax-p)^{T}W^{\frac{1}{2}}W^{\frac{1}{2}}(Ax-p)\\
+ & = & \Vert Ax-p\Vert_{W}^{2}.
+\end{eqnarray*}
+
+\end_inset
+
+ Now this is in the form that can be solved with the algorithms in Table
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Prox-Operators"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+\prox_{\lambda f_{P}}(u)=\min_{x}\Vert\tilde{A}x-\tilde{p}\Vert^{2}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.
+\]
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+Laplace Noise
+\end_layout
+
+\begin_layout Plain Layout
+The 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+ data term minimizes the 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+ norm of the errors.
+ This is considered as a robust estimator, since it is less affected by
+ outliers 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "clinthorne1993preconditioning"
+key "boyd2004convex,sidky2012convex"
+
+\end_inset
+
+.
+ It can also be considered a maximum likelihood estimation when the measurement
+ noise 
+\begin_inset Formula $\varepsilon_{i}$
+\end_inset
+
+ in Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:Noise-Model"
+
+\end_inset
+
+ follows a Laplace distribution 
+\begin_inset Formula $\varepsilon_{i}\sim\mbox{Laplace}(0,1)$
+\end_inset
+
+ (i.e.
+ has a pdf of the form 
+\begin_inset Formula $h(\varepsilon_{i})=\exp\left(-|\varepsilon_{i}|\right)$
+\end_inset
+
+) in which case the log-likelihood becomes 
+\begin_inset Formula 
+\begin{equation}
+\mathcal{L}_{1}(x)=-\sum_{i=1}^{m}\vert a_{i}^{T}x-p_{i}\vert.\label{eq:L1-Log-Likelihood}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+To use it we need to solve its proximal operator 
+\begin_inset Formula 
+\begin{equation}
+\prox_{\lambda f_{1}}(u)=\argmin_{x}\Vert Ax-p\Vert_{1}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.\label{eq:L1-data-term-proximal-operator}
+\end{equation}
+
+\end_inset
+
+We will use ADMM and variable splitting methods 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "boyd2011distributed,parikh2013proximal"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Plain Layout
+Define 
+\begin_inset Formula $z\in\mathbb{R}^{m}$
+\end_inset
+
+.
+ The problem in Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:L1-data-term-proximal-operator"
+
+\end_inset
+
+ is equivalent to 
+\begin_inset Formula 
+\begin{eqnarray*}
+\min_{x} & \Vert z-p\Vert_{1}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}\\
+\mbox{s.t.} & Ax=z.
+\end{eqnarray*}
+
+\end_inset
+
+Form the augmented 
+\emph on
+scaled 
+\emph default
+Lagriangian 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "boyd2011distributed,parikh2013proximal"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+\mathcal{L}_{\rho}(x,z,y)=\Vert z-p\Vert_{1}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}+\frac{\rho}{2}\Vert Ax-z+y\Vert_{2}^{2}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $y\in\mathbb{R}^{m}$
+\end_inset
+
+ is the dual variable.
+ Now this can be minimized ADMM by iterating minimizations w.r.t.
+ 
+\begin_inset Formula $x$
+\end_inset
+
+ and 
+\begin_inset Formula $z$
+\end_inset
+
+ and updating the dual variable 
+\begin_inset Formula $y$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $x$
+\end_inset
+
+ step: is equivalent to 
+\begin_inset Formula 
+\begin{align*}
+x^{(t+1)} & =\argmin_{x}\frac{\rho}{2}\Vert Ax-z^{(t)}+y^{(t)}\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}\\
+ & =\argmin_{x}\Vert\tilde{\rho}Ax-\tilde{\rho}(z^{(t)}-y^{(t)})\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\tilde{\rho}=\sqrt{\rho/2}$
+\end_inset
+
+, and is equivalent to the proximal operator of the 
+\begin_inset Formula $\ell_{2}$
+\end_inset
+
+ data term 
+\begin_inset Formula $f_{2}$
+\end_inset
+
+ in Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:L2-data-term-prox"
+
+\end_inset
+
+ with system matrix 
+\begin_inset Formula $\tilde{\rho}A$
+\end_inset
+
+ and projection measurements 
+\begin_inset Formula $\tilde{\rho}(z^{(t)}-y^{(t)})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $z$
+\end_inset
+
+ step: is equivalent to
+\begin_inset Formula 
+\begin{eqnarray*}
+z^{(t+1)} & = & \argmin_{z}\Vert z-p\Vert_{1}+\frac{\rho}{2}\Vert Ax^{(t+1)}-z+y^{(t)}\Vert_{2}^{2}\\
+ & = & p+\argmin_{w=z-p}\Vert w\Vert_{1}+\frac{\rho}{2}\Vert Ax^{(t+1)}+y^{(t)}-p-w\Vert_{2}^{2}\\
+ & = & p+\prox_{\rho^{-1}\ell_{1}}(Ax^{(t+1)}+y^{(t)}-p)
+\end{eqnarray*}
+
+\end_inset
+
+ where we changed variables 
+\begin_inset Formula $w=z-p$
+\end_inset
+
+.
+ The last term is the proximal operator of the 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+ norm, which is the component-wise soft thresholding function 
+\begin_inset Formula 
+\begin{equation}
+\prox_{\mu\ell_{1}}(u_{i})=S_{\mu}(u_{i})=\mbox{sign}(u_{i})\max\left(0,|u_{i}|-\mu\right)\label{eq:soft-thresholding}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $y$
+\end_inset
+
+ step: 
+\begin_inset Formula 
+\[
+y^{(t+1)}=y^{(t)}+Ax^{(t+1)}-z^{(t+1)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+The steps are summarized in Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:L1-SART-Proximal-Operator-ADMM"
 
 \end_inset
 
 .
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
+\begin_inset Float algorithm
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:L1-SART-Proximal-Operator-ADMM"
+
+\end_inset
+
+
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+ Data Term Proximal Operator
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithmic}[1]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $A\in\mathbb{R}{}^{m\times n}$
+\end_inset
+
+, 
+\begin_inset Formula $u\in\mathbb{R}{}^{n}$
+\end_inset
+
+, 
+\begin_inset Formula $\lambda\in\mathbb{R}$
+\end_inset
+
+, 
+\begin_inset Formula $\alpha\in\mathbb{R}$
+\end_inset
+
+, 
+\begin_inset Formula $p\in\mathbb{R}{}^{m}$
+\end_inset
+
+, 
+\begin_inset Formula $\rho\in\mathbb{R}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+ Initialize 
+\begin_inset Formula 
+\begin{align*}
+z^{(0)}=y^{(0)}=0.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ForAll {
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $t=1\ldots T$
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Update 
+\begin_inset Formula $x$
+\end_inset
+
+: 
+\begin_inset Formula 
+\[
+x^{(t+1)}=\argmin_{x}\left\Vert \tilde{\rho}Ax-\tilde{\rho}(z^{(t)}-y^{(t)})\right\Vert _{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\tilde{\rho}=\sqrt{\rho/2}$
+\end_inset
+
+ by running Algoritm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:SART-Proximal-Operator"
+
+\end_inset
+
+ with system matrix 
+\begin_inset Formula $\tilde{\rho}A$
+\end_inset
+
+ and input projections 
+\begin_inset Formula $\tilde{\rho}(z^{(t)}-y^{(t)})$
+\end_inset
+
+ and parameters 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ and 
+\begin_inset Formula $\alpha$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Update 
+\begin_inset Formula $z$
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+z^{(t+1)}=p+S_{\rho^{-1}}\left(Ax^{(t+1)}+y^{(t)}-p\right)
+\]
+
+\end_inset
+
+ from Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:soft-thresholding"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Update 
+\begin_inset Formula $y$
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+y^{(t+1)}=y^{(t)}+Ax^{(t+1)}-z^{(t+1)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+Return
+\end_layout
+
+\end_inset
+
+ volume reconstruction 
+\begin_inset Formula $x^{\star}\in\mathbb{R}{}^{n}=\argmin_{x}\Vert Ax-p\Vert_{1}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithmic}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
 \begin_inset Formula $\ell_{1}$
 \end_inset
 
@@ -4678,7 +5256,7 @@ key "sidky2012convex"
 .
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 For example, in our case, 
 \begin_inset Formula 
 \[
@@ -4691,213 +5269,229 @@ which is a measure of how well the reconstruction fits the given projection
  images.
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Regularizers
+\end_layout
+
 \begin_layout Standard
-For the regularization part, we can have several functions.
- For example: 
+The regularizers impose constraints on the reconstruction volume.
+ We will consider three state of the art regularizers:
 \end_layout
 
-\begin_layout Itemize
-the simplest is to regularize the 
-\begin_inset Formula $\ell_{2}$
+\begin_layout Subsubsection
+Isotropic Total Variation (ITV)
+\end_layout
+
+\begin_layout Standard
+It is the sum of the gradient magnitude at each voxel 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rudin1992nonlinear,sidky2012convex,chambolle2011first"
+
 \end_inset
 
- norm of the volume i.e.
+ i.e.
+ 
+\begin_inset Formula 
+\begin{equation}
+h_{\text{ITV}}(x)=\sigma\Vert x\Vert_{\text{TV}}=\sigma\sum_{i}\Vert\nabla x_{i}\Vert_{2}\label{eq:h-ITV}
+\end{equation}
+
+\end_inset
+
+ where 
+\begin_inset Formula $\nabla x_{i}=\left[\begin{smallmatrix}\nabla x_{i}^{1} & \nabla x_{i}^{2}\end{smallmatrix}\right]^{T}$
+\end_inset
+
+ is the discrete gradient at voxel 
+\begin_inset Formula $i$
+\end_inset
+
+ containing the horizontal forward differen 
+\begin_inset Formula $\nabla x_{i}^{1}$
+\end_inset
+
+ and the vertical forward difference 
+\begin_inset Formula $\nabla x_{i}^{2}$
+\end_inset
+
+.
+ It can be represented in the form of Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:full-problem"
+
+\end_inset
+
  
 \begin_inset Formula 
 \[
-g(Kx)=\sigma\tilde{g}(Kx)=\sigma\Vert x\Vert_{2}^{2}\mbox{ where }K=I.
+h_{\text{ITV}}(x)=g_{\text{ITV}}(Kx)
 \]
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Itemize
-Another example is the 
-\begin_inset Formula $\ell_{1}$
+by defining the matrix 
+\begin_inset Formula $K=D\in\mathbb{R}^{2n\times n}$
 \end_inset
 
- norm if we have reason to believe that the volume should have few nonzero
- voxels i.e.
+ to be the forward difference matrix that produces the discrete gradient
  
+\begin_inset Formula $\nabla x\in\mathbb{R}^{2n}$
+\end_inset
+
+: 
 \begin_inset Formula 
 \[
-g(Kx)=\sigma\Vert x\Vert_{1}=\sum_{i}\vert x_{i}\vert.
+\nabla x=\begin{bmatrix}\nabla x_{i}\\
+\vdots\\
+\nabla x_{n}
+\end{bmatrix}=Dx
 \]
 
 \end_inset
 
+ and defining for 
+\begin_inset Formula $u\in\mathbb{R}^{2n}=\begin{bmatrix}u_{1}^{T} & \cdots & u_{n}^{T}\end{bmatrix}^{T}$
+\end_inset
 
+ 
+\begin_inset Formula 
+\[
+g_{\text{ITV}}(u)=\sigma\sum_{i}\Vert u_{i}\Vert_{2}
+\]
+
+\end_inset
+
+ The proximal operator 
+\begin_inset Formula $\prox_{\lambda g_{\text{ITV}}}(u)$
+\end_inset
+
+ is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "esser2010general,chambolle2011first"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+\prox_{\lambda g_{\text{ITV}}}(u_{i})=\frac{\sigma u_{i}}{\max(\sigma,\Vert u_{i}\Vert_{2})}
+\]
+
+\end_inset
+
+ where 
+\begin_inset Formula $u_{i}\in\mathbb{R}^{2}$
+\end_inset
+
+ is the 
+\begin_inset Formula $i$
+\end_inset
+
+th component of 
+\begin_inset Formula $u$
+\end_inset
+
+.
+ Intuitively it projects back the vector 
+\begin_inset Formula $u_{i}$
+\end_inset
+
+ to be on the Euclidean ball of radius 
+\begin_inset Formula $\sigma$
+\end_inset
+
+.
 \end_layout
 
-\begin_layout Itemize
-One more example is the Anisotropic Total Variation 
+\begin_layout Subsubsection
+Anisotropic Total Variation (ATV)
+\end_layout
+
+\begin_layout Standard
+It is a simplification of ITV 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "sidky2008image,beck2009bfast,chambolle2010introduction,nien2015fast"
 
 \end_inset
 
-, which intuitively is the 
+ , and is defined as 
+\begin_inset Formula 
+\begin{equation}
+h_{\text{ATV}}(x)=\sigma\Vert\nabla x\Vert_{1}\label{eq:h-ATV}
+\end{equation}
+
+\end_inset
+
+ which is the 
 \begin_inset Formula $\ell_{1}$
 \end_inset
 
- norm of the gradient of the volume i.e.
+ norm of the gradient 
+\begin_inset Formula $\nabla x$
+\end_inset
+
+ of the volume.
+ This can be written in the form 
+\begin_inset Formula 
+\[
+h_{\text{ATV}}(x)=g_{\text{ATV}}(Kx)
+\]
+
+\end_inset
+
+ by defining 
+\begin_inset Formula $K=D$
+\end_inset
+
+ as in the ITV case and defining for 
+\begin_inset Formula $u\in\mathbb{R}^{2n}$
+\end_inset
+
  
 \begin_inset Formula 
 \[
-g(Kx)=\sigma\Vert\nabla x\Vert_{1},
+g_{\text{ATV}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}.
 \]
 
 \end_inset
 
-where in this case the matrix 
-\begin_inset Formula $K\in\mathbb{R}^{3n\times n}$
+The proximal operator 
+\begin_inset Formula $\prox_{\lambda g_{\text{ATV}}}(u)$
 \end_inset
 
- is the matrix of first-order forward derivatives.
+ is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "esser2010general,chambolle2011first"
+
+\end_inset
+
  
-\end_layout
+\begin_inset Formula 
+\[
+\prox_{\lambda g_{\text{ITV}}}(u_{i})=\sign(u_{i})\odot\max(0,\vert u_{i}\vert-\sigma)
+\]
 
-\begin_layout Standard
-In order to solve this problem, we will use proximal algorithms, namely
- the first-order primal-dual algorithm proposed by Chambolle and Pock (hencefort
-h referred to as the CP algorithm) 
+\end_inset
+
+ which is the soft thresholding function 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "chambolle2011first"
+key "sidky2012convex"
 
 \end_inset
 
- summarized in Algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "alg:CP-algorithm"
-
-\end_inset
-
-.
- For the algorithm to work, we need two proximal operators: 
-\end_layout
-
-\begin_layout Itemize
-The proximal operator for the first function 
-\begin_inset Formula 
-\[
-\prox_{\lambda f}(u)=\argmin_{x}f(x)+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-The proximal operator for the convex conjugate 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "boyd2004convex"
-
-\end_inset
-
- function 
-\begin_inset Formula $g^{*}(\cdot)$
-\end_inset
-
- of 
-\begin_inset Formula $g(\cdot)$
-\end_inset
-
- defined as 
-\begin_inset Formula 
-\[
-\prox_{\mu g^{*}}(u)=\argmin_{x}g^{*}(x)+\frac{1}{2\mu}\Vert x-u\Vert_{2}^{2},
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $g^{*}(\cdot)$
-\end_inset
-
- is defined as 
-\begin_inset Formula 
-\[
-g^{*}(u)=\sup_{x}u^{T}x-g(x).
-\]
-
-\end_inset
-
-Computing this conjugate proximal operator actually is quite easy if we
- know the proximal operator for 
-\begin_inset Formula $g(\cdot),$
-\end_inset
-
- since using Moreau's decomposition 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "parikh2013proximal"
-
-\end_inset
-
- we have 
-\begin_inset Formula 
-\begin{equation}
-\prox_{\mu g^{*}}(u)=u-\mu\prox_{\frac{1}{\mu}g}(\frac{u}{\mu}).\label{eq:moreau-decomposition}
-\end{equation}
-
-\end_inset
-
-It can also be shown that the proximal operator for 
-\begin_inset Formula $g^{*}(\cdot)$
-\end_inset
-
- is related to the proximal operator for 
-\begin_inset Formula $\tilde{g}^{*}(\cdot)$
-\end_inset
-
- by 
-\begin_inset Formula 
-\begin{equation}
-\prox_{\mu g^{*}}(u)=\sigma\prox_{(\mu/\sigma)\tilde{g}^{*}}\left(\frac{u}{\sigma}\right),\label{eq:prox-g-conj-with-sigma}
-\end{equation}
-
-\end_inset
-
-so the 
-\begin_inset Formula $z-$
-\end_inset
-
-step of Algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "alg:CP-algorithm"
-
-\end_inset
-
- can be written as 
-\begin_inset Formula 
-\[
-z^{(t+1)}=\sigma\prox_{(\mu/\sigma)\tilde{g}^{*}}\left(\frac{z^{(t)}+\mu K\bar{x}^{(t)}}{\sigma}\right).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Using different regularization functions 
-\begin_inset Formula $g(\cdot)$
-\end_inset
-
- and matrices 
-\begin_inset Formula $K$
-\end_inset
-
-, we can plug in different priors based on our prior information of how
- the reconstructed volume should look like.
+, where the max and product are component-wise operations.
 \end_layout
 
 \begin_layout Standard
@@ -5131,365 +5725,96 @@ end{algorithmic}
 
 \end_layout
 
-\begin_layout Subsection
-Details
-\end_layout
-
-\begin_layout Standard
-We use our SART proximal operator detailed in Algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "alg:SART-Proximal-Operator"
-
-\end_inset
-
- for solving 
-\begin_inset Formula $\prox_{f}(\cdot)$
-\end_inset
-
- required in the CP algorithm.
- The implementation of 
-\begin_inset Formula $\prox_{g^{*}}(\cdot)$
-\end_inset
-
- depends on the choice of prior.
- We experiment with the following priors:
-\end_layout
-
 \begin_layout Subsubsection
-Anisotropic TV (ATV)
+Sum of Absolute Differences (SAD)
 \end_layout
 
 \begin_layout Standard
-This prior is defined as: 
-\begin_inset Formula 
-\begin{equation}
-h(x)=\sum_{ijk}{\scriptstyle \left|x_{i+1,j,k}-x_{i,j,k}\right|+\left|x_{i,j+1,k}-x_{i,j,k}\right|+\left|x_{i,j,k+1}-x_{i,j,k}\right|},\label{eq:ATV}
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $x_{i,j,k}$
-\end_inset
-
- is the voxel value at position 
-\begin_inset Formula $(i,j,k)$
-\end_inset
-
-.
- This can be represented as 
-\begin_inset Formula $\tilde{g}(Kx)$
-\end_inset
-
-, where 
-\begin_inset Formula $g(\cdot)=\Vert\cdot\Vert_{1}$
-\end_inset
-
- is the 
-\begin_inset Formula $\ell_{1}$
-\end_inset
-
- norm and 
-\begin_inset Formula $K=D\in\mathbb{R}^{3n\times n}$
-\end_inset
-
- is the forward difference matrix defined as 
-\begin_inset Formula 
-\begin{eqnarray}
-D_{ev} & = & \begin{cases}
--1 & \mbox{if }v=i\\
-1 & \mbox{if }v=j\\
-0 & \mbox{otherwise}
-\end{cases},\label{eq:forward-diff-matrix-D}
-\end{eqnarray}
-
-\end_inset
-
-where we consider a graph defined on the volume such that we have 
-\begin_inset Formula $n$
-\end_inset
-
- vertices (voxels) and 
-\begin_inset Formula $3n$
-\end_inset
-
- edges (connecting each voxel to its six neighbors, replicating voxels at
- the edge).
- The matrix 
-\begin_inset Formula $D$
-\end_inset
-
- is a representation of this graph, where each row corresponds to one edge,
- and each column to one vertex.
- The value at row 
-\begin_inset Formula $e$
-\end_inset
-
- and column 
-\begin_inset Formula $v$
-\end_inset
-
- is given by Eq.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:forward-diff-matrix-D"
-
-\end_inset
-
- above.
- The proximal operator of 
-\begin_inset Formula $\tilde{g}^{*}(\cdot)$
-\end_inset
-
- can be shown to be 
+It is an extension to the ATV by adding more forward differences around
+ each voxel 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "parikh2013proximal"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{equation}
-\prox_{\mu\tilde{g}^{*}}(u)=P_{B_{\infty}}(u)=\begin{cases}
-1 & u>1\\
-u & \vert u\vert\le1\\
--1 & u<-1
-\end{cases},\label{eq:l1-prox-conj}
-\end{equation}
-
-\end_inset
-
-where the operations are component-wise, and is equivalent to the projection
- on the unit ball 
-\begin_inset Formula $B_{\infty}$
-\end_inset
-
- of the 
-\begin_inset Formula $\ell_{\infty}$
-\end_inset
-
- norm.
- Note that we do not need to store the matrix 
-\begin_inset Formula $D$
-\end_inset
-
-, and multiplication by 
-\begin_inset Formula $D$
-\end_inset
-
- (computing the gradient) or by 
-\begin_inset Formula $D^{T}$
-\end_inset
-
- (computing the divergence) can be efficiently computed on-the-fly 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "esser2010general"
+key "gregson2012stochastic"
 
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Subsubsection
-Isotropic TV (ITV)
-\end_layout
-
-\begin_layout Standard
-This prior is defined as: 
-\begin_inset Formula 
-\[
-h(x)=\sum_{ijk}{\scriptstyle \sqrt{\left|x_{i+1,j,k}-x_{i,j,k}\right|^{2}+\left|x_{i,j+1,k}-x_{i,j,k}\right|^{2}+\left|x_{i,j,k+1}-x_{i,j,k}\right|^{2}}},
-\]
-
-\end_inset
-
-where it sums the magnitude of the gradient at each voxel.
- Using the same matrix 
-\begin_inset Formula $D$
-\end_inset
-
- defined in Eq.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:forward-diff-matrix-D"
-
-\end_inset
-
- and defining a new matrix 
-\begin_inset Formula $E\in\mathbb{R}^{3n\times n}$
-\end_inset
-
- that denotes the positions of the forward differences 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "esser2010general"
-
-\end_inset
-
- such that 
-\begin_inset Formula 
-\[
-E_{ev}=\begin{cases}
-1 & \mbox{if }D_{ev}=-1\\
-0 & \mbox{otherwise}
-\end{cases},
-\]
-
-\end_inset
-
-we can define the function 
-\begin_inset Formula $h(x)$
-\end_inset
-
- as a norm 
-\begin_inset Formula $\Vert u\Vert_{E}$
-\end_inset
-
- for 
-\begin_inset Formula $u=Dx\in\mathbb{R}^{3n}$
-\end_inset
-
- defined as 
-\begin_inset Formula 
-\[
-\Vert w\Vert_{E}=\Vert\sqrt{E^{T}w^{2}}\Vert_{1}=\sum_{v}\Vert w^{v}\Vert_{2},
-\]
-
-\end_inset
-
-where the square root and square functions are component-wise, and 
-\begin_inset Formula $w^{v}$
-\end_inset
-
- is the gradient at voxel 
-\begin_inset Formula $v=(i,j,k)$
-\end_inset
-
- i.e.
- 
-\begin_inset Formula 
-\[
-w^{v}=\left[\begin{array}{c}
-x_{i+1,j,k}-x_{i,j,k}\\
-x_{i,j+1,k}-x_{i,j,k}\\
-x_{i,j,k+1}-x{}_{i,j,k}
-\end{array}\right].
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Now we can express the ITV prior 
-\begin_inset Formula $h(x)$
-\end_inset
-
- in terms of the 
-\begin_inset Formula $\Vert u\Vert_{E}$
-\end_inset
-
- norm as 
-\begin_inset Formula 
-\[
-h(x)=\Vert Dx\Vert_{E}=g(Dx)\mbox{ where }\tilde{g}(u)=\Vert u\Vert_{E}.
-\]
-
-\end_inset
-
-The proximal operator for 
-\begin_inset Formula $g^{*}(\cdot)$
-\end_inset
-
- can be shown to be 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "esser2010general"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{equation}
-\prox_{\mu\tilde{g}^{*}}(u)=P_{B^{*}}(u)=\frac{u}{E\max\left(\sqrt{E^{T}u^{2}},1\right)}\label{eq:ITV-prox}
-\end{equation}
-
-\end_inset
-
-which is the projection on the unit ball 
-\begin_inset Formula $B^{*}$
-\end_inset
-
- of the dual norm 
-\begin_inset Formula $\Vert u\Vert_{E^{*}}$
-\end_inset
-
-, and where the division and max operations are performed component-wise.
- Intuitively, this scales each voxel by the magnitude of its gradient if
- it's greater than unity.
- Similar to ATV, we don't need to explicitly store the matrix 
-\begin_inset Formula $E$
-\end_inset
-
-, and multiplication by 
-\begin_inset Formula $E$
-\end_inset
-
- can be computed efficiently on-the-fly.
-\end_layout
-
-\begin_layout Subsubsection
-Sum of Absolute Differences (SAD) 
-\end_layout
-
-\begin_layout Standard
-This prior is defined as: 
-\begin_inset Formula 
-\begin{equation}
-h(x)=\sum_{ijk}\sum_{x_{n}\in N(x_{i,j,k})}\left|x_{n}-x_{i,j,k}\right|,\label{eq:SAD}
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $N(x_{i,j,k})$
-\end_inset
-
- is the 
+ In particular, it sums the differences of the voxels in the 
 \begin_inset Formula $3\times3$
 \end_inset
 
- neighborhood around voxel 
-\begin_inset Formula $x_{i,j,k}$
+ neighborhood around each voxel 
+\begin_inset Formula 
+\begin{equation}
+h_{\text{SAD}}(x)=\sigma\sum_{i}\sum_{k\in\mathcal{N}(i)}\vert x_{i}-x_{k}\vert\label{eq:h-SAD}
+\end{equation}
+
 \end_inset
 
- (excluding voxel 
-\begin_inset Formula $x_{i,j,k}$
+where 
+\begin_inset Formula $\mathcal{\mathcal{N}}(i)$
 \end_inset
 
- itself).
- It can be seen as an extension to the ATV prior, just with a different
- matrix 
-\begin_inset Formula $D$
-\end_inset
-
- where more edges are considered for every voxel instead of just three.
- Hence its proximal operator is similar to Eq.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:l1-prox-conj"
-
+ contains the voxels in the neighborhood around voxel 
+\begin_inset Formula $i$
 \end_inset
 
 .
- It has been shown 
+ It can be written similarly in the form 
+\begin_inset Formula 
+\[
+h_{\text{SAD}}(x)=g_{\text{SAD}}(Kx)
+\]
+
+\end_inset
+
+ by defining 
+\begin_inset Formula $ $
+\end_inset
+
+ as in the ITV case and defining for 
+\begin_inset Formula $u\in\mathbb{R}^{2n}$
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+g_{\text{ATV}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}.
+\]
+
+\end_inset
+
+The proximal operator 
+\begin_inset Formula $\prox_{\lambda g_{\text{ATV}}}(u)$
+\end_inset
+
+ is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "esser2010general,chambolle2011first"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+\prox_{\lambda g_{\text{ITV}}}(u_{i})=\sign(u_{i})\odot\max(0,\vert u_{i}\vert-\sigma)
+\]
+
+\end_inset
+
+ which is the soft thresholding function 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sidky2012convex"
+
+\end_inset
+
+, where the max and product are component-wise operations.
+\end_layout
+
+\begin_layout Standard
+It has been shown 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "gregson2012stochastic"
@@ -5510,442 +5835,6 @@ name "sec:Experiments"
 
 \end_layout
 
-\begin_layout Standard
-We run two kinds of experiments: (a) on simulated data using the Shepp-Logan
- phantom 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "shepp1974fourier"
-
-\end_inset
-
-; and (b) on real data using the standard RabbitCT benchmark 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "rohkohl2009rabbitct"
-
-\end_inset
-
- and the Lynx dataset.
- All experiments are executed on a machine with two Intel Xeon X5650 processors
- (24 cores overall) and 48 GB of RAM.
- The code is implemented in C++ and is available at 
-\begin_inset Flex Flex:URL
-status collapsed
-
-\begin_layout Plain Layout
-
-https://github.com/prilemon/ProxiSART
-\end_layout
-
-\end_inset
-
-.
- Our implementation of SART uses the Kaiser-Bessel kernels 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "mueller1998fast"
-
-\end_inset
-
- (with a radius of 2 voxels) for more accurate and smooth interpolation
- in the forward and back projection steps.
- We also employ the slice-by-slice mechanism to speed up the (back)projection
- steps 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "mueller1998fast"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-We evaluate our results using two metrics: (a) Signal-to-noise Ratio (SNR);
- and (b) Structural Similarity Index (SSIM) 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "wang2004image"
-
-\end_inset
-
-.
- The first metric is a standard one used for measuring the quality of volume
- reconstruction compared to the ground truth volume, while the second gives
- more perceptually-related reconstruction measure.
-\end_layout
-
-\begin_layout Standard
-We run different versions of our algorithms with different priors, namely:
- 
-\end_layout
-
-\begin_layout Itemize
-Our implementation of plain SART with no priors as in Alg.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "alg:standard-SART"
-
-\end_inset
-
- (PlainSART).
- 
-\end_layout
-
-\begin_layout Itemize
-ProxiSART with Anisotropic Total Variation using CP (PSART-ATV) 
-\end_layout
-
-\begin_layout Itemize
-ProxiSART with Isotropic Total Variation using CP (PSART-ITV).
- 
-\end_layout
-
-\begin_layout Itemize
-ProxiSART with Sum of Absolute Differences using CP (PSART-SAD).
- 
-\end_layout
-
-\begin_layout Standard
-We compare results from our framework to state-of-the-art algorithms and
- comparable implementations in RTK, namely: 
-\end_layout
-
-\begin_layout Itemize
-Cone Beam Filtered Back Projection (RTK-FDK) 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "feldkamp1984practical"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Itemize
-Plain SART with no priors (RTK-SART).
- 
-\end_layout
-
-\begin_layout Itemize
-ADMM with ATV prior (RTK-ADMM) using Conjugate Gradient (CG) 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "mory2012ecg"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-For choosing the hyper parameters in all the algorithms, we experiment with
- a range of combinations and pick the one with the best performance (SNR).
-\end_layout
-
-\begin_layout Subsection
-Simulated Dataset
-\end_layout
-
-\begin_layout Standard
-We run experiments on a 
-\begin_inset Formula $128\times128\times128$
-\end_inset
-
- 3D Shepp-Logan volume with voxel size of 
-\begin_inset Formula $1\times1\times1$
-\end_inset
-
- mm.
- The distance between the cone beam source and the detector matrix is 955
- mm, while that between the source and the object isocenter is 500 mm.
- The detector panel has 
-\begin_inset Formula $512\times512$
-\end_inset
-
- pixels with 
-\begin_inset Formula $1\times1$
-\end_inset
-
- mm size.
- We focus on cases where noise might prevent accurate reconstruction.
- Therefore, we compare reconstruction using different numbers of projection
- images; namely 30, 45, 60, and 90 images equally distributed across the
- 
-\begin_inset Formula $360^{\circ}$
-\end_inset
-
- angular range.
- We also compare injecting zero-mean additive Gaussian noise with different
- standard deviations; namely 0.05, 0.2, 0.5, and 0.75.
- The projections were generated using RTK 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "rit2014reconstruction"
-
-\end_inset
-
-.
- We set the number of SART and CG iterations at 2 in every step for our
- algorithms and for RTK-ADMM, respectively.
- The relaxation coefficient 
-\begin_inset Formula $\alpha$
-\end_inset
-
- in SART is set to 0.5.
-\end_layout
-
-\begin_layout Standard
-Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Simulation-Results:-Effect-Num-Proj"
-
-\end_inset
-
- shows the SNR and SSIM for the different reconstruction algorithms when
- varying the number of projections.
- Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Simulation-Results-Sample-Num-Proj"
-
-\end_inset
-
- shows a sample slice from the reconstructed volume for the different algorithms
- and different numbers of projections.
- Similarly, Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Simulation-Results:-Effect-Noise"
-
-\end_inset
-
- shows the SNR and SSIM for the different algorithms with different amounts
- of additive Gaussian noise, while Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Simulation-Results-Sample-Noise"
-
-\end_inset
-
- shows a sample slice from the respective reconstructions (we omit results
- for PSART-ATV because they are almost identical to PSART-ITV).
- To assess the speed of convergence, Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Simulation-Speed-of-convergence"
-
-\end_inset
-
- shows the SNR as a function of the number of iterations in the reconstruction,
- with 60 projections and 
-\begin_inset Formula $\sigma=0.75$
-\end_inset
-
- noise.
-\end_layout
-
-\begin_layout Standard
-We note the following: 
-\end_layout
-
-\begin_layout Itemize
-Using priors (ATV, ITV, or SAD) consistently gives better accuracy and faster
- convergence, specially with noisy measurements or using very few projections.
- 
-\end_layout
-
-\begin_layout Itemize
-Our implementation of SART converges faster and gives lower error than RTK-SART.
- One reason might be the better interpolation filter (Kaiser-Bessel vs.
- tri-linear in RTK) we use.
- 
-\end_layout
-
-\begin_layout Itemize
-Our ProxiSART reconstructions consistently give better results than the
- equivalent RTK-ADMM.
- 
-\end_layout
-
-\begin_layout Itemize
-ITV and ATV priors give almost identical results, hence we include only
- the visualizations for ITV in Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Simulation-Results-Sample-Num-Proj"
-
-\end_inset
-
- and 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Simulation-Results-Sample-Noise"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Itemize
-PSART-SAD produces the best results in terms of visualization quality, SNR,
- and convergence speed, confirming earlier results about the SAD regularizer
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "gregson2012stochastic"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Subsection
-Real Datasets
-\end_layout
-
-\begin_layout Standard
-We run another round of experiments on a real datasets, namely: (a) the
- RabbitCT 
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-available from 
-\begin_inset Flex Flex:URL
-status open
-
-\begin_layout Plain Layout
-
-http://rabbitct.com
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "rohkohl2009rabbitct"
-
-\end_inset
-
- ; and (b) the Lynx Dataset 
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-available from 
-\begin_inset Flex Flex:URL
-status collapsed
-
-\begin_layout Plain Layout
-
-http://goo.gl/3NhbKq
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-.
- The RabbitCT is a CT scan of a rabbit used for benchmarking the speed of
- tomographic reconstruction algorithms.
- It contains 496 projections obtained using a C-arm system from Siemens
- Artis Zee acquired on a 
-\begin_inset Formula $200^{\circ}$
-\end_inset
-
- circular short-scan trajectory.
- We use 62 (=496/8) equally-distributed projections.
- The size of the projection image is 
-\begin_inset Formula $1248\times960$
-\end_inset
-
- pixels with isotropic resolution of 
-\begin_inset Formula $0.32$
-\end_inset
-
- mm/pixel.
- The source to detector distance is 871.1088 mm and the source to isocenter
- is 600 mm.
- We used a volume of size 
-\begin_inset Formula $128\times128\times128$
-\end_inset
-
- voxels and 2 mm spacing.
-\end_layout
-
-\begin_layout Standard
-The Lynx dataset is a CT scan of a lynx skull using an Agfa Orthoregular
- intensifier screen.
- We use 90 equally-distributed projections.
- The source to detector distance is 784.86 mm and the source to isocenter
- distance is 250 mm.
- The detector size is 
-\begin_inset Formula $546\times348$
-\end_inset
-
- pixels with 
-\begin_inset Formula $1\times1$
-\end_inset
-
- mm spacings.
- The volume size is 
-\begin_inset Formula $350\times260\times260$
-\end_inset
-
- voxels with 
-\begin_inset Formula $0.5\times0.5\times0.5$
-\end_inset
-
- mm spacing.
-\end_layout
-
-\begin_layout Standard
-We use 20 iterations for both ADMM and CP (with 2 iterations for SART and
- CG, respectively).
- Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Real-Results-Sample-Rabbit"
-
-\end_inset
-
- and 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Real-Results-Sample-Lynx"
-
-\end_inset
-
- shows sample slices from reconstruction of the RabbitCT and the Lynx datasets,
- respectively.
- We notice that using ProxiSART with ITV or SAD provides better reconstructions
- with less artifacts than FDK or plain SART.
-\end_layout
-
 \begin_layout Section
 Conclusions
 \begin_inset CommandInset label
@@ -5955,22 +5844,6 @@ name "sec:Discussion-and-Conclusion"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-We presented ProxiSART, a flexible proximal framework for robust 3D cone
- beam reconstruction.
- We derived the proximal operator for the data fitting sub-problem using
- the powerful SART algorithm.
- We ran experiments comparing our framework with the popular RTK open-source
- software toolkit, both on real and simulated datasets, using different
- standard and non-standard priors.
- We showed the robustness of our algorithms in terms of reconstruction quality
- and fewer iterations till convergence in the presence of noise and using
- fewer projections.
- Next, we plan on investigating using other more powerful priors, specifically
- non-local TV; and using the method with other noise models than the Gaussian
- noise model, for example the Poisson noise model.
 \end_layout
 
 \begin_layout Section

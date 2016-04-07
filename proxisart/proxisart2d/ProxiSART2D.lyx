@@ -13,6 +13,7 @@
 \DeclareMathOperator*{\st}{s.t.\,}
 \DeclareMathOperator{\prox}{prox}
 \DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\sign}{sign}
 
 % Stretch cells vertically
 \usepackage{array}
@@ -419,7 +420,7 @@ key "kim2015combining"
 
 \end_inset
 
-, and show that our framework gives superiror reconstruction quality.
+, and show that our framework gives superior reconstruction quality.
 \end_layout
 
 \begin_layout Standard
@@ -748,11 +749,20 @@ name "sec:Iterative-Algorithms"
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
 Overview
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Overview-Iterative-Algorithms"
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -1134,7 +1144,7 @@ reference "alg:Iterative-Algorithm"
 \begin_inset Formula $p_{S}-A_{S}x^{(t)}$
 \end_inset
 
- that is then backprojected with some normalization procedure.
+ that is then back projected with some normalization procedure.
  It can take the form 
 \begin_inset Formula 
 \[
@@ -1160,7 +1170,7 @@ where the function
 
 \end_inset
 
- and so these algorithms can be veiwed as variations of (stochastic) gradient
+ and so these algorithms can be viewed as variations of (stochastic) gradient
  descent 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1782,12 +1792,11 @@ reference "sec:Iterative-Algorithms"
 
 \end_layout
 
-\begin_layout Standard
-
-\series bold
+\begin_layout Subsubsection
 ART
-\series default
- 
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "gordon1970algebraic,gordon1971reconstruction"
@@ -1866,7 +1875,8 @@ th column of
 \end_inset
 
 th ray (equation or row), the difference in the numerator is the projection
- error, that is then backprojected by multiplying the transpose of the 
+ error, that is then back projected by multiplying the transpose of the
+ 
 \begin_inset Formula $i$
 \end_inset
 
@@ -1928,12 +1938,13 @@ th row
  
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
 
 \series bold
-SIRT 
-\series default
+SIRT
+\end_layout
 
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "gilbert1972iterative"
@@ -2003,7 +2014,7 @@ x^{(t+1)}=x^{(t)}+\alpha C^{-1}A^{T}R^{-1}\left(p-Ax^{(t)}\right)
 \begin_inset Formula $Ax^{(t)}$
 \end_inset
 
-, computes the residual, and then backprojects it.
+, computes the residual, and then back projects it.
  The diagonal matrices 
 \begin_inset Formula $R$
 \end_inset
@@ -2053,12 +2064,13 @@ key "gregor2015comparison"
 .
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
 
 \series bold
-SART 
-\series default
+SART
+\end_layout
 
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "andersen1984simultaneous,andersen1989algebraic"
@@ -2162,12 +2174,13 @@ x^{\star}\approx\argmin_{x}\Vert x\Vert_{2}^{2}\st Ax=p.
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
 
 \series bold
 BSSART
-\series default
- 
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "censor2002block"
@@ -2207,7 +2220,7 @@ x^{(t+1)}=x^{(t)}+\alpha C^{-1}A_{S}^{T}R^{-1}\left(p_{S}-A_{S}x^{(t)}\right)
 
 \end_inset
 
- where the diagonal matrices are both indepdendent of the projection view
+ where the diagonal matrices are both independent of the projection view
  
 \begin_inset Formula $S$
 \end_inset
@@ -2235,12 +2248,13 @@ x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\st Ax=p
 .
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
 
 \series bold
 BICAV
-\series default
- 
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "censor2001bicav,censor2002block"
@@ -2322,12 +2336,13 @@ key "censor2002block"
 .
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
 
 \series bold
-OS-SQS 
-\series default
+OS-SQS
+\end_layout
 
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "erdogan1999ordered,kim2013accelerating,kim2015combining,nien2015fast"
@@ -2450,12 +2465,13 @@ ly.
  
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
 
 \series bold
 CGLS
-\series default
- 
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "bjorck1996numerical,fessler1999conjugate"
@@ -2493,1075 +2509,6 @@ key "bjorck1996numerical"
 \[
 x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}.
 \]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Experimental Comparison
-\begin_inset CommandInset label
-LatexCommand label
-name "sub:Experimental-Comparison-Iterative-Algorithms"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We present experiments on two simulated phantoms and one real dataset, see
- Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Phantoms"
-
-\end_inset
-
-.
- The phantoms are: the modified 2D Shepp-Logan head phantom 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "toft1996radon"
-
-\end_inset
-
-; and a 2D slice of the NCAT phantom 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "segars2002study"
-
-\end_inset
-
-.
- The phantoms were generated at a resolution of 
-\begin_inset Formula $512\times512$
-\end_inset
-
- pixels, and ground truth sinograms were generated in ASTRA using a fan
- beam geometry with 
-\begin_inset Formula $888$
-\end_inset
-
- detectors, isotropic pixels of 1 mm, isotropic detectors of 
-\begin_inset Formula $1.0239$
-\end_inset
-
- mm, and source-to-detector distance of 
-\begin_inset Formula $949.075$
-\end_inset
-
- mm.
- We assumed Poisson measurement noise with emitted intensity count 
-\begin_inset Formula $I_{0}=10^{5}$
-\end_inset
-
- to generate the noisy projections used.
-\end_layout
-
-\begin_layout Standard
-The real dataset is a 2D slice of a 3D cone beam scan of a mouse from the
- Exxim Cobra software 
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-available from 
-\begin_inset CommandInset href
-LatexCommand href
-name "www.exxim-cc.com"
-target "http://www.exxim-cc.com/"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-.
- The data contains 194 projections (over 194 degrees) of a fan beam geometry
- with 512 detectors of size 0.16176 mm, source-to-detector distance of 529.29
- mm, source-to-isocenter distance of 395.73 mm, and reconstructed volume
- of 
-\begin_inset Formula $512\times512$
-\end_inset
-
- pixels of isotropic size 0.12 mm.
- We ran 500 iterations of BSSART with 
-\begin_inset Formula $\alpha=0.1$
-\end_inset
-
- to generate the 
-\emph on
-ground truth
-\emph default
- volume.
- We measure performance in terms of SNR (signal-to-noise ratio) defined
- as 
-\begin_inset Formula 
-\[
-\mbox{SNR}(x,\hat{x})=10\log\frac{\sum_{j}\hat{x}_{j}^{2}}{\sum_{j}\left(x_{j}-\hat{x}_{j}\right)^{2}}
-\]
-
-\end_inset
-
- where 
-\begin_inset Formula $x\in\mathbb{R}^{n}$
-\end_inset
-
- is the current estimate of the volume and 
-\begin_inset Formula $\hat{x}\in\mathbb{R}^{n}$
-\end_inset
-
- is the ground truth volume.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide true
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/phantom-ph_mod-sl-512.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Modified Shepp-Logan
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/phantom-ph_ncat-512.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/phantom-ph_mouse-512.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-The three datasets used.
- (c) shows the 
-\emph on
-ground truth
-\emph default
- converged result from the projections.
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Phantoms"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We clip the reconstruction estimate 
-\begin_inset Formula $x$
-\end_inset
-
- at the end of each inner iteration (i.e.
- after each update step) using this function 
-\begin_inset Formula 
-\[
-\mbox{clip}(x)=\max(0,x)
-\]
-
-\end_inset
-
- to get rid of negative voxel values.
- We set the number of subsets in OS-SQS to the number of projections to
- have a fair comparison with SART, since we noticed that increasing the
- number of subsets increases the convergence rate.
- All experiments in this section are run using ASTRA running on one core
- of an Intel Xeon E5-280 2.7 GHz with 64 GB RAM.
- We compare different values of 
-\begin_inset Formula $\alpha$
-\end_inset
-
-, namely 0.1, 1, and 1.99.
- We compare convergence per iteration since all methods are roughly equal
- in runtime, as each outer iteration contains (roughly) one forward and
- one backward projection.
- This is confirmed in Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:SNR-per-time-iterative"
-
-\end_inset
-
-.
- Note that our implementation is not optimized for any of the methods, and
- the processing time is just an indication.
-\end_layout
-
-\begin_layout Standard
-Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:SNR-per-iteration-iterative"
-
-\end_inset
-
- shows the SNR per iteration for 15 and 90 projections for 30 iterations,
- while Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:SNR-per-num-proj-iterative"
-
-\end_inset
-
- shows the the maximum SNR over 30 iterations for different number of equally
- distributed projections from 15 to 180.
- From the figures, we make the following conclusions:
-\end_layout
-
-\begin_layout Itemize
-The simulated projections closely resemble the results from the real dataset,
- which suggests that the measurement noise model is reflective of real data.
-\end_layout
-
-\begin_layout Itemize
-With fewer projections (15 or 30 projections), using larger values 
-\begin_inset Formula $\alpha=1.99$
-\end_inset
-
- gives faster and better convergence.
- 
-\end_layout
-
-\begin_layout Itemize
-With many projections, moderate values 
-\begin_inset Formula $\alpha=1$
-\end_inset
-
- produces a fast convergence that then falls off and is overtaken by 
-\begin_inset Formula $\alpha=0.1$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-SART provides the fastest convergence within a handful of iterations, and
- is consistently better for fewer projections.
- However, it is overtaken by ART and others for many projections.
- This provides the motivation to use it in the proximal framework, since
- typically the tomography solver is invoked for only a few iterations per
- outer iteration of ADMM for example 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "ramani2012splitting"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-With more projections, e.g.
- 90, we notice that the SNR for a few methods go up and then down.
- This doesn't mean, however, that they are not converging.
- The objective function is the projection error, and we confirmed it is
- in fact improving even though the SNR is decreasing.
- This can be explained by the fact of the presence of noise, and that at
- some point the algorithm starts fitting the noise in the measurements 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "herman2009fundamentals"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Even though BICAV, SIRT, and BSSART have formal proofs of convergence, their
- convergence speed per iteration is in fact much lower than SART or OS-SQS.
- 
-\end_layout
-
-\begin_layout Itemize
-The faster convergence and best results are achieved by SART, followed by
- ART, OS-SQS, and BICAV.
- They work better with 
-\begin_inset Formula $\alpha=1$
-\end_inset
-
- for few projections, and with 
-\begin_inset Formula $\alpha=0.1$
-\end_inset
-
- for more projections.
-\end_layout
-
-\begin_layout Itemize
-Using plain iterative methods does not give acceptable results with fewer
- projections.
- Thus we focus next on using regularizers in the proximal framework with
- SART, ART, OS-SQS, and BICAV and fewer projections, namely 30 projections.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide true
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Modified Shepp-Logan
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Convergence of Iterative Algorithms.
- Plots show SNR per iteration.
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:SNR-per-iteration-iterative"
-
-\end_inset
-
-Top row is for 15 projections, and bottom row is for 90 projections.
- Solid lines have 
-\begin_inset Formula $\alpha=1$
-\end_inset
-
-, dashed lines have 
-\begin_inset Formula $\alpha=1.99$
-\end_inset
-
-, and dotted lines have 
-\begin_inset Formula $\alpha=0.1$
-\end_inset
-
-.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide true
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan_t1-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Modified Shepp-Logan
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse_t1-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse_t1-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-SNR per running time for 90 projections.
- Compare with Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:SNR-per-iteration-iterative"
-
-\end_inset
-
- (bottom row).
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:SNR-per-time-iterative"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide true
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/max-snr-per_num_proj-ph_mod-sl-512_nt_poisson-nl_100000.000-it_30-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Modified Shepp-Logan
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/max-snr-per_num_proj-ph_ncat-512_nt_poisson-nl_100000.000-it_30-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/max-snr-per_num_proj-ph_mouse-512_nt_gauss-nl_0.000-it_30-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Effect of the number of projections.
- Plots show the maximum SNR achieved over 30 iterations per number of projection
-s used.
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:SNR-per-num-proj-iterative"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -3652,7 +2599,7 @@ x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\st Ax=p.
 
 \end_inset
 
- What we want is a solver for LS proejction error i.e.
+ What we want is a solver for LS projection error i.e.
  
 \begin_inset Formula 
 \begin{equation}
@@ -4275,7 +3222,165 @@ reference "eq:full-problem"
 
 \end_inset
 
-it iterates the following steps 
+ and iterates the steps in Alg.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:LADMM-algorithm"
+
+\end_inset
+
+.
+ This framework is very flexible, and we will show how to solve for different
+ data terms and different regularizers.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+protect
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:LADMM-algorithm"
+
+\end_inset
+
+Linearized ADMM
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithmic}[1]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $K\in\mathbb{R}{}^{d\times n}$
+\end_inset
+
+, 
+\begin_inset Formula $\rho,\mu\in\mathbb{R}$
+\end_inset
+
+ such that 
+\begin_inset Formula $\mu\rho\Vert K\Vert^{2}<1$
+\end_inset
+
+, initial values 
+\begin_inset Formula $x^{(0)}\in\mathbb{R}^{n}$
+\end_inset
+
+ and 
+\begin_inset Formula $z^{(0)}\in\mathbb{R}^{d}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+ Initialize 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ForAll
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $t=1\ldots T$
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
 \begin_inset Formula 
 \begin{align*}
 x^{(t+1)} & =\mbox{prox}_{\mu f}\left(x^{(t)}-\rho\mu K^{T}(Kx^{(t)}-z^{(t)}+u^{(t)})\right)\\
@@ -4285,29 +3390,64 @@ u^{(t+1)} & =u^{(t)}+Kx^{(t+1)}-z^{(t+1)}
 
 \end_inset
 
- where 
-\begin_inset Formula $\mu$
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
+\end_layout
+
 \end_inset
 
- and 
-\begin_inset Formula $\rho$
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+Return
+\end_layout
+
 \end_inset
 
- are the parameters such that 
-\begin_inset Formula $\mu\rho\Vert K\Vert^{2}\le1$
+ 
+\begin_inset Formula $x^{(T)}\in\mathbb{R}{}^{n}$
 \end_inset
 
- where 
-\begin_inset Formula $\Vert K\Vert$
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithmic}
+\end_layout
+
 \end_inset
 
- is the spectral norm of 
-\begin_inset Formula $K$
+ 
+\end_layout
+
 \end_inset
 
- (maximum singular value).
- This framework is very flexible, and we will show how to solve for different
- data terms and different regularizers.
+
 \end_layout
 
 \begin_layout Subsection
@@ -4388,7 +3528,7 @@ Assuming an
 \emph on
 approximated
 \emph default
- Poisson nosie model leads to a WLS data term, where the weights are proportiona
+ Poisson noise model leads to a WLS data term, where the weights are proportiona
 l to the detector measurements 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -4442,7 +3582,7 @@ where
 \emph on
 beam hardening
 \emph default
-, the projection line intergral data at detector 
+, the projection line integral data at detector 
 \begin_inset Formula $i$
 \end_inset
 
@@ -4505,7 +3645,7 @@ x\sim\mbox{Poisson}(\lambda)\equiv P(x=X)=\frac{e^{-\lambda}\lambda^{x}}{x!}.
  
 \begin_inset Formula 
 \[
-I_{t}^{i}\sim\mathbb{P}(I_{o}^{i}e^{-p_{i}})=\mathbb{P}(I_{o}^{i}e^{-A_{i}^{T}x}).
+I_{t}^{i}\sim\mathbb{P}(I_{o}^{i}e^{-p_{i}})\approx\mathbb{P}(I_{o}^{i}e^{-A_{i}^{T}x}).
 \]
 
 \end_inset
@@ -4700,20 +3840,11 @@ reference "tab:Prox-Operators"
  
 \begin_inset Formula 
 \[
-\prox_{\lambda f_{P}}(u)=\min_{x}\Vert\tilde{A}x-\tilde{p}\Vert^{2}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}
+\prox_{\lambda f_{P}}(u)=\min_{x}\Vert\tilde{A}x-\tilde{p}\Vert^{2}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.
 \]
 
 \end_inset
 
- where 
-\begin_inset Formula $\tilde{A}=W^{\frac{1}{2}}A$
-\end_inset
-
- and 
-\begin_inset Formula $\tilde{p}=W^{\frac{1}{2}}p$
-\end_inset
-
-.
  
 \end_layout
 
@@ -4823,7 +3954,7 @@ Form the augmented
 \emph on
 scaled 
 \emph default
-Lagriangian 
+Lagrangian 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "boyd2011distributed,parikh2013proximal"
@@ -5287,804 +4418,302 @@ Regularizers
 \end_layout
 
 \begin_layout Standard
-For the regularization part, we can have several functions.
- For example: 
+The regularizers impose constraints on the reconstruction volume.
+ We will consider three state of the art regularizers:
 \end_layout
 
-\begin_layout Itemize
-the simplest is to regularize the 
-\begin_inset Formula $\ell_{2}$
+\begin_layout Subsubsection
+Isotropic Total Variation (ITV)
+\end_layout
+
+\begin_layout Standard
+It is the sum of the gradient magnitude at each voxel 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rudin1992nonlinear,sidky2012convex,chambolle2011first"
+
 \end_inset
 
- norm of the volume i.e.
+ i.e.
+ 
+\begin_inset Formula 
+\begin{equation}
+h_{\text{ITV}}(x)=\sigma\Vert x\Vert_{\text{TV}}=\sigma\sum_{i}\Vert\nabla x_{i}\Vert_{2}\label{eq:h-ITV}
+\end{equation}
+
+\end_inset
+
+ where 
+\begin_inset Formula $\nabla x_{i}=\left[\begin{smallmatrix}\nabla x_{i}^{1} & \nabla x_{i}^{2}\end{smallmatrix}\right]^{T}$
+\end_inset
+
+ is the discrete gradient at voxel 
+\begin_inset Formula $i$
+\end_inset
+
+ containing the horizontal forward different 
+\begin_inset Formula $\nabla x_{i}^{1}$
+\end_inset
+
+ and the vertical forward difference 
+\begin_inset Formula $\nabla x_{i}^{2}$
+\end_inset
+
+.
+ It can be represented in the form of Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:full-problem"
+
+\end_inset
+
  
 \begin_inset Formula 
 \[
-g(Kx)=\sigma\tilde{g}(Kx)=\sigma\Vert x\Vert_{2}^{2}\mbox{ where }K=I.
+h_{\text{ITV}}(x)=g_{\text{ITV}}(Kx)
 \]
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Itemize
-Another example is the 
-\begin_inset Formula $\ell_{1}$
+by defining the matrix 
+\begin_inset Formula $K=D\in\mathbb{R}^{2n\times n}$
 \end_inset
 
- norm if we have reason to believe that the volume should have few nonzero
- voxels i.e.
+ to be the forward difference matrix that produces the discrete gradient
  
+\begin_inset Formula $\nabla x\in\mathbb{R}^{2n}$
+\end_inset
+
+: 
 \begin_inset Formula 
 \[
-g(Kx)=\sigma\Vert x\Vert_{1}=\sum_{i}\vert x_{i}\vert.
+\nabla x=\begin{bmatrix}\nabla x_{i}\\
+\vdots\\
+\nabla x_{n}
+\end{bmatrix}=Dx
 \]
 
 \end_inset
 
+ and defining for 
+\begin_inset Formula $u\in\mathbb{R}^{2n}=\begin{bmatrix}u_{1}^{T} & \cdots & u_{n}^{T}\end{bmatrix}^{T}$
+\end_inset
 
+ 
+\begin_inset Formula 
+\[
+g_{\text{ITV}}(u)=\sigma\sum_{i}\Vert u_{i}\Vert_{2}
+\]
+
+\end_inset
+
+ The proximal operator 
+\begin_inset Formula $\prox_{\lambda g_{\text{ITV}}}(u)$
+\end_inset
+
+ is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "esser2010general,chambolle2011first"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{equation}
+\prox_{\lambda g_{\text{ITV}}}(u_{i})=\frac{\sigma u_{i}}{\max(\sigma,\Vert u_{i}\Vert_{2})}\label{eq:ITV-prox}
+\end{equation}
+
+\end_inset
+
+ where 
+\begin_inset Formula $u_{i}\in\mathbb{R}^{2}$
+\end_inset
+
+ is the 
+\begin_inset Formula $i$
+\end_inset
+
+th component of 
+\begin_inset Formula $u$
+\end_inset
+
+.
+ Intuitively it projects back the vector 
+\begin_inset Formula $u_{i}$
+\end_inset
+
+ to be on the Euclidean ball of radius 
+\begin_inset Formula $\sigma$
+\end_inset
+
+.
 \end_layout
 
-\begin_layout Itemize
-One more example is the Anisotropic Total Variation 
+\begin_layout Subsubsection
+Anisotropic Total Variation (ATV)
+\end_layout
+
+\begin_layout Standard
+It is a simplification of ITV 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "sidky2008image,beck2009bfast,chambolle2010introduction,nien2015fast"
 
 \end_inset
 
-, which intuitively is the 
+, and is defined as 
+\begin_inset Formula 
+\begin{equation}
+h_{\text{ATV}}(x)=\sigma\Vert\nabla x\Vert_{1}\label{eq:h-ATV}
+\end{equation}
+
+\end_inset
+
+ which is the 
 \begin_inset Formula $\ell_{1}$
 \end_inset
 
- norm of the gradient of the volume i.e.
- 
+ norm of the gradient 
+\begin_inset Formula $\nabla x$
+\end_inset
+
+ of the volume.
+ This can be written in the form 
 \begin_inset Formula 
 \[
-g(Kx)=\sigma\Vert\nabla x\Vert_{1},
+h_{\text{ATV}}(x)=g_{\text{ATV}}(Kx)
 \]
 
 \end_inset
 
-where in this case the matrix 
-\begin_inset Formula $K\in\mathbb{R}^{3n\times n}$
+ by defining 
+\begin_inset Formula $K=D$
 \end_inset
 
- is the matrix of first-order forward derivatives.
+ as in the ITV case and defining for 
+\begin_inset Formula $u\in\mathbb{R}^{2n}$
+\end_inset
+
  
+\begin_inset Formula 
+\[
+g_{\text{ATV}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}.
+\]
+
+\end_inset
+
+The proximal operator 
+\begin_inset Formula $\prox_{\lambda g_{\text{ATV}}}(u)$
+\end_inset
+
+ is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "esser2010general,chambolle2011first"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{equation}
+\prox_{\lambda g_{\text{ITV}}}(u_{i})=\sign(u_{i})\odot\max(0,\vert u_{i}\vert-\sigma)\label{eq:ATV-prox}
+\end{equation}
+
+\end_inset
+
+ which is the soft thresholding function 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sidky2012convex"
+
+\end_inset
+
+, where the max and product are component-wise operations.
+\end_layout
+
+\begin_layout Subsubsection
+Sum of Absolute Differences (SAD)
 \end_layout
 
 \begin_layout Standard
-In order to solve this problem, we will use proximal algorithms, namely
- the first-order primal-dual algorithm proposed by Chambolle and Pock (hencefort
-h referred to as the CP algorithm) 
+It is an extension to the ATV by adding more forward differences around
+ each voxel 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "chambolle2011first"
-
-\end_inset
-
- summarized in Algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "alg:CP-algorithm"
+key "gregson2012stochastic"
 
 \end_inset
 
 .
- For the algorithm to work, we need two proximal operators: 
-\end_layout
-
-\begin_layout Itemize
-The proximal operator for the first function 
-\begin_inset Formula 
-\[
-\prox_{\lambda f}(u)=\argmin_{x}f(x)+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-The proximal operator for the convex conjugate 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "boyd2004convex"
-
-\end_inset
-
- function 
-\begin_inset Formula $g^{*}(\cdot)$
-\end_inset
-
- of 
-\begin_inset Formula $g(\cdot)$
-\end_inset
-
- defined as 
-\begin_inset Formula 
-\[
-\prox_{\mu g^{*}}(u)=\argmin_{x}g^{*}(x)+\frac{1}{2\mu}\Vert x-u\Vert_{2}^{2},
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $g^{*}(\cdot)$
-\end_inset
-
- is defined as 
-\begin_inset Formula 
-\[
-g^{*}(u)=\sup_{x}u^{T}x-g(x).
-\]
-
-\end_inset
-
-Computing this conjugate proximal operator actually is quite easy if we
- know the proximal operator for 
-\begin_inset Formula $g(\cdot),$
-\end_inset
-
- since using Moreau's decomposition 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "parikh2013proximal"
-
-\end_inset
-
- we have 
-\begin_inset Formula 
-\begin{equation}
-\prox_{\mu g^{*}}(u)=u-\mu\prox_{\frac{1}{\mu}g}(\frac{u}{\mu}).\label{eq:moreau-decomposition}
-\end{equation}
-
-\end_inset
-
-It can also be shown that the proximal operator for 
-\begin_inset Formula $g^{*}(\cdot)$
-\end_inset
-
- is related to the proximal operator for 
-\begin_inset Formula $\tilde{g}^{*}(\cdot)$
-\end_inset
-
- by 
-\begin_inset Formula 
-\begin{equation}
-\prox_{\mu g^{*}}(u)=\sigma\prox_{(\mu/\sigma)\tilde{g}^{*}}\left(\frac{u}{\sigma}\right),\label{eq:prox-g-conj-with-sigma}
-\end{equation}
-
-\end_inset
-
-so the 
-\begin_inset Formula $z-$
-\end_inset
-
-step of Algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "alg:CP-algorithm"
-
-\end_inset
-
- can be written as 
-\begin_inset Formula 
-\[
-z^{(t+1)}=\sigma\prox_{(\mu/\sigma)\tilde{g}^{*}}\left(\frac{z^{(t)}+\mu K\bar{x}^{(t)}}{\sigma}\right).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Using different regularization functions 
-\begin_inset Formula $g(\cdot)$
-\end_inset
-
- and matrices 
-\begin_inset Formula $K$
-\end_inset
-
-, we can plug in different priors based on our prior information of how
- the reconstructed volume should look like.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float algorithm
-placement h
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-protect
-\end_layout
-
-\end_inset
-
-
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "alg:CP-algorithm"
-
-\end_inset
-
-CP Algorithm (Chambolle-Pock Primal-Dual)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{algorithmic}[1]
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-Require
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Formula $K\in\mathbb{R}{}^{d\times n}$
-\end_inset
-
-, 
-\begin_inset Formula $\theta\in[0,1]$
-\end_inset
-
-, 
-\begin_inset Formula $\lambda,\mu$
-\end_inset
-
- such that 
-\begin_inset Formula $\mu\lambda\Vert K\Vert^{2}<1$
-\end_inset
-
-, 
-\begin_inset Formula $\sigma\in\mathbb{R}$
-\end_inset
-
-, initial values 
-\begin_inset Formula $x^{(0)}\in\mathbb{R}^{n}$
-\end_inset
-
- and 
-\begin_inset Formula $z^{(0)}\in\mathbb{R}^{d}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-State
-\end_layout
-
-\end_inset
-
- Initialize 
-\begin_inset Formula 
-\[
-\bar{x}^{(0)}=x^{(0)}
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-ForAll
-\end_layout
-
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\end_inset
-
-
-\begin_inset Formula $t=1\ldots T$
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{eqnarray*}
-z^{(t+1)} & = & \prox_{\mu g^{*}}\left(z^{(t)}+\mu K\bar{x}^{(t)}\right)\\
-x^{(t+1)} & = & \prox_{\lambda f}\left(x^{(t)}-\lambda K^{T}z^{(t+1)}\right)\\
-\bar{x}^{(t+1)} & = & x^{(t+1)}+\theta(x^{(t+1)}-x^{(t)})
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-EndFor
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-Return
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Formula $x^{(T)}\in\mathbb{R}{}^{n}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{algorithmic}
-\end_layout
-
-\end_inset
-
- 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Details
-\end_layout
-
-\begin_layout Standard
-We use our SART proximal operator detailed in Algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "alg:SART-Proximal-Operator"
-
-\end_inset
-
- for solving 
-\begin_inset Formula $\prox_{f}(\cdot)$
-\end_inset
-
- required in the CP algorithm.
- The implementation of 
-\begin_inset Formula $\prox_{g^{*}}(\cdot)$
-\end_inset
-
- depends on the choice of prior.
- We experiment with the following priors:
-\end_layout
-
-\begin_layout Subsubsection
-Anisotropic TV (ATV)
-\end_layout
-
-\begin_layout Standard
-This prior is defined as: 
-\begin_inset Formula 
-\begin{equation}
-h(x)=\sum_{ijk}{\scriptstyle \left|x_{i+1,j,k}-x_{i,j,k}\right|+\left|x_{i,j+1,k}-x_{i,j,k}\right|+\left|x_{i,j,k+1}-x_{i,j,k}\right|},\label{eq:ATV}
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $x_{i,j,k}$
-\end_inset
-
- is the voxel value at position 
-\begin_inset Formula $(i,j,k)$
-\end_inset
-
-.
- This can be represented as 
-\begin_inset Formula $\tilde{g}(Kx)$
-\end_inset
-
-, where 
-\begin_inset Formula $g(\cdot)=\Vert\cdot\Vert_{1}$
-\end_inset
-
- is the 
-\begin_inset Formula $\ell_{1}$
-\end_inset
-
- norm and 
-\begin_inset Formula $K=D\in\mathbb{R}^{3n\times n}$
-\end_inset
-
- is the forward difference matrix defined as 
-\begin_inset Formula 
-\begin{eqnarray}
-D_{ev} & = & \begin{cases}
--1 & \mbox{if }v=i\\
-1 & \mbox{if }v=j\\
-0 & \mbox{otherwise}
-\end{cases},\label{eq:forward-diff-matrix-D}
-\end{eqnarray}
-
-\end_inset
-
-where we consider a graph defined on the volume such that we have 
-\begin_inset Formula $n$
-\end_inset
-
- vertices (voxels) and 
-\begin_inset Formula $3n$
-\end_inset
-
- edges (connecting each voxel to its six neighbors, replicating voxels at
- the edge).
- The matrix 
-\begin_inset Formula $D$
-\end_inset
-
- is a representation of this graph, where each row corresponds to one edge,
- and each column to one vertex.
- The value at row 
-\begin_inset Formula $e$
-\end_inset
-
- and column 
-\begin_inset Formula $v$
-\end_inset
-
- is given by Eq.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:forward-diff-matrix-D"
-
-\end_inset
-
- above.
- The proximal operator of 
-\begin_inset Formula $\tilde{g}^{*}(\cdot)$
-\end_inset
-
- can be shown to be 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "parikh2013proximal"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{equation}
-\prox_{\mu\tilde{g}^{*}}(u)=P_{B_{\infty}}(u)=\begin{cases}
-1 & u>1\\
-u & \vert u\vert\le1\\
--1 & u<-1
-\end{cases},\label{eq:l1-prox-conj}
-\end{equation}
-
-\end_inset
-
-where the operations are component-wise, and is equivalent to the projection
- on the unit ball 
-\begin_inset Formula $B_{\infty}$
-\end_inset
-
- of the 
-\begin_inset Formula $\ell_{\infty}$
-\end_inset
-
- norm.
- Note that we do not need to store the matrix 
-\begin_inset Formula $D$
-\end_inset
-
-, and multiplication by 
-\begin_inset Formula $D$
-\end_inset
-
- (computing the gradient) or by 
-\begin_inset Formula $D^{T}$
-\end_inset
-
- (computing the divergence) can be efficiently computed on-the-fly 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "esser2010general"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsubsection
-Isotropic TV (ITV)
-\end_layout
-
-\begin_layout Standard
-This prior is defined as: 
-\begin_inset Formula 
-\[
-h(x)=\sum_{ijk}{\scriptstyle \sqrt{\left|x_{i+1,j,k}-x_{i,j,k}\right|^{2}+\left|x_{i,j+1,k}-x_{i,j,k}\right|^{2}+\left|x_{i,j,k+1}-x_{i,j,k}\right|^{2}}},
-\]
-
-\end_inset
-
-where it sums the magnitude of the gradient at each voxel.
- Using the same matrix 
-\begin_inset Formula $D$
-\end_inset
-
- defined in Eq.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:forward-diff-matrix-D"
-
-\end_inset
-
- and defining a new matrix 
-\begin_inset Formula $E\in\mathbb{R}^{3n\times n}$
-\end_inset
-
- that denotes the positions of the forward differences 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "esser2010general"
-
-\end_inset
-
- such that 
-\begin_inset Formula 
-\[
-E_{ev}=\begin{cases}
-1 & \mbox{if }D_{ev}=-1\\
-0 & \mbox{otherwise}
-\end{cases},
-\]
-
-\end_inset
-
-we can define the function 
-\begin_inset Formula $h(x)$
-\end_inset
-
- as a norm 
-\begin_inset Formula $\Vert u\Vert_{E}$
-\end_inset
-
- for 
-\begin_inset Formula $u=Dx\in\mathbb{R}^{3n}$
-\end_inset
-
- defined as 
-\begin_inset Formula 
-\[
-\Vert w\Vert_{E}=\Vert\sqrt{E^{T}w^{2}}\Vert_{1}=\sum_{v}\Vert w^{v}\Vert_{2},
-\]
-
-\end_inset
-
-where the square root and square functions are component-wise, and 
-\begin_inset Formula $w^{v}$
-\end_inset
-
- is the gradient at voxel 
-\begin_inset Formula $v=(i,j,k)$
-\end_inset
-
- i.e.
- 
-\begin_inset Formula 
-\[
-w^{v}=\left[\begin{array}{c}
-x_{i+1,j,k}-x_{i,j,k}\\
-x_{i,j+1,k}-x_{i,j,k}\\
-x_{i,j,k+1}-x{}_{i,j,k}
-\end{array}\right].
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Now we can express the ITV prior 
-\begin_inset Formula $h(x)$
-\end_inset
-
- in terms of the 
-\begin_inset Formula $\Vert u\Vert_{E}$
-\end_inset
-
- norm as 
-\begin_inset Formula 
-\[
-h(x)=\Vert Dx\Vert_{E}=g(Dx)\mbox{ where }\tilde{g}(u)=\Vert u\Vert_{E}.
-\]
-
-\end_inset
-
-The proximal operator for 
-\begin_inset Formula $g^{*}(\cdot)$
-\end_inset
-
- can be shown to be 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "esser2010general"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{equation}
-\prox_{\mu\tilde{g}^{*}}(u)=P_{B^{*}}(u)=\frac{u}{E\max\left(\sqrt{E^{T}u^{2}},1\right)}\label{eq:ITV-prox}
-\end{equation}
-
-\end_inset
-
-which is the projection on the unit ball 
-\begin_inset Formula $B^{*}$
-\end_inset
-
- of the dual norm 
-\begin_inset Formula $\Vert u\Vert_{E^{*}}$
-\end_inset
-
-, and where the division and max operations are performed component-wise.
- Intuitively, this scales each voxel by the magnitude of its gradient if
- it's greater than unity.
- Similar to ATV, we don't need to explicitly store the matrix 
-\begin_inset Formula $E$
-\end_inset
-
-, and multiplication by 
-\begin_inset Formula $E$
-\end_inset
-
- can be computed efficiently on-the-fly.
-\end_layout
-
-\begin_layout Subsubsection
-Sum of Absolute Differences (SAD) 
-\end_layout
-
-\begin_layout Standard
-This prior is defined as: 
-\begin_inset Formula 
-\begin{equation}
-h(x)=\sum_{ijk}\sum_{x_{n}\in N(x_{i,j,k})}\left|x_{n}-x_{i,j,k}\right|,\label{eq:SAD}
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $N(x_{i,j,k})$
-\end_inset
-
- is the 
+ In particular, it sums the differences of the voxels in the 
 \begin_inset Formula $3\times3$
 \end_inset
 
- neighborhood around voxel 
-\begin_inset Formula $x_{i,j,k}$
+ neighborhood around each voxel 
+\begin_inset Formula 
+\begin{equation}
+h_{\text{SAD}}(x)=\sigma\sum_{i}\sum_{k\in\mathcal{N}(i)}\vert x_{i}-x_{k}\vert\label{eq:h-SAD}
+\end{equation}
+
 \end_inset
 
- (excluding voxel 
-\begin_inset Formula $x_{i,j,k}$
+where 
+\begin_inset Formula $\mathcal{\mathcal{N}}(i)$
 \end_inset
 
- itself).
- It can be seen as an extension to the ATV prior, just with a different
- matrix 
-\begin_inset Formula $D$
-\end_inset
-
- where more edges are considered for every voxel instead of just three.
- Hence its proximal operator is similar to Eq.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:l1-prox-conj"
-
+ contains the voxels in the neighborhood around voxel 
+\begin_inset Formula $i$
 \end_inset
 
 .
- It has been shown 
+ It can be written similarly in the form 
+\begin_inset Formula 
+\[
+h_{\text{SAD}}(x)=g_{\text{SAD}}(Kx)
+\]
+
+\end_inset
+
+ by defining 
+\begin_inset Formula $K\in\mathbb{R}^{8n\times n}$
+\end_inset
+
+ that computes the 8 forward differences in the 
+\begin_inset Formula $3\times3$
+\end_inset
+
+ neighborhood and defining for 
+\begin_inset Formula $u\in\mathbb{R}^{8n}$
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+g_{\text{SAD}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}
+\]
+
+\end_inset
+
+ where 
+\begin_inset Formula $u_{i}\in\mathbb{R}^{8}$
+\end_inset
+
+.
+ The proximal operator 
+\begin_inset Formula $\prox_{\lambda g_{\text{ATV}}}(u)$
+\end_inset
+
+ is similar to the ATV case: 
+\begin_inset Formula 
+\begin{equation}
+\prox_{\lambda g_{\text{ITV}}}(u_{i})=\sign(u_{i})\odot\max(0,\vert u_{i}\vert-\sigma).\label{eq:SAD-prox}
+\end{equation}
+
+\end_inset
+
+The SAD prior has been shown 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "gregson2012stochastic"
@@ -6105,193 +4734,374 @@ name "sec:Experiments"
 
 \end_layout
 
-\begin_layout Standard
-We run two kinds of experiments: (a) on simulated data using the Shepp-Logan
- phantom 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "shepp1974fourier"
-
-\end_inset
-
-; and (b) on real data using the standard RabbitCT benchmark 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "rohkohl2009rabbitct"
-
-\end_inset
-
- and the Lynx dataset.
- All experiments are executed on a machine with two Intel Xeon X5650 processors
- (24 cores overall) and 48 GB of RAM.
- The code is implemented in C++ and is available at 
-\begin_inset Flex Flex:URL
-status collapsed
-
-\begin_layout Plain Layout
-
-https://github.com/prilemon/ProxiSART
-\end_layout
-
-\end_inset
-
-.
- Our implementation of SART uses the Kaiser-Bessel kernels 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "mueller1998fast"
-
-\end_inset
-
- (with a radius of 2 voxels) for more accurate and smooth interpolation
- in the forward and back projection steps.
- We also employ the slice-by-slice mechanism to speed up the (back)projection
- steps 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "mueller1998fast"
-
-\end_inset
-
-.
+\begin_layout Subsection
+Datasets
 \end_layout
 
 \begin_layout Standard
-We evaluate our results using two metrics: (a) Signal-to-noise Ratio (SNR);
- and (b) Structural Similarity Index (SSIM) 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "wang2004image"
-
-\end_inset
-
-.
- The first metric is a standard one used for measuring the quality of volume
- reconstruction compared to the ground truth volume, while the second gives
- more perceptually-related reconstruction measure.
-\end_layout
-
-\begin_layout Standard
-We run different versions of our algorithms with different priors, namely:
- 
-\end_layout
-
-\begin_layout Itemize
-Our implementation of plain SART with no priors as in Alg.
+We present experiments on two simulated phantoms and one real dataset, see
+ Fig.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "alg:standard-SART"
-
-\end_inset
-
- (PlainSART).
- 
-\end_layout
-
-\begin_layout Itemize
-ProxiSART with Anisotropic Total Variation using CP (PSART-ATV) 
-\end_layout
-
-\begin_layout Itemize
-ProxiSART with Isotropic Total Variation using CP (PSART-ITV).
- 
-\end_layout
-
-\begin_layout Itemize
-ProxiSART with Sum of Absolute Differences using CP (PSART-SAD).
- 
-\end_layout
-
-\begin_layout Standard
-We compare results from our framework to state-of-the-art algorithms and
- comparable implementations in RTK, namely: 
-\end_layout
-
-\begin_layout Itemize
-Cone Beam Filtered Back Projection (RTK-FDK) 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "feldkamp1984practical"
+reference "fig:Phantoms"
 
 \end_inset
 
 .
- 
-\end_layout
-
-\begin_layout Itemize
-Plain SART with no priors (RTK-SART).
- 
-\end_layout
-
-\begin_layout Itemize
-ADMM with ATV prior (RTK-ADMM) using Conjugate Gradient (CG) 
+ The phantoms are: the modified 2D Shepp-Logan head phantom 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "mory2012ecg"
+key "toft1996radon"
+
+\end_inset
+
+; and a 2D slice of the NCAT phantom 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "segars2002study"
 
 \end_inset
 
 .
- 
-\end_layout
-
-\begin_layout Standard
-For choosing the hyper parameters in all the algorithms, we experiment with
- a range of combinations and pick the one with the best performance (SNR).
-\end_layout
-
-\begin_layout Subsection
-Simulated Dataset
-\end_layout
-
-\begin_layout Standard
-We run experiments on a 
-\begin_inset Formula $128\times128\times128$
-\end_inset
-
- 3D Shepp-Logan volume with voxel size of 
-\begin_inset Formula $1\times1\times1$
-\end_inset
-
- mm.
- The distance between the cone beam source and the detector matrix is 955
- mm, while that between the source and the object isocenter is 500 mm.
- The detector panel has 
+ The phantoms were generated at a resolution of 
 \begin_inset Formula $512\times512$
 \end_inset
 
- pixels with 
-\begin_inset Formula $1\times1$
+ pixels, and ground truth sinograms were generated in ASTRA using a fan
+ beam geometry with 
+\begin_inset Formula $888$
 \end_inset
 
- mm size.
- We focus on cases where noise might prevent accurate reconstruction.
- Therefore, we compare reconstruction using different numbers of projection
- images; namely 30, 45, 60, and 90 images equally distributed across the
- 
-\begin_inset Formula $360^{\circ}$
+ detectors, isotropic pixels of 1 mm, isotropic detectors of 
+\begin_inset Formula $1.0239$
 \end_inset
 
- angular range.
- We also compare injecting zero-mean additive Gaussian noise with different
- standard deviations; namely 0.05, 0.2, 0.5, and 0.75.
- The projections were generated using RTK 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "rit2014reconstruction"
+ mm, and source-to-detector distance of 
+\begin_inset Formula $949.075$
+\end_inset
+
+ mm.
+ We assumed Poisson measurement noise with emitted intensity count 
+\begin_inset Formula $I_{0}=10^{5}$
+\end_inset
+
+ to generate the noisy projections used.
+\end_layout
+
+\begin_layout Standard
+The real dataset is a 2D slice of a 3D cone beam scan of a mouse from the
+ Exxim Cobra software 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+available from 
+\begin_inset CommandInset href
+LatexCommand href
+name "www.exxim-cc.com"
+target "http://www.exxim-cc.com/"
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
 .
- We set the number of SART and CG iterations at 2 in every step for our
- algorithms and for RTK-ADMM, respectively.
- The relaxation coefficient 
+ The data contains 194 projections (over 194 degrees) of a fan beam geometry
+ with 512 detectors of size 0.16176 mm, source-to-detector distance of 529.29
+ mm, source-to-isocenter distance of 395.73 mm, and reconstructed volume
+ of 
+\begin_inset Formula $512\times512$
+\end_inset
+
+ pixels of isotropic size 0.12 mm.
+ We ran 500 iterations of BSSART with 
+\begin_inset Formula $\alpha=0.1$
+\end_inset
+
+ to generate the 
+\emph on
+ground truth
+\emph default
+ volume.
+ We measure performance in terms of SNR (signal-to-noise ratio) defined
+ as 
+\begin_inset Formula 
+\[
+\mbox{SNR}(x,\hat{x})=10\log\frac{\sum_{j}\hat{x}_{j}^{2}}{\sum_{j}\left(x_{j}-\hat{x}_{j}\right)^{2}}
+\]
+
+\end_inset
+
+ where 
+\begin_inset Formula $x\in\mathbb{R}^{n}$
+\end_inset
+
+ is the current estimate of the volume and 
+\begin_inset Formula $\hat{x}\in\mathbb{R}^{n}$
+\end_inset
+
+ is the ground truth volume.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/phantom-ph_mod-sl-512.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Modified Shepp-Logan
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/phantom-ph_ncat-512.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NCAT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/phantom-ph_mouse-512.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mouse
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The three datasets used.
+ (c) shows the 
+\emph on
+ground truth
+\emph default
+ converged result from the projections.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Phantoms"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We clip the reconstruction estimate 
+\begin_inset Formula $x$
+\end_inset
+
+ at the end of each inner iteration (i.e.
+ after each update step) using this function 
+\begin_inset Formula 
+\[
+\mbox{clip}(x)=\max(0,x)
+\]
+
+\end_inset
+
+ to get rid of negative voxel values.
+ All experiments in this section are on one core of an Intel Xeon E5-280
+ 2.7 GHz with 64 GB RAM.
+ 
+\end_layout
+
+\begin_layout Subsection
+Iterative Algorithms Comparison
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Iterative-Algorithms-Comparison"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We first compare the different iterative algorithms presented in Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Iterative-Algorithms"
+
+\end_inset
+
+ on the three datasets.
+ We set the number of subsets in OS-SQS to the number of projections to
+ have a fair comparison with SART, since we noticed that increasing the
+ number of subsets increases the convergence rate.
+ All experiments in this section are run using ASTRA, where implemented
+ missing algorithms and modified existing ones to suit our needs e.g.
+ compute SNR, report run times, etc.
+ We compare different values of 
 \begin_inset Formula $\alpha$
 \end_inset
 
- in SART is set to 0.5.
+, namely 0.1, 1, and 1.99.
+ We compare convergence per iteration since all methods are roughly equal
+ in runtime, as each outer iteration contains (roughly) one forward and
+ one backward projection.
+ This is confirmed in Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SNR-per-time-iterative"
+
+\end_inset
+
+.
+ Note that our implementation is not optimized for any of the methods, and
+ the processing time is just an indication.
 \end_layout
 
 \begin_layout Standard
@@ -6299,161 +5109,228 @@ Fig.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Simulation-Results:-Effect-Num-Proj"
+reference "fig:SNR-per-iteration-iterative"
 
 \end_inset
 
- shows the SNR and SSIM for the different reconstruction algorithms when
- varying the number of projections.
- Fig.
+ shows the SNR per iteration for 15 and 90 projections for 30 iterations,
+ while Fig.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Simulation-Results-Sample-Num-Proj"
+reference "fig:SNR-per-num-proj-iterative"
 
 \end_inset
 
- shows a sample slice from the reconstructed volume for the different algorithms
- and different numbers of projections.
- Similarly, Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Simulation-Results:-Effect-Noise"
-
-\end_inset
-
- shows the SNR and SSIM for the different algorithms with different amounts
- of additive Gaussian noise, while Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Simulation-Results-Sample-Noise"
-
-\end_inset
-
- shows a sample slice from the respective reconstructions (we omit results
- for PSART-ATV because they are almost identical to PSART-ITV).
- To assess the speed of convergence, Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Simulation-Speed-of-convergence"
-
-\end_inset
-
- shows the SNR as a function of the number of iterations in the reconstruction,
- with 60 projections and 
-\begin_inset Formula $\sigma=0.75$
-\end_inset
-
- noise.
-\end_layout
-
-\begin_layout Standard
-We note the following: 
+ shows the the maximum SNR over 30 iterations for different number of equally
+ distributed projections from 15 to 180.
+ From the figures, we make the following conclusions:
 \end_layout
 
 \begin_layout Itemize
-Using priors (ATV, ITV, or SAD) consistently gives better accuracy and faster
- convergence, specially with noisy measurements or using very few projections.
+The simulated projections closely resemble the results from the real dataset,
+ which suggests that the measurement noise model is reflective of real data.
+\end_layout
+
+\begin_layout Itemize
+With fewer projections (15 or 30 projections), using larger values 
+\begin_inset Formula $\alpha=1.99$
+\end_inset
+
+ gives faster and better convergence.
  
 \end_layout
 
 \begin_layout Itemize
-Our implementation of SART converges faster and gives lower error than RTK-SART.
- One reason might be the better interpolation filter (Kaiser-Bessel vs.
- tri-linear in RTK) we use.
- 
-\end_layout
-
-\begin_layout Itemize
-Our ProxiSART reconstructions consistently give better results than the
- equivalent RTK-ADMM.
- 
-\end_layout
-
-\begin_layout Itemize
-ITV and ATV priors give almost identical results, hence we include only
- the visualizations for ITV in Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Simulation-Results-Sample-Num-Proj"
-
+With many projections, moderate values 
+\begin_inset Formula $\alpha=1$
 \end_inset
 
- and 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Simulation-Results-Sample-Noise"
+ produces a fast convergence that then falls off and is overtaken by 
+\begin_inset Formula $\alpha=0.1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+SART provides the fastest convergence within a handful of iterations, and
+ is consistently better for fewer projections.
+ However, it is overtaken by ART and others for many projections.
+ This provides the motivation to use it in the proximal framework, since
+ typically the tomography solver is invoked for only a few iterations per
+ outer iteration of ADMM for example 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ramani2012splitting"
 
 \end_inset
 
 .
- 
 \end_layout
 
 \begin_layout Itemize
-PSART-SAD produces the best results in terms of visualization quality, SNR,
- and convergence speed, confirming earlier results about the SAD regularizer
- 
+With more projections, e.g.
+ 90, we notice that the SNR for a few methods go up and then down.
+ This doesn't mean, however, that they are not converging.
+ The objective function is the projection error, and we confirmed it is
+ in fact improving even though the SNR is decreasing.
+ This can be explained by the fact of the presence of noise, and that at
+ some point the algorithm starts fitting the noise in the measurements 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "gregson2012stochastic"
+key "herman2009fundamentals"
 
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Itemize
+Even though BICAV, SIRT, and BSSART have formal proofs of convergence, their
+ convergence speed per iteration is in fact much lower than SART or OS-SQS.
  
 \end_layout
 
-\begin_layout Subsection
-Real Datasets
+\begin_layout Itemize
+The faster convergence and best results are achieved by SART, followed by
+ ART, OS-SQS, and BICAV.
+ They work better with 
+\begin_inset Formula $\alpha=1$
+\end_inset
+
+ for few projections, and with 
+\begin_inset Formula $\alpha=0.1$
+\end_inset
+
+ for more projections.
+\end_layout
+
+\begin_layout Itemize
+CGLS, that was used before for solving tomography problems 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ramani2012splitting,sidky2012convex"
+
+\end_inset
+
+, performs quite poorly compared to the other iterative algorithms.
+\end_layout
+
+\begin_layout Itemize
+Using plain iterative methods does not give acceptable results with fewer
+ projections.
+ Thus we focus next on using regularizers in the proximal framework with
+ SART, ART, OS-SQS, and BICAV and fewer projections, namely 30 projections.
 \end_layout
 
 \begin_layout Standard
-We run another round of experiments on a real datasets, namely: (a) the
- RabbitCT 
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-available from 
-\begin_inset Flex Flex:URL
-status open
-
-\begin_layout Plain Layout
-
-http://rabbitct.com
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "rohkohl2009rabbitct"
-
-\end_inset
-
- ; and (b) the Lynx Dataset 
-\begin_inset Foot
+\begin_inset Float figure
+wide true
+sideways false
 status collapsed
 
 \begin_layout Plain Layout
-available from 
-\begin_inset Flex Flex:URL
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Modified Shepp-Logan
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
 status collapsed
 
 \begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status collapsed
 
-http://goo.gl/3NhbKq
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -6461,84 +5338,500 @@ http://goo.gl/3NhbKq
 
 \end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NCAT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mouse
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Convergence of Iterative Algorithms.
+ Plots show SNR per iteration.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SNR-per-iteration-iterative"
+
+\end_inset
+
+Top row is for 15 projections, and bottom row is for 90 projections.
+ Solid lines have 
+\begin_inset Formula $\alpha=1$
+\end_inset
+
+, dashed lines have 
+\begin_inset Formula $\alpha=1.99$
+\end_inset
+
+, and dotted lines have 
+\begin_inset Formula $\alpha=0.1$
 \end_inset
 
 .
- The RabbitCT is a CT scan of a rabbit used for benchmarking the speed of
- tomographic reconstruction algorithms.
- It contains 496 projections obtained using a C-arm system from Siemens
- Artis Zee acquired on a 
-\begin_inset Formula $200^{\circ}$
+\end_layout
+
 \end_inset
 
- circular short-scan trajectory.
- We use 62 (=496/8) equally-distributed projections.
- The size of the projection image is 
-\begin_inset Formula $1248\times960$
+
+\end_layout
+
 \end_inset
 
- pixels with isotropic resolution of 
-\begin_inset Formula $0.32$
-\end_inset
-
- mm/pixel.
- The source to detector distance is 871.1088 mm and the source to isocenter
- is 600 mm.
- We used a volume of size 
-\begin_inset Formula $128\times128\times128$
-\end_inset
-
- voxels and 2 mm spacing.
+ 
 \end_layout
 
 \begin_layout Standard
-The Lynx dataset is a CT scan of a lynx skull using an Agfa Orthoregular
- intensifier screen.
- We use 90 equally-distributed projections.
- The source to detector distance is 784.86 mm and the source to isocenter
- distance is 250 mm.
- The detector size is 
-\begin_inset Formula $546\times348$
+\begin_inset Float figure
+wide true
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan_t1-snr.pdf
+	lyxscale 20
+	width 100text%
+
 \end_inset
 
- pixels with 
-\begin_inset Formula $1\times1$
-\end_inset
 
- mm spacings.
- The volume size is 
-\begin_inset Formula $350\times260\times260$
-\end_inset
-
- voxels with 
-\begin_inset Formula $0.5\times0.5\times0.5$
-\end_inset
-
- mm spacing.
 \end_layout
 
-\begin_layout Standard
-We use 20 iterations for both ADMM and CP (with 2 iterations for SART and
- CG, respectively).
- Fig.
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Modified Shepp-Logan
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse_t1-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NCAT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse_t1-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mouse
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SNR per running time for 90 projections.
+ Compare with Fig.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Real-Results-Sample-Rabbit"
+reference "fig:SNR-per-iteration-iterative"
 
 \end_inset
 
- and 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Real-Results-Sample-Lynx"
+ (bottom row).
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SNR-per-time-iterative"
 
 \end_inset
 
- shows sample slices from reconstruction of the RabbitCT and the Lynx datasets,
- respectively.
- We notice that using ProxiSART with ITV or SAD provides better reconstructions
- with less artifacts than FDK or plain SART.
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/max-snr-per_num_proj-ph_mod-sl-512_nt_poisson-nl_100000.000-it_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Modified Shepp-Logan
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/max-snr-per_num_proj-ph_ncat-512_nt_poisson-nl_100000.000-it_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NCAT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/max-snr-per_num_proj-ph_mouse-512_nt_gauss-nl_0.000-it_30-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mouse
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Effect of the number of projections.
+ Plots show the maximum SNR achieved over 30 iterations per number of projection
+s used.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SNR-per-num-proj-iterative"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -6550,22 +5843,6 @@ name "sec:Discussion-and-Conclusion"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-We presented ProxiSART, a flexible proximal framework for robust 3D cone
- beam reconstruction.
- We derived the proximal operator for the data fitting sub-problem using
- the powerful SART algorithm.
- We ran experiments comparing our framework with the popular RTK open-source
- software toolkit, both on real and simulated datasets, using different
- standard and non-standard priors.
- We showed the robustness of our algorithms in terms of reconstruction quality
- and fewer iterations till convergence in the presence of noise and using
- fewer projections.
- Next, we plan on investigating using other more powerful priors, specifically
- non-local TV; and using the method with other noise models than the Gaussian
- noise model, for example the Poisson noise model.
 \end_layout
 
 \begin_layout Section

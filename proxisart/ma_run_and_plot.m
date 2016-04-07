@@ -2,7 +2,7 @@ function [ output_args ] = ma_run_and_plot(plt, arg, algs )
 % MA_FIG_PERITER Plots performance per iteration for different phantoms.
 
 [fig_file, mat_file, vol_geom, proj_geom, P, sinogram, proj_id, ...
-  proj_mat, fbp] = deal([]);
+  proj_mat, fbp, wi] = deal([]);
 
 % init;
 eval(plt);
@@ -82,6 +82,7 @@ eval(plt);
       % generate projections
       [sinogram_id, sinogram] = astra_create_sino(P, proj_id);
       astra_mex_data2d('delete', sinogram_id);
+      wi = [];
 
     case 'mouse'
       pp = load(phan_file);
@@ -89,6 +90,10 @@ eval(plt);
       sinogram = pp.sino;
       % choose the relevant projections
       sinogram = sinogram(projs_ids, :);
+      
+      % get the weights and scale
+      wi = pp.wi(projs_ids, :);
+      wi = wi / max(wi(:));
     end
 
     % create gt astra data
@@ -100,7 +105,7 @@ eval(plt);
     switch noise_type
     case 'gauss'
       sinogram = sinogram + ...
-        randn(size(sinogram)) * noise_level * max(sinogram(:));
+        randn(size(sinogram)) * noise_level * max(sinogram(:));      
     case 'poisson'
       % copied from Fessler's IRT
       I0 = noise_level;  %1e5 % incident photons; decrease this for "low dose" scans
@@ -116,11 +121,10 @@ eval(plt);
       
       sinogram = log(I0 ./ max(yi,1)) / scale_factor; % noisy fan-beam sinogram: form of the data in the quadratic approximation to the actual log-likelihood
 
-      %% PWLS weights
+      % PWLS weights
       wi = yi / max(yi(:)); % PWLS weights; gives 0 weight to any ray where yi=0!
       mxW = max(wi(:));
-      mnW = min(wi(:));
-      
+      mnW = min(wi(:));      
     otherwise
       error(['Unsupported nosie: ' noise_type]);
     end
@@ -128,6 +132,11 @@ eval(plt);
 %     sinogram = sinogram - min(sinogram(:));
 %     sinogram(sinogram < 0) = 0;
 
+    % default wi
+    if isempty(wi)
+      wi = ones(size(sinogram));
+    end
+    
     % delete and recreate
     sinogram_id = astra_mex_data2d('create', '-sino', proj_geom, sinogram);
 
@@ -462,18 +471,19 @@ eval(plt);
 
   % run the algorithm
   function [rec, tt, ss, it, rs] = run_alg(alg)
+      
+    fprintf('Alg %s\n', alg.name);
+    
     switch alg.type
     case 'astra'
       % input params
       in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
         'gt_vol',P, 'sino',sinogram, 'proj_id',proj_id, ...
-        'wi',ones(size(sinogram)), 'fbp',fbp, 'prox_in',zeros(size(P)));
+        'wi',wi, 'fbp',fbp, 'prox_in',zeros(size(P)));
       % put fbp in prox input?
       if isfield(arg,'prox_fbp') && arg.prox_fbp
         in_params.prox_in = fbp;
       end
-      % run
-      fprintf('Alg %s\n', alg.name);
       alg.alg_params.iter = arg.iter;
       % residual
       alg.alg_params.option.ComputeIterationResidual = arg.plot_resid;          
@@ -481,6 +491,18 @@ eval(plt);
       [rec, tt, ss, it, rs] = ma_alg_astra(alg.alg, in_params, ...
         alg.alg_params);
     case 'irt'
+      
+    case 'psart'
+      % input params
+      in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
+        'gt_vol',P, 'sino',sinogram, 'proj_id',proj_id, ...
+        'wi',wi, 'fbp',fbp);
+      
+      alg.alg_params.iter = arg.iter;
+
+      [rec, tt, ss, it] = ma_alg_psart(alg.alg, in_params, alg.alg_params);
+      rs = 0 * tt;
+      
     end
   end
 

@@ -50,6 +50,15 @@ end
 sino_id = astra_mex_data2d('create', '-sino', in_params.proj_geom, ...
   in_params.sino);
 
+% WLS?
+if isfield(alg_params,'wls') && alg_params.wls
+  % Set the sqrt of the weights as input
+  wi_id = astra_mex_data2d('create', '-sino', in_params.proj_geom, ...
+    sqrt(in_params.wi));
+else
+  wi_id = -1;
+end;
+
 % create object for metrics
 metrics_id = astra_mex_data2d('create', '-vol', in_params.vol_geom);
 
@@ -64,6 +73,7 @@ cfg.ProxInputDataId = prox_in_id;
 cfg.option = alg_params.option; 
 cfg.option.GTReconstructionId = gt_vol_id;
 cfg.option.IterationMetricsId = metrics_id;    
+cfg.option.WlsWeightDataId = wi_id;
 
 % Create the algorithm and run
 alg_id = astra_mex_algorithm('create', cfg);
@@ -88,5 +98,6 @@ astra_mex_data2d('delete', metrics_id);
 astra_mex_data2d('delete', prox_in_id);
 astra_mex_data2d('delete', rec_id);
 astra_mex_data2d('delete', sino_id);
+astra_mex_data2d('delete', wi_id);
 
 end
