@@ -25,7 +25,11 @@ function [rec, times, snrs, iters] = ma_alg_irt(alg, in_params, alg_params)
 % Adapted from IRT toolbox by Fessler.
 %
 
-addpath samples/matlab/irt/
+% addpath ./irt/
+% p = mfilename('fullpath');
+% pids = strfind(p,filesep);
+% addpath(sprintf('%s%s',p(1:pids(end)), 'irt'));
+addpath(fullfile(fileparts(mfilename('fullpath')), 'irt'));
 
 % init.
 params = struct();
@@ -33,16 +37,19 @@ init();
 
 switch alg
   % Ramani ADMM
-  case 'admm'
-    params.AL.mu = alg_params.mu; %0.001; %medwi;
+  case 'admm'    
+    params.AL.mu = params.medwi; % default
     params.CG.nCG = alg_params.nCG; % 2;
-    params.lambda = alg_params.lambda; % 0.02
+%     params.lambda = alg_params.lambda; % 0.02
     params.minx = alg_params.minx;
     params.AL.nu1 = nuoptapprox / params.AL.nu1AL1factor;
     params.CG.precon = alg_params.precon; % Do Precondition CG-solver inverting (A'A + mu*R'R) in ADMM
 
     %disp(sprintf('nu = %f', params.AL.nu1));
+    % Override defaults
     if ~isempty(alg_params.nu), params.AL.nu1 = alg_params.nu; end
+    if ~isempty(alg_params.lambda), params.lambda = alg_params.lambda; end
+    if ~isempty(alg_params.mu), params.AL.mu = alg_params.mu; end
 
     params.figno = 0;
     kWAL1 = (mxW + params.AL.mu)/(mnW + params.AL.mu);
@@ -50,7 +57,7 @@ switch alg
     params.maxitr = alg_params.iter; % 25; % Max # of outer iterations
     params.dispitrnum = 0;
 
-    printm(['Doing ADMM with mu = ' num2str(params.AL.mu) '; nu1 = ' num2str(params.AL.nu1) '...'])
+    printm(['Doing ADMM with mu = ' num2str(params.AL.mu) '; nu1 = ' num2str(params.AL.nu1) '; lambda = ' num2str(params.lambda)])
     [rec CADMM TADMM l2DADMM snrs] = runADMM(in_params.sino, ...
       params.xini, params);
     times = cumsum(TADMM); times(1) = [];
@@ -183,19 +190,26 @@ iters = iters(:);
     % if ~isvar('kappa'), printm('kappas')
       kappa = sqrt( div0(params.A' * in_params.wi, ...
         params.A' * ones(size(in_params.wi))) );
-      skap = sort(kappa(:));
-      skap = skap(skap > 0);
-      kappa(kappa==0) = skap(1); % Ensure kappa does not have any zeros
+%       skap = sort(kappa(:));
+%       skap = skap(skap > 0);
+%       kappa(kappa==0) = skap(1); % Ensure kappa does not have any zeros
+      minkap = min(kappa(:));
+      kappa(kappa == 0) = minkap;
       rw = kappa .^ 2; % spatially varying regularization weights; usually kappa ^ 2, but can be adjusted for quality
 %       im(kappa)
     % end
 
-    params.scale = 1;
     params.kappa = kappa;
     params.rw = rw;
 
     % Regularization parameter for statistical recon
-    lambda = 0.01; % medwi * 20; % heuristic!
+    wistack = sort(in_params.wi(:) );
+    wistack = wistack( wistack <= 0.9 );
+    wistack = wistack( wistack > 0 ); % only nonzero weights less than 0.9 * max are considered for selecting the AL parameters
+    medwi = median( wistack(:) ); % Median of weights for use in ADMM
+
+    lambda = medwi * 20; % heuristic!
+    params.medwi = medwi;
     params.lambda = lambda;
 
     % Parameters for Preconditioned CG-solver inside ADMM for "inverting" A'A + nu * R'R

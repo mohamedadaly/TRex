@@ -85,7 +85,7 @@ z{1} = params.AL.iWmu .* z{1};
 z{2} = Rx + d{2};
 z{2} = thresholdRx(z{2}, params, nu1*mu); % Perform thresholding
 
-while((itr <= maxitr) && (diffx/normx >= dxtol) && (diffcost <= dcosttol)) % 0)) %
+while(itr <= maxitr) %&& (diffx/normx >= dxtol) && (diffcost <= dcosttol)) % 0)) %
     admmt = tic;
     
     cost_old = cost_new;

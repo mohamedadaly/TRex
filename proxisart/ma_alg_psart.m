@@ -55,6 +55,10 @@ iters = cumsum(iters);
     if isempty(mu), mu = 1 / (rho * 8); end    
     sigma = alg_params.sigma;
     mu/sigma;
+    % scale mu accordingly if it's with prior term
+    if ~alg_params.sigma_with_data
+      mu = mu / sigma^2;
+    end
     
     % define the matrix K
     switch alg_params.prior
@@ -70,6 +74,7 @@ iters = cumsum(iters);
     
     % Set WLS data term
     if strcmp(alg_params.data, 'wls')
+      % Set WLS inside the prox solver
       alg_params.prox_params.wls = 1;
     end;
     
@@ -81,7 +86,7 @@ iters = cumsum(iters);
       x = zeros(size(in_params.fbp));
     end
     % inital values
-    z = fdiff(x);
+    z = K(x);
     u = z;
 
 %     [ny, nx] = size(in_params.gt_vol);
@@ -101,7 +106,7 @@ iters = cumsum(iters);
 %       x = l2_data_prox(cfg, x - rho*mu * ndiv(fdiff(x)-z+u), ...
 %         mu/sigma, 2);
       switch alg_params.data
-      case 'l2'
+      case {'l2', 'wls'}
         % 1/sigma with data term
         if alg_params.sigma_with_data
           [x, itimes, isnrs, iiters] = l2_data_prox(...
@@ -112,8 +117,11 @@ iters = cumsum(iters);
           % sigma with regularizer
           [x, itimes, isnrs, iiters] = l2_data_prox(...
             x - rho*mu * Kt(K(x)-z+u), mu, ...
-            alg_params.prox_params, in_params, alg_params.prox);
+            alg_params.prox_params, in_params, alg_params.prox, ...
+            alg_params.prox_name);
         end
+      otherwise
+        error(sprintf('Not implemented data: %s', alg_params.data));
       end
       x = max(0, x);
       times(it) = itimes(end);
@@ -145,6 +153,8 @@ iters = cumsum(iters);
         else
           z = itv_prox(K(x) + u, 1/rho, sigma);
         end
+      otherwise
+        error(sprintf('Not implemented prior: %s', alg_params.prior));
       end
       
     %   z = z - (1/rho) * atv_conj_prox((fdiff(x) + u) * rho, rho, 1);
