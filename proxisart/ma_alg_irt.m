@@ -37,7 +37,7 @@ switch alg
     params.AL.mu = alg_params.mu; %0.001; %medwi;
     params.CG.nCG = alg_params.nCG; % 2;
     params.lambda = alg_params.lambda; % 0.02
-%     params.minx = -Inf;
+    params.minx = alg_params.minx;
     params.AL.nu1 = nuoptapprox / params.AL.nu1AL1factor;
     params.CG.precon = alg_params.precon; % Do Precondition CG-solver inverting (A'A + mu*R'R) in ADMM
 
@@ -155,7 +155,8 @@ iters = iters(:);
 
     mxW = max(in_params.wi(:));
     mnW = min(in_params.wi(:));
-    params.Wy = in_params.sino;
+
+    params.Wy = in_params.wi .* in_params.sino;
     params.W = in_params.wi;
 
     params.Nmask = sum(params.ig.mask(:)>0);
@@ -186,7 +187,7 @@ iters = iters(:);
       skap = skap(skap > 0);
       kappa(kappa==0) = skap(1); % Ensure kappa does not have any zeros
       rw = kappa .^ 2; % spatially varying regularization weights; usually kappa ^ 2, but can be adjusted for quality
-      im(kappa)
+%       im(kappa)
     % end
 
     params.scale = 1;
@@ -317,22 +318,24 @@ iters = iters(:);
     params.mxRR = mxRR;
     params.mnRR = mnRR;
 
-    warn 'no file?'
+%     warn 'no file?'
     params.eigtol = eps; % Matlab epsilon
     params.eigpowermaxitr = 10000;
     params.eigdispitr = 10;
     params.N = N;
 
     % eigenvalue related
-    printm('Computing max eigvalue of AWA using Power method for MFISTA...');
-    tic
-    mEAWA = get_MaxEigenValue_1by1(params, 'AWA'); % Find maximum eigenvalues of the forward system and the regularization
-    toc
-    printm(['Max eigvalue of AWA =' num2str(mEAWA)]);
+    if strcmp(alg, 'mfista')
+      printm('Computing max eigvalue of AWA using Power method for MFISTA...');
+      tic
+      mEAWA = get_MaxEigenValue_1by1(params, 'AWA'); % Find maximum eigenvalues of the forward system and the regularization
+      toc
+      printm(['Max eigvalue of AWA =' num2str(mEAWA)]);
 
-    params.mEAWA = mEAWA;
-    params.eiginflate = 1.0025;
-    params.mEval_adjust = mEAWA * params.eiginflate;
+      params.mEAWA = mEAWA;
+      params.eiginflate = 1.0025;
+      params.mEval_adjust = mEAWA * params.eiginflate;
+    end
 
     % Circulant approximation to A'A by taking response of A'A to an impulse at the center
     % if ~isvar('CAA'), printm('ADMM: Minimizing the condition number of CAA + nu1*RR');

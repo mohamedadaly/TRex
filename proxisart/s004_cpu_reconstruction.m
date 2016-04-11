@@ -13,7 +13,7 @@ colormap gray
 
 vol_geom = astra_create_vol_geom(256, 256);
 proj_geom = astra_create_proj_geom('parallel', 1.0, 384, ...
-  linspace2(0,pi,30));
+  linspace2(0,2*pi,30));
 % vol_geom = astra_create_vol_geom(4,4);
 % proj_geom = astra_create_proj_geom('parallel', 1.0, 10, linspace2(0,pi,4));
 
@@ -97,18 +97,19 @@ astra_mex_algorithm('delete', alg_id);
 fbp = astra_mex_data2d('get',rec_id);
 
 %%
-addpath samples/matlab
+% addpath samples/matlab
 
 in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
   'gt_vol',P, 'sino',sinogram, 'A',proj_mat, ...
-  'wi',ones(size(sinogram)), 'fbp',fbp);
+  'wi',wi, 'fbp',fbp);
 %%
 alg = 'admm';
-% alg_params = struct('iter',20, 'mu',0.001, 'nCG',2, 'lambda',0.02, ... .001&.02
-%   'nu',[], 'operator','W', 'prior_type','l1'); %nu=200
-alg_params = struct('iter',10, 'mu',0.001, 'nCG',2, 'lambda',.01, ... .001&.01
-  'nu', 100, 'operator','AFD', 'prior_type','l1', 'precon',1, ... %nu=200
-  'init_fbp',1);
+alg_params = struct('iter',5, 'mu',.0001, 'nCG',2, 'lambda',0.001, ... .001&.02
+  'nu',400, 'operator','W', 'prior_type','l1', ...
+  'init_fbp',1, 'precon',1, 'minx',-Inf); %nu=200
+% alg_params = struct('iter',10, 'mu',0.001, 'nCG',2, 'lambda',.01, ... .001&.01
+%   'nu', 100, 'operator','AFD', 'prior_type','l1', 'precon',1, ... %nu=200
+%   'init_fbp',1);
 
 % profile on      
 [rec, times, snrs, iters] = ma_alg_irt(alg, in_params, alg_params);

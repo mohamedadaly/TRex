@@ -4522,7 +4522,7 @@ key "esser2010general,chambolle2011first"
  
 \begin_inset Formula 
 \begin{equation}
-\prox_{\lambda g_{\text{ITV}}}(u_{i})=\frac{\sigma u_{i}}{\max(\sigma,\Vert u_{i}\Vert_{2})}\label{eq:ITV-prox}
+\prox_{\lambda g_{\text{ITV}}}(u_{i})=u-\frac{\lambda\sigma u_{i}}{\max(\lambda\sigma,\Vert u_{i}\Vert_{2})}\label{eq:ITV-prox}
 \end{equation}
 
 \end_inset

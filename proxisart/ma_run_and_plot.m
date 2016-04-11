@@ -213,6 +213,7 @@ eval(plt);
     
     legends = cell(size(results));
     handles = [];
+    max_it = 0;
     for a = 1:length(algs)
       res = results{a};
       alg = algs{a};
@@ -221,6 +222,7 @@ eval(plt);
         xs = res.times;
       else
         xs = res.iter;
+        max_it = max(max_it, xs(end));
       end
       handles(a) = plot(xs, res.snrs, 'Color',alg.clr, ...
         'LineStyle',alg.lstyle, 'Marker', alg.marker, ...
@@ -233,7 +235,7 @@ eval(plt);
       xlabel('Time (sec)');
     else
       xlabel('Iteration');
-      xlim([1 arg.iter]);
+      xlim([1 max_it]);
     end
     ylabel('SNR (db)');    
     hleg = legendflex(handles, legends, 'anchor',{'se','se'}, ...
@@ -475,6 +477,7 @@ eval(plt);
     fprintf('Alg %s\n', alg.name);
     
     switch alg.type
+    % ASTRA algorithms
     case 'astra'
       % input params
       in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
@@ -488,17 +491,42 @@ eval(plt);
       % residual
       alg.alg_params.option.ComputeIterationResidual = arg.plot_resid;          
 
+%       if ~alg.alg_params.wls, in_params.wi = ones(size(wi)); end
+      
       [rec, tt, ss, it, rs] = ma_alg_astra(alg.alg, in_params, ...
         alg.alg_params);
-    case 'irt'
       
+    % IRT toolbox
+    case 'irt'
+      in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
+        'gt_vol',P, 'sino',sinogram, 'A',proj_mat, ...
+        'wi',wi, 'fbp',fbp);
+      
+      if ~alg.alg_params.wls, in_params.wi = ones(size(wi)); end
+      
+      % set iterations according to if they have inner iterations or not
+      switch(alg.alg)
+      case 'admm'
+        alg.alg_params.iter = arg.iter / alg.alg_params.nCG;
+      otherwise
+        alg.alg_params.iter = arg.iter ;
+      end
+
+
+      [rec, tt, ss, it] = ma_alg_irt(alg.alg, in_params, ...
+        alg.alg_params);
+      rs = 0 * tt;
+      
+    % Proximal algorithms
     case 'psart'
       % input params
       in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
         'gt_vol',P, 'sino',sinogram, 'proj_id',proj_id, ...
         'wi',wi, 'fbp',fbp);
+
+%       if ~alg.alg_params.wls, in_params.wi = ones(size(wi)); end
       
-      alg.alg_params.iter = arg.iter;
+      alg.alg_params.iter = arg.iter / alg.alg_params.prox_params.iter;
 
       [rec, tt, ss, it] = ma_alg_psart(alg.alg, in_params, alg.alg_params);
       rs = 0 * tt;

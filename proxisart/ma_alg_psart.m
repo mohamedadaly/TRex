@@ -33,7 +33,7 @@ function [rec, times, snrs, iters] = ma_alg_psart(alg, in_params, alg_params)
 % return
 % dx = fdiff(x)
 % xx = ndiv(dx)
-[times snrs iters] = deal(zeros(alg_params.iter, 1));
+[times snrs iters] = deal(zeros(floor(alg_params.iter), 1));
 
 switch alg
   case 'admm'
@@ -440,6 +440,21 @@ assert(all(size(mag) == sz(1:2)));
 
 % project on L_2 ball with radius sigma
 zp = bsxfun(@rdivide, sigma*z, max(sigma, mag));
+end
+
+% Isotropic TV proximal operator
+% z is a "gradient" object i.e. 3-dim with horizontal diff in first channel
+% and vertical diff in second channel
+function zp = itv_prox(z, mu, sigma)
+sz = size(z);
+assert(length(sz) == 3);
+
+% compute magnitude of gradient at each voxel
+mag = sqrt(sum(z.^2, 3));
+assert(all(size(mag) == sz(1:2)));
+
+% project on L_2 ball with radius sigma*mu and subtract
+zp = z - bsxfun(@rdivide, sigma*mu*z, max(sigma*mu, mag));
 end
 
 % Isotropic TV objective
