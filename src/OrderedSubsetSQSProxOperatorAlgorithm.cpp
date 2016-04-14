@@ -344,24 +344,24 @@ void COrderedSubsetSQSProxOperatorAlgorithm::run(int _iNrIterations)
             pBackProjector->projectSingleProjection(iProjection);
 
 
-			// Update all the voxels, which seems wrong ...
-			//// Add alpha * tempVol / TotalPixel
-			//*m_pTempVol /= *m_pTotalPixelWeight;
-			//*m_pTempVol *= m_fAlpha;
-			//*m_pReconstruction += *m_pTempVol;
+			//Update all the voxels, not sure if wrong, but gives better results ...
+			// Add alpha * tempVol / TotalPixel
+			*m_pTempVol /= *m_pTotalPixelWeight;
+			*m_pTempVol *= m_fAlpha;
+			*m_pReconstruction += *m_pTempVol;
 
-			// Update only a subset of the Reconstruction corresponding to the current subset
-			for (int i = iVoxelsPerProjection * iP; 
-				i < min(iVoxelsPerProjection * (iP + 1), m_pReconstruction->getSize()); 
-				++i) {
-				// Get tempVol[i]
-				float32 val = m_pTempVol->getData()[i];
-				// Update alpha * tempVol / TotalPixel
-				val /= m_pTotalPixelWeight->getData()[i];
-				val *= m_fAlpha;
-				// Update voxel
-				m_pReconstruction->getData()[i] += val;
-			}			
+			//// Update only a subset of the Reconstruction corresponding to the current subset
+			//for (int i = iVoxelsPerProjection * iP; 
+			//	i < min(iVoxelsPerProjection * (iP + 1), m_pReconstruction->getSize()); 
+			//	++i) {
+			//	// Get tempVol[i]
+			//	float32 val = m_pTempVol->getData()[i];
+			//	// Update alpha * tempVol / TotalPixel
+			//	val /= m_pTotalPixelWeight->getData()[i];
+			//	val *= m_fAlpha;
+			//	// Update voxel
+			//	m_pReconstruction->getData()[i] += val;
+			//}			
 
             // update iteration count
             m_iIterationCount++;

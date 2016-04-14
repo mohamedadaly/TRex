@@ -2894,6 +2894,39 @@ Write the matrix update equation in terms of
 \begin_inset Formula 
 \begin{align*}
 x^{(t+1)} & =x^{(t)}+\alpha s\tilde{C}^{-1}\tilde{A}_{S}^{T}\left(\tilde{p}_{S}-\tilde{A}_{S}x^{(t)}\right)\\
+ & =x^{(t)}+\alpha s\tilde{C}^{-1}\left[\begin{smallmatrix}\sqrt{2\lambda}A_{S}^{T} & I\end{smallmatrix}\right]\left[\begin{smallmatrix}\sqrt{2\lambda}(p_{S}-A_{S}x^{(t)})\\
+u-x^{(t)}
+\end{smallmatrix}\right]\\
+ & =x^{(t)}+\alpha s\tilde{C}^{-1}{\scriptstyle \left(2\lambda A_{S}^{T}(p_{S}-A_{S}x^{(t)})+(u-x^{(t)})\right)}.
+\end{align*}
+
+\end_inset
+
+In component form 
+\begin_inset Formula 
+\begin{align*}
+x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{\tilde{c}_{j}}{\scriptstyle \left(2\lambda\sum_{i\in S}(p_{j}-\sum_{k}a_{ik}x_{k}^{(t)})a_{ij}+u_{j}-x_{j}^{(t)}\right)}.
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+Write the matrix update equation in terms of 
+\begin_inset Formula $\tilde{A}$
+\end_inset
+
+ and 
+\begin_inset Formula $\tilde{p}$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\begin{align*}
+x^{(t+1)} & =x^{(t)}+\alpha s\tilde{C}^{-1}\tilde{A}_{S}^{T}\left(\tilde{p}_{S}-\tilde{A}_{S}x^{(t)}\right)\\
  & =x^{(t)}+\alpha s\tilde{C}^{-1}\left[\begin{smallmatrix}\sqrt{2\lambda}A_{S}^{T} & I_{S}\end{smallmatrix}\right]\left[\begin{smallmatrix}\sqrt{2\lambda}(p_{S}-A_{S}x^{(t)})\\
 u_{S}-x_{S}^{(t)}
 \end{smallmatrix}\right]\\
@@ -2941,6 +2974,11 @@ x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{\tilde{c}_{j}}{\scriptstyle \left(2\
 \end_inset
 
 ).
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3108,8 +3146,22 @@ key "erdogan1999ordered"
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{2\lambda c_{j}+1}\left(2\lambda\sum_{i\in S}(p_{j}-\sum_{k}a_{ik}x_{k}^{(t)})a_{ij}+u_{j}-x_{j}^{(t)}\right)\mbox{ for }j=1\ldots n\end{aligned}
+$
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{2\lambda c_{j}+1}\left(2\lambda\sum_{i\in S}(p_{j}-\sum_{k}a_{ik}x_{k}^{(t)})a_{ij}+(u_{j}-x_{j}^{(t)})\delta_{jS}\right)\mbox{ for }j=1\ldots n\end{aligned}
 $
+\end_inset
+
+
+\end_layout
+
 \end_inset
 
 
@@ -3240,7 +3292,7 @@ reference "alg:LADMM-algorithm"
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -5145,7 +5197,6 @@ reference "sec:Iterative-Algorithms"
  We compare convergence per iteration since all methods are roughly equal
  in runtime, as each outer iteration contains (roughly) one forward and
  one backward projection.
- We process the projections in a random order.
  This is confirmed in Fig.
  
 \begin_inset CommandInset ref
@@ -5173,7 +5224,7 @@ reference "fig:SNR-per-iteration-iterative"
 
 \end_inset
 
- shows the SNR per iteration for 15 and 90 projections for 30 iterations,
+ shows the SNR per iteration for 15, 30, 90 projections for 30 iterations,
  while Fig.
  
 \begin_inset CommandInset ref
@@ -5288,13 +5339,13 @@ Using plain iterative methods does not give acceptable results with fewer
 \begin_inset Float figure
 wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -5334,29 +5385,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_60-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
 	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_180-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -5402,11 +5431,22 @@ width "33text%"
 special "none"
 height "1in"
 height_special "totalheight"
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename plots/per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -5478,6 +5518,17 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
+	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
 	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
@@ -5515,14 +5566,6 @@ Mouse
 \begin_layout Plain Layout
 Convergence of Iterative Algorithms.
  Plots show SNR per iteration.
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:SNR-per-iteration-iterative"
-
-\end_inset
-
-Top row is for 15 projections, and bottom row is for 90 projections.
  Solid lines have 
 \begin_inset Formula $\alpha=1$
 \end_inset
@@ -5536,6 +5579,14 @@ Top row is for 15 projections, and bottom row is for 90 projections.
 \end_inset
 
 .
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SNR-per-iteration-iterative"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -5967,12 +6018,11 @@ reference "tab:Prox-Operators"
 \begin_inset Formula $\alpha=1.99$
 \end_inset
 
- with for 30 projections and 
+ with for 15 and 30 projections and 
 \begin_inset Formula $\alpha=1$
 \end_inset
 
- for 90 projections.
- (see Sec.
+ for 90 projections (see Sec.
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -5982,6 +6032,14 @@ reference "sub:Iterative-Algorithms-Comparison"
 
 ).
  We use 
+\begin_inset Formula $\sigma=0.05$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho=25$
+\end_inset
+
+ for 15 projections; 
 \begin_inset Formula $\sigma=0.1$
 \end_inset
 
@@ -6088,7 +6146,7 @@ status open
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6103,6 +6161,17 @@ special "none"
 height "1in"
 height_special "totalheight"
 status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -6149,7 +6218,7 @@ Modified Shepp-Logan
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6164,6 +6233,17 @@ special "none"
 height "1in"
 height_special "totalheight"
 status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -6225,6 +6305,17 @@ special "none"
 height "1in"
 height_special "totalheight"
 status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -6366,7 +6457,19 @@ reference "sub:Data-Terms-and-Regularizers-Comparison"
 
  i.e.
  Poisson noise model and SAD regularizer.
- 
+ We set 
+\begin_inset Formula $\sigma=0.1$
+\end_inset
+
+; 
+\begin_inset Formula $\rho=50$
+\end_inset
+
+ for SART, ART, and BICAV, and 
+\begin_inset Formula $\rho=1$
+\end_inset
+
+ for OS-SQS (which gave better results).
 \end_layout
 
 \begin_layout Standard
@@ -6379,7 +6482,7 @@ status open
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6397,7 +6500,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	filename plots/prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6408,7 +6511,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	filename plots/prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6440,7 +6543,7 @@ Modified Shepp-Logan
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6458,7 +6561,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	filename plots/prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6469,7 +6572,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	filename plots/prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6501,7 +6604,7 @@ NCAT
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6519,7 +6622,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	filename plots/prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6530,7 +6633,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	filename plots/prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
 

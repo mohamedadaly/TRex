@@ -118,6 +118,7 @@ iters = cumsum(iters);
     
     % loop
     for it=1:alg_params.iter
+      drawnow;
 
       % x-step
     %   new_x = l2_data_prox(cfg, x - lambda * ndiv(z), lambda, 20);

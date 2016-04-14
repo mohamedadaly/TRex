@@ -29,7 +29,8 @@ P = read_ncat('nx', scale, 'ny', scale, 'marrow', true, ...
 P = single(P') / single(max(P(:))) * 0.4; % convert to 1/cm units
 
 save(sprintf('phantoms/ncat-%d.mat', scale), 'P')
-%% Not using this anymore
+
+%%    -- Not using this anymore
 load phantoms/ncat-1024.mat
 figure(1), imshow(P, [])
 
@@ -470,18 +471,22 @@ end
 %% Comparison of data terms and priors using SART-PROX and ADMM
 
 % sigma_with_data = 0
-% l2: .1&50&[]->np-30  .5&200&[]->np-90
+% l2: .1&50&[]&alpha=1->np-30  
+%   .5&200&[]&alpha=1.99->np-90  
+%   .05&50&[]&alpha=1.99->np-15 
 % wls: .1&50&[]
 
-sigma_l2 = .5; 
-rho_l2 = 200; 
+sigma_l2 = .05; .5; 
+rho_l2 = 50; 200; 
 mu_l2 = []; .0001; []; 1e-3;
-sigma_wls = .5;
-rho_wls = 200;
+sigma_wls = .05; .5;
+rho_wls = 50; 200;
 mu_wls = []; []; 1e-3;
-alpha = 1; 1.99;
+alpha = 1.99; 1; 1.99;
 sigma_with_data = 0;
 init_fbp = 0;
+
+try
 algs = {
   % Basic SART
   struct('name','SART', 'type','astra', ...
@@ -592,6 +597,7 @@ algs = {
       
           
   };
+end
 
 for i=1:2
   if i==1
@@ -604,7 +610,7 @@ for i=1:2
     proj_types = {'fan'}; %{'fan', 'parallel', 'mouse'};
   end
 
-  num_projs = 30; 90; 30; [15, 90]; [15, 30, 60, 90, 180]; 
+  num_projs = 15; 30; 90; 30; [15, 90]; [15, 30, 60, 90, 180]; 
 
   iter = 30;
   prefix = 'sart-prox-comp-';
@@ -619,7 +625,7 @@ for i=1:2
             % put args
             arg = struct('phan',phantom, 'phan_size',512, 'path','./plots', ...
               'noise_type',noise_type, 'noise_level',noise_level, ...
-              'num_proj',num_proj, 'iter',iter, 'recompute',0, ...
+              'num_proj',num_proj, 'iter',iter, 'recompute',1, ...
               'proj_type',proj_type, 'prefix',prefix, 'plot_resid',0, ...
               'legend_cols',2, 'per_time',0, 'prox_fbp',0, ...
               'exclude_legend',[1], 'fig_size',[800,400], 'title','num_proj');
@@ -635,18 +641,27 @@ end
 %% Comparison of proximal operators
 
 % sigma_with_data = 0
-% l2: .1&50&[]->np-30  .5&200&[]->np-90
-% wls: .1&50&[]
+% alpha = 1
+% wls&sad: 
+%          .05&50|50|50|1&[]->np-15 alpha=1.99
+%          .1&50|50|50|1&[]->np-30  alpha=1
+%          .5&200|1|1|1e-4&[]->np-90  alpha=1
 
-sigma = .5; .1;
-rho = 200; 50;
+ 
+sigma = .5; .05; .5; .5; .1;
+rho_sart = 200; 50; 200;
+rho_art = 1; 200; 50; 10; 50; 25;  4e3; 1.25e4; 50; 200; 50;
+rho_os = 1; 1e-4; .00010; 1;
 mu = []; []; 1e-3;
-alpha = 1; 1;
+alpha = 1; .1; 1.99; 1;
 sigma_with_data = 0;
 init_fbp = 0;
+projection_order = 'sequential';
 
 data = 'wls';
-prior = 'atv';
+prior = 'sad';
+
+try
 algs = {
   
   % PSART types
@@ -654,7 +669,7 @@ algs = {
   struct('name','SART-PROX', 'type','psart', ...
     'clr','k', 'lstyle','-', 'marker','d', ...
     'alg','admm', ...
-    'alg_params', struct('iter',1, 'sigma',sigma, 'rho',rho, 'mu',mu, ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
+    'alg_params', struct('iter',1, 'sigma',sigma, 'rho',rho_sart, 'mu',mu, ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
       'theta',1, 'init_fbp',init_fbp, 'data',data, 'prior',prior, ...
       'sigma_with_data', sigma_with_data, 'prox','astra', ...
       'prox_name','SART-PROX', ...
@@ -663,12 +678,12 @@ algs = {
           'UseMaxConstraint',0, 'MaxConstraintValue',1, ...
           'Alpha',alpha, 'Lambda',1e3, 'ComputeIterationMetrics',1, ...
           'ClearReconstruction',1, ...
-          'UseBSSART',0, 'ProjectionOrder','random'))))
+          'UseBSSART',0, 'ProjectionOrder',projection_order))))
 
   struct('name','ART-PROX', 'type','psart', ...
     'clr','r', 'lstyle','-', 'marker','s', ...
     'alg','admm', ...
-    'alg_params', struct('iter',1, 'sigma',sigma, 'rho',rho, 'mu',mu, ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
+    'alg_params', struct('iter',1, 'sigma',sigma, 'rho',rho_art, 'mu',mu, ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
       'theta',1, 'init_fbp',init_fbp, 'data',data, 'prior',prior, ...
       'sigma_with_data', sigma_with_data, 'prox','astra', ...
       'prox_name','ART-PROX', ...
@@ -677,12 +692,12 @@ algs = {
           'UseMaxConstraint',0, 'MaxConstraintValue',1, ...
           'Alpha',alpha, 'Lambda',1e3, 'ComputeIterationMetrics',1, ...
           'ClearReconstruction',1, ...
-          'UseBSSART',0, 'ProjectionOrder','sequential'))))
+          'UseBSSART',0, 'ProjectionOrder',projection_order))))
                     
   struct('name','BICAV-PROX', 'type','psart', ...
     'clr','g', 'lstyle','-', 'marker','*', ...
     'alg','admm', ...
-    'alg_params', struct('iter',1, 'sigma',sigma, 'rho',rho, 'mu',mu, ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
+    'alg_params', struct('iter',1, 'sigma',sigma, 'rho',rho_art, 'mu',mu, ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
       'theta',1, 'init_fbp',init_fbp, 'data',data, 'prior',prior, ...
       'sigma_with_data', sigma_with_data, 'prox','astra', ...
       'prox_name','BICAV-PROX', ...
@@ -691,13 +706,13 @@ algs = {
           'UseMaxConstraint',0, 'MaxConstraintValue',1, ...
           'Alpha',alpha, 'Lambda',1e3, 'ComputeIterationMetrics',1, ...
           'ClearReconstruction',1, ...
-          'UseBSSART',0, 'ProjectionOrder','random'))))
+          'UseBSSART',0, 'ProjectionOrder',projection_order))))
 
   struct('name','OS-SQS-PROX', 'type','psart', ...
     'clr','m', 'lstyle','-', 'marker','^', ...
     'alg','admm', ...
-    'alg_params', struct('iter',1, 'sigma',sigma, 'rho',rho, 'mu',mu, ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
-      'theta',.1, 'init_fbp',init_fbp, 'data',data, 'prior',prior, ...
+    'alg_params', struct('iter',1, 'sigma',sigma, 'rho',rho_os, 'mu',mu, ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
+      'theta',1, 'init_fbp',init_fbp, 'data',data, 'prior',prior, ...
       'sigma_with_data', sigma_with_data, 'prox','astra', ...
       'prox_name','OS-SQS-PROX', ...
       'prox_params', struct('iter',2, ...
@@ -705,24 +720,37 @@ algs = {
           'UseMaxConstraint',0, 'MaxConstraintValue',1, ...
           'Alpha',1, 'Lambda',1e3, 'ComputeIterationMetrics',1, ...
           'ClearReconstruction',1, ...
-          'UseBSSART',0, 'ProjectionOrder','random'))))          
+          'UseBSSART',0, 'ProjectionOrder',projection_order))))         
+          
+  struct('name','OS-SQS', 'type','astra', ...
+    'clr','m', 'lstyle','--', 'marker','^', ...
+    'alg','OS-SQS', ...
+    'alg_params', struct('iter',1, ...
+      'option',struct('UseMinConstraint',1, 'MinConstraintValue',0, ...
+      'UseMaxConstraint',0, 'MaxConstraintValue',1, ...
+      'Alpha',1, 'Lambda',1e3, 'ComputeIterationMetrics',1, ...
+      'ClearReconstruction',1, 'UseJacobiPreconditioner',0, ...
+      'UseBSSART',0, 'ProjectionOrder',projection_order)))
+          
   };
+catch
+end
 
-for i=1
+for i=1:2
   if i==1
     phantoms = {'mouse'}; {'ncat', 'mod-sl'}; {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
     noises = {struct('noise_type', 'gauss', 'noise_levels',[0.0])}; 
     proj_types = {'mouse'}; %{'fan', 'parallel', 'mouse'};
   else
-    phantoms = {'ncat'}; %, 'mod-sl'}; {'ncat', 'mod-sl'}; {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
+    phantoms = {'ncat', 'mod-sl'}; {'ncat', 'mod-sl'}; {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
     noises = {struct('noise_type', 'poisson', 'noise_levels',[1e5])};
     proj_types = {'fan'}; %{'fan', 'parallel', 'mouse'};
   end
 
   num_projs = 90; 90; 30; [15, 90]; [15, 30, 60, 90, 180]; 
 
-  iter = 8;
-  prefix = 'prox-comp-';
+  iter = 10; 30;
+  prefix = 'prox-comp';
   plt = 'per_iter';
   
   for phantom = phantoms
@@ -740,7 +768,7 @@ for i=1
               'legend_cols',2, 'per_time',0, 'prox_fbp',0, ...
               'exclude_legend',[], 'fig_size',[800,400], 'title','num_proj');
             % call
-            ma_run_and_plot(plt, arg, algs);
+            ma_run_and_plot(plt, arg, algs([1 : 2]));
           end
         end
       end
