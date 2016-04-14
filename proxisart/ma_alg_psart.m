@@ -49,28 +49,46 @@ end
 times = cumsum(times);
 iters = cumsum(iters);
 
-  function x = admm()
-    rho = alg_params.rho;
-    mu = alg_params.mu;
-    if isempty(mu), mu = 1 / (rho * 8); end    
+  function x = admm()    
     sigma = alg_params.sigma;
-    mu/sigma;
-    % scale mu accordingly if it's with prior term
-    if ~alg_params.sigma_with_data
-      mu = mu / sigma^2;
-    end
-    
+
     % define the matrix K
     switch alg_params.prior
     case {'atv', 'itv'}
       % forward difference and divergence
       K = @fdiff;
       Kt = @ndiv;
+      Knorm_sq = 8;
     case 'sad'
       % sad forward difference and its divergence
       K = @sadfdiff;
       Kt = @sadndiv;
+      Knorm_sq = 24;
     end
+    
+    % scale K accordingly if sigma with prior
+    if ~alg_params.sigma_with_data
+      K = @(x)(sigma * K(x));
+      Kt = @(x) (sigma * Kt(x));
+      Knorm_sq = Knorm_sq * (sigma*sigma);
+    end
+    
+    rho = alg_params.rho;
+    mu = alg_params.mu;
+    if isempty(mu), mu = 1 / (rho * Knorm_sq); end    
+%     mu/sigma;
+%     % scale mu accordingly if it's with prior term
+%     if ~alg_params.sigma_with_data
+%       mu = mu / sigma^2;
+%     end    
+    
+%     xx = randn(size(in_params.gt_vol));
+%     for i=1:1e3
+%       xx = sigma*Kt(sigma*K(xx));
+%   %     xx = R' * R * xx;
+%       xx = xx / norm(xx(:)); %sqrt(sum(reshape(xx,[],1).^2));
+%     end
+%     val = sum(reshape((sigma*K(xx)).^2,[],1)) / norm(xx(:)) %sum(reshape(xx.^2,[],1))    
     
     % Set WLS data term
     if strcmp(alg_params.data, 'wls')
@@ -484,12 +502,12 @@ end
 %   'scale_filters', 1/sqrt(2));
 % 
 % % Power Iteration to estimate spectral norm of first diff matrix
-%   xx = randn(size(P));
+%   xx = randn(size(in_params.gt_vol));
 %   for i=1:1e2
-% %     xx = ndiv(fdiff(xx));
-%     xx = R' * R * xx;
+%     xx = ndiv(fdiff(xx));
+% %     xx = R' * R * xx;
 %     xx = xx / sqrt(sum(reshape(xx,[],1).^2));
 %   end
-% %   val = sum(reshape(fdiff(xx).^2,[],1)) / sum(reshape(xx.^2,[],1))
+%   val = sum(reshape(fdiff(xx).^2,[],1)) / sum(reshape(xx.^2,[],1))
 % val = sum(reshape(R* xx.^2,[],1)) / sum(reshape(xx.^2,[],1))
   

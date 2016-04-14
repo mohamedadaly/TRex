@@ -420,7 +420,7 @@ key "kim2015combining"
 
 \end_inset
 
-, and show that our framework gives superiror reconstruction quality.
+, and show that our framework gives superior reconstruction quality.
 \end_layout
 
 \begin_layout Standard
@@ -749,11 +749,20 @@ name "sec:Iterative-Algorithms"
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
 Overview
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Overview-Iterative-Algorithms"
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -1135,7 +1144,7 @@ reference "alg:Iterative-Algorithm"
 \begin_inset Formula $p_{S}-A_{S}x^{(t)}$
 \end_inset
 
- that is then backprojected with some normalization procedure.
+ that is then back projected with some normalization procedure.
  It can take the form 
 \begin_inset Formula 
 \[
@@ -1161,7 +1170,7 @@ where the function
 
 \end_inset
 
- and so these algorithms can be veiwed as variations of (stochastic) gradient
+ and so these algorithms can be viewed as variations of (stochastic) gradient
  descent 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1783,12 +1792,11 @@ reference "sec:Iterative-Algorithms"
 
 \end_layout
 
-\begin_layout Standard
-
-\series bold
+\begin_layout Subsubsection
 ART
-\series default
- 
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "gordon1970algebraic,gordon1971reconstruction"
@@ -1867,7 +1875,8 @@ th column of
 \end_inset
 
 th ray (equation or row), the difference in the numerator is the projection
- error, that is then backprojected by multiplying the transpose of the 
+ error, that is then back projected by multiplying the transpose of the
+ 
 \begin_inset Formula $i$
 \end_inset
 
@@ -1929,12 +1938,13 @@ th row
  
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
 
 \series bold
-SIRT 
-\series default
+SIRT
+\end_layout
 
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "gilbert1972iterative"
@@ -2004,7 +2014,7 @@ x^{(t+1)}=x^{(t)}+\alpha C^{-1}A^{T}R^{-1}\left(p-Ax^{(t)}\right)
 \begin_inset Formula $Ax^{(t)}$
 \end_inset
 
-, computes the residual, and then backprojects it.
+, computes the residual, and then back projects it.
  The diagonal matrices 
 \begin_inset Formula $R$
 \end_inset
@@ -2054,12 +2064,13 @@ key "gregor2015comparison"
 .
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
 
 \series bold
-SART 
-\series default
+SART
+\end_layout
 
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "andersen1984simultaneous,andersen1989algebraic"
@@ -2163,12 +2174,13 @@ x^{\star}\approx\argmin_{x}\Vert x\Vert_{2}^{2}\st Ax=p.
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
 
 \series bold
 BSSART
-\series default
- 
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "censor2002block"
@@ -2208,7 +2220,7 @@ x^{(t+1)}=x^{(t)}+\alpha C^{-1}A_{S}^{T}R^{-1}\left(p_{S}-A_{S}x^{(t)}\right)
 
 \end_inset
 
- where the diagonal matrices are both indepdendent of the projection view
+ where the diagonal matrices are both independent of the projection view
  
 \begin_inset Formula $S$
 \end_inset
@@ -2236,12 +2248,13 @@ x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\st Ax=p
 .
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
 
 \series bold
 BICAV
-\series default
- 
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "censor2001bicav,censor2002block"
@@ -2323,12 +2336,13 @@ key "censor2002block"
 .
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
 
 \series bold
-OS-SQS 
-\series default
+OS-SQS
+\end_layout
 
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "erdogan1999ordered,kim2013accelerating,kim2015combining,nien2015fast"
@@ -2451,12 +2465,13 @@ ly.
  
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsubsection
 
 \series bold
 CGLS
-\series default
- 
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "bjorck1996numerical,fessler1999conjugate"
@@ -2500,15 +2515,2281 @@ x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}.
 
 \end_layout
 
-\begin_layout Subsection
-Experimental Comparison
+\begin_layout Section
+Proximal Operators
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:Experimental-Comparison-Iterative-Algorithms"
+name "sec:Proximal-Operators"
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Proximal algorithms are a class of optimization algorithms that are quite
+ flexible and powerful 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "combettes2011proximal,boyd2011distributed,parikh2013proximal"
+
+\end_inset
+
+.
+ They are generally used to efficiently solve non-smooth, constrained, distribut
+ed, or large scale optimization problems.
+ They are more modular than other optimization problems, in the sense that
+ they provide a few lines of code that depend on solving smaller conventional,
+ and usually simpler, optimization problems called 
+\emph on
+proximal operator
+\emph default
+.
+ The proximal operator 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "bauschke2011convex,combettes2011proximal,parikh2013proximal"
+
+\end_inset
+
+ for a function 
+\begin_inset Formula $h(\cdot)$
+\end_inset
+
+ is a generalization of projections on convex sets, and can be thought of
+ intuitively as getting closer to the optimal solution while staying close
+ to the current estimate.
+ Formally it is defined as 
+\begin_inset Formula 
+\begin{equation}
+\prox_{\lambda h}(u)=\argmin_{x}h(x)+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2},\label{eq:prox-operator}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $x,u\in\mathbb{R}^{n}$
+\end_inset
+
+ and 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ is a regularization parameter.
+ Many proximal operators of common functions are easy to compute, and often
+ admit a closed form solution.
+ Computing the proximal operator of a certain function opens the way to
+ solving hard optimization problems involving this function and other regulariza
+tion terms e.g.
+ smoothing norms or sparsity inducing norms, which otherwise is not generally
+ easy.
+ We will derive proximal operators for SART, ART, BICAV, and OS-SQS.
+\end_layout
+
+\begin_layout Subsection
+SART, ART, and BICAV
+\end_layout
+
+\begin_layout Standard
+ART, SART, and BICAV (approximately) solve the least-norm problem 
+\begin_inset Formula 
+\[
+x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\st Ax=p.
+\]
+
+\end_inset
+
+ What we want is a solver for LS projection error i.e.
+ 
+\begin_inset Formula 
+\begin{equation}
+\mbox{prox}_{\lambda h}(u)=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-1-1}
+\end{equation}
+
+\end_inset
+
+ This is equivalent to solving 
+\begin_inset Formula 
+\begin{equation}
+\min_{x}2\lambda\Vert Ax-p\Vert_{2}^{2}+\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-2}
+\end{equation}
+
+\end_inset
+
+Now introduce new variables as follows: let 
+\begin_inset Formula $y=\sqrt{2\lambda}(p-Ax)$
+\end_inset
+
+ and 
+\begin_inset Formula $z=x-u$
+\end_inset
+
+.
+ The problem becomes 
+\begin_inset Formula 
+\begin{eqnarray}
+\min_{y,z} & \Vert y\Vert_{2}^{2}+\Vert z\Vert_{2}^{2}\nonumber \\
+\st & y+\sqrt{2\lambda}Az=\sqrt{2\lambda}(p-Au).\label{eq:SART-prox-3}
+\end{eqnarray}
+
+\end_inset
+
+Rewriting Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:SART-prox-3"
+
+\end_inset
+
+ we arrive at the system 
+\begin_inset Formula 
+\begin{eqnarray*}
+\mbox{\ensuremath{\min}}_{y,z} & \left\Vert \left[\begin{array}{c}
+y\\
+z
+\end{array}\right]\right\Vert _{2}^{2}\\
+\mbox{subject to} & \left[\begin{array}{cc}
+I & \sqrt{2\lambda}A\end{array}\right]\left[\begin{array}{c}
+y\\
+z
+\end{array}\right]=\sqrt{2\lambda}\left(p-Au\right)
+\end{eqnarray*}
+
+\end_inset
+
+which can be written as 
+\begin_inset Formula 
+\begin{eqnarray*}
+\mbox{\ensuremath{\min}}_{\tilde{x}} & \left\Vert \tilde{x}\right\Vert _{2}^{2}\\
+\st & \tilde{A}\tilde{x}=\tilde{p},
+\end{eqnarray*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\tilde{x}\in\mathbb{R}^{m+n}$
+\end_inset
+
+, 
+\begin_inset Formula $\tilde{A}\in\mathbb{R}^{m\times m+n}$
+\end_inset
+
+, and 
+\begin_inset Formula $\tilde{p}\in\mathbb{R}^{m}$
+\end_inset
+
+.
+ This is now a consistent under-determined linear system, and can be solved
+ using either ART, SART, or BICAV.
+ 
+\end_layout
+
+\begin_layout Standard
+Although we introduced new variables 
+\begin_inset Formula $y$
+\end_inset
+
+ and 
+\begin_inset Formula $z$
+\end_inset
+
+ and increased the dimensionality of the problem from 
+\begin_inset Formula $n$
+\end_inset
+
+ to 
+\begin_inset Formula $n+m$
+\end_inset
+
+, we can solve the modified algorithm efficiently with very little computational
+ overhead.
+ Instead of solving explicitly for the optimal 
+\begin_inset Formula $y^{\star}$
+\end_inset
+
+ and 
+\begin_inset Formula $z^{\star}$
+\end_inset
+
+, we can manipulate the algorithm to solve directly for the optimal 
+\begin_inset Formula $x^{\star}.$
+\end_inset
+
+ For example, for SART, the initialization and update equation for 
+\begin_inset Formula $\tilde{x}$
+\end_inset
+
+ become 
+\begin_inset Formula 
+\begin{eqnarray}
+\tilde{x}_{j}^{(0)} & = & \mathbf{0},\nonumber \\
+\tilde{x}_{j}^{(t+1)} & = & \tilde{x}_{j}^{(t)}+\alpha\frac{\sum_{i\in\mathcal{S}}\frac{\tilde{p}_{i}-\sum_{k}\tilde{a}_{ik}\tilde{x}_{k}^{(t)}}{\sum_{k}\tilde{a}_{ik}}\tilde{a}_{ij}}{\sum_{i\in S}\tilde{a}_{ij}},\label{eq:SART-proximal-update-1}
+\end{eqnarray}
+
+\end_inset
+
+which can be expanded in terms of 
+\begin_inset Formula $y$
+\end_inset
+
+, 
+\begin_inset Formula $z$
+\end_inset
+
+, and 
+\begin_inset Formula $A$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\begin{eqnarray*}
+y^{(0)} & = & \mathbf{0}_{m}\\
+z^{(0)} & = & \mathbf{0}_{n}\\
+y_{j}^{(t+1)} & = & y_{j}^{(t)}+\frac{\alpha\sum_{i\in\mathcal{S}}\frac{\tilde{p}_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}z_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\delta_{ij}}{1},\\
+z_{j}^{(t+1)} & = & z_{j}^{(t)}+\alpha\frac{\sum_{i\in\mathcal{S}}\frac{\tilde{p}_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}z_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\sqrt{2\lambda}a_{ij}}{\sqrt{2\lambda}\sum_{i\in S}a_{ij}},
+\end{eqnarray*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\delta_{ij}=1$
+\end_inset
+
+ when 
+\begin_inset Formula $i=j$
+\end_inset
+
+ and 0 otherwise.
+ Using the fact that 
+\begin_inset Formula $z=x-u$
+\end_inset
+
+ and 
+\begin_inset Formula $\tilde{p}_{i}=\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}u_{k}$
+\end_inset
+
+ and simplifying we arrive at 
+\begin_inset Formula 
+\begin{eqnarray*}
+y^{(0)} & = & \mathbf{0}_{m}\\
+x^{(0)} & = & u\\
+y_{j}^{(t+1)} & = & y_{j}^{(t)}+\alpha\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\delta_{ij},\\
+x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\sqrt{2\lambda}a_{ij}}{\sqrt{2\lambda}\sum_{i\in S}a_{ij}}.
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Following the same line of reasoning, we can arrive at similar update formulas
+ for both ART and BICAV.
+ The steps are summarized in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Prox-Operators"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+OS-SQS
+\end_layout
+
+\begin_layout Standard
+We want to express the proximal operator problem in Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:SART-prox-1-1"
+
+\end_inset
+
+ in the form of a the LS problem that can be solved (approximately) by OS-SQS:
+ 
+\begin_inset Formula 
+\[
+x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}.
+\]
+
+\end_inset
+
+ Rewrite in the form 
+\begin_inset Formula 
+\begin{equation}
+\argmin_{x}2\lambda\Vert Ax-p\Vert_{2}^{2}+\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-2-1}
+\end{equation}
+
+\end_inset
+
+which is equivalent to 
+\begin_inset Formula 
+\begin{align*}
+ & \argmin_{x}\left\Vert \left[\begin{array}{c}
+\sqrt{2\lambda}A\\
+I
+\end{array}\right]x-\left[\begin{array}{c}
+\sqrt{2\lambda}p\\
+u
+\end{array}\right]\right\Vert _{2}^{2}\\
+ & \iff\argmin_{x}\left\Vert \tilde{A}x-\tilde{p}\right\Vert _{2}^{2}
+\end{align*}
+
+\end_inset
+
+ where 
+\begin_inset Formula 
+\begin{eqnarray*}
+\tilde{A} & = & \left[\begin{array}{c}
+\sqrt{2\lambda}A\\
+I
+\end{array}\right]\in\mathbb{R}^{m+n\times n}\\
+\tilde{p} & = & \left[\begin{array}{c}
+\sqrt{2\lambda}p\\
+u
+\end{array}\right]\in\mathbb{R}^{m+n}.
+\end{eqnarray*}
+
+\end_inset
+
+The weighting matrix 
+\begin_inset Formula $\tilde{C}\in\mathbb{R}^{n\times n}$
+\end_inset
+
+ now becomes now becomes 
+\begin_inset Formula 
+\begin{eqnarray*}
+\tilde{C} & = & \mbox{diag}(\tilde{A}^{T}\tilde{A}\mathbf{1})\\
+ & = & \mbox{diag}\left((2\lambda A^{T}A+I)\mathbf{1}\right)\\
+ & = & \mbox{diag}\left(2\lambda A^{T}A\mathbf{1}+\mathbf{1}\right)
+\end{eqnarray*}
+
+\end_inset
+
+ and its diagonal entries are 
+\begin_inset Formula 
+\[
+\tilde{c}_{j}=2\lambda c_{j}+1
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Write the matrix update equation in terms of 
+\begin_inset Formula $\tilde{A}$
+\end_inset
+
+ and 
+\begin_inset Formula $\tilde{p}$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\begin{align*}
+x^{(t+1)} & =x^{(t)}+\alpha s\tilde{C}^{-1}\tilde{A}_{S}^{T}\left(\tilde{p}_{S}-\tilde{A}_{S}x^{(t)}\right)\\
+ & =x^{(t)}+\alpha s\tilde{C}^{-1}\left[\begin{smallmatrix}\sqrt{2\lambda}A_{S}^{T} & I_{S}\end{smallmatrix}\right]\left[\begin{smallmatrix}\sqrt{2\lambda}(p_{S}-A_{S}x^{(t)})\\
+u_{S}-x_{S}^{(t)}
+\end{smallmatrix}\right]\\
+ & =x^{(t)}+\alpha s\tilde{C}^{-1}{\scriptstyle \left(2\lambda A_{S}^{T}(p_{S}-A_{S}x^{(t)})+I_{S}(u_{S}-x_{S}^{(t)})\right)}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $u_{S}$
+\end_inset
+
+ contains a subset of entries of 
+\begin_inset Formula $u$
+\end_inset
+
+, and similarly for 
+\begin_inset Formula $x_{S}^{(t)}$
+\end_inset
+
+.
+ In component form 
+\begin_inset Formula 
+\begin{align*}
+x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{\tilde{c}_{j}}{\scriptstyle \left(2\lambda\sum_{i\in S}(p_{j}-\sum_{k}a_{ik}x_{k}^{(t)})a_{ij}+(u_{j}-x_{j}^{(t)})\delta_{jS}\right)}
+\end{align*}
+
+\end_inset
+
+ where 
+\begin_inset Formula $\delta_{jS}=1$
+\end_inset
+
+ if 
+\begin_inset Formula $j\in S$
+\end_inset
+
+ and 0 otherwise.
+ Note that we only include a subset from the second term 
+\begin_inset Formula $u-x^{(t)}$
+\end_inset
+
+ per each inner iteration (each subset 
+\begin_inset Formula $S$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide true
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+center
+\end_layout
+
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features rotate="0" booktabs="true" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Method
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Update Step
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ART 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gordon1970algebraic"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\mbox{ for }i\in S\\
+x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\sqrt{2\lambda}a_{ij}\mbox{ for }j=1\ldots n
+\end{aligned}
+$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SART 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "andersen1984simultaneous"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\mbox{ for }i\in S\\
+x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\sqrt{2\lambda}a_{ij}}{\sqrt{2\lambda}\sum_{i\in S}a_{ij}}\mbox{ for }j=1\ldots n
+\end{aligned}
+$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BICAV 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "censor2001bicav"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{j}-\sqrt{2\lambda}\sum_{k}a_{jk}x_{k}^{(t)}-y_{j}^{(t)}}{2\lambda\sum_{k}a_{jk}^{2}+1}\mbox{ for }i\in S\\
+x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\sqrt{2\lambda}a_{ij}}{\sum_{i\in S}\{a_{ij}\ne0\}}\mbox{ for }j=1\ldots n
+\end{aligned}
+$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+OS-SQS 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "erdogan1999ordered"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{2\lambda c_{j}+1}\left(2\lambda\sum_{i\in S}(p_{j}-\sum_{k}a_{ik}x_{k}^{(t)})a_{ij}+(u_{j}-x_{j}^{(t)})\delta_{jS}\right)\mbox{ for }j=1\ldots n\end{aligned}
+$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Summary of the proximal operators update steps.
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Prox-Operators"
+
+\end_inset
+
+ See Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Proximal-Operators"
+
+\end_inset
+
+ for details.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Proximal Framework
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Proximal-Framework"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Proximal Algorithm
+\end_layout
+
+\begin_layout Standard
+The overall problem we are interested in solving is a regularized data fitting
+ problem.
+ In particular, the problem we are interested in solving is 
+\begin_inset Formula 
+\begin{equation}
+\argmin_{x}f(x)+g(Kx),\label{eq:full-problem}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $f(\cdot)$
+\end_inset
+
+ is a data fitting term that measures how much the solution fits the data
+ and that depends on the measurement noise model assumed, 
+\begin_inset Formula $K\in\mathbb{R}^{d\times n}$
+\end_inset
+
+ is a matrix, and 
+\begin_inset Formula $g(\cdot)$
+\end_inset
+
+ is a regularization term that imposes constraints on acceptable solutions.
+ We will use the linearized ADMM method 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "boyd2011distributed,parikh2013proximal"
+
+\end_inset
+
+ for solving this problem for different data terms and different regularizers.
+ It rewrites Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:full-problem"
+
+\end_inset
+
+ into the equivalent form 
+\begin_inset Formula 
+\begin{align*}
+\argmin_{x,z} & f(x)+g(z)\\
+\st & Kx=z
+\end{align*}
+
+\end_inset
+
+ and iterates the steps in Alg.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:LADMM-algorithm"
+
+\end_inset
+
+.
+ This framework is very flexible, and we will show how to solve for different
+ data terms and different regularizers.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+protect
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:LADMM-algorithm"
+
+\end_inset
+
+Linearized ADMM
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithmic}[1]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $K\in\mathbb{R}{}^{d\times n}$
+\end_inset
+
+, 
+\begin_inset Formula $\rho,\mu\in\mathbb{R}$
+\end_inset
+
+ such that 
+\begin_inset Formula $\mu\rho\Vert K\Vert^{2}<1$
+\end_inset
+
+, initial values 
+\begin_inset Formula $x^{(0)}\in\mathbb{R}^{n}$
+\end_inset
+
+ and 
+\begin_inset Formula $z^{(0)}\in\mathbb{R}^{d}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+ Initialize 
+\begin_inset Formula $u^{(0)}=\mathbf{0}_{d}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ForAll
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $t=1\ldots T$
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $x^{(t+1)}=\mbox{prox}_{\mu f}\left(x^{(t)}-\rho\mu K^{T}(Kx^{(t)}-z^{(t)}+u^{(t)})\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $z^{(t+1)}=\mbox{prox}_{\rho^{-1}g}\left(Kx^{(t+1)}+u^{(t)}\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $u^{(t+1)}=u^{(t)}+Kx^{(t+1)}-z^{(t+1)}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+Return
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $x^{(T)}=\argmin_{x}f(x)+g(Kx)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithmic}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Data Terms
+\end_layout
+
+\begin_layout Standard
+We will consider the following data fidelity terms, which correspond to
+ specific noise models:
+\end_layout
+
+\begin_layout Subsubsection
+Gaussian Noise
+\end_layout
+
+\begin_layout Standard
+Assume the measurements 
+\begin_inset Formula $p_{i}\forall i=1,\ldots m$
+\end_inset
+
+ follow the model
+\begin_inset Formula 
+\begin{equation}
+p_{i}=a_{i}^{T}x+\varepsilon_{i}\label{eq:Gaussian-Noise-Model}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\varepsilon\sim\mathbb{N}(0,1)$
+\end_inset
+
+.
+ The projection data log-likelihood is
+\begin_inset Formula 
+\begin{equation}
+\mathcal{L}_{\text{G}}(p)\propto-\sum_{i}\left(p_{i}-a_{i}^{T}x\right)^{2}\label{eq:Gaussian-Log-Likelihood}
+\end{equation}
+
+\end_inset
+
+and maximizing 
+\begin_inset Formula $\mathcal{L}_{\text{G}}(p)$
+\end_inset
+
+ is equivalent to minimizing the LS 
+\begin_inset Formula $\ell_{2}$
+\end_inset
+
+ norm data term
+\begin_inset Formula 
+\begin{equation}
+f_{\text{G}}(x)=\Vert Ax-p\Vert_{2}^{2}=\sum_{i=1}^{m}(A_{i}^{T}x-p_{i})^{2}.\label{eq:gaussian-data-term}
+\end{equation}
+
+\end_inset
+
+We can solve proximal operator 
+\begin_inset Formula $\prox_{\lambda f_{\text{G}}}(\cdot)$
+\end_inset
+
+ directly using any of the algorithms from Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Prox-Operators"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Poisson Noise
+\end_layout
+
+\begin_layout Standard
+Assuming an 
+\emph on
+approximated
+\emph default
+ Poisson noise model leads to a WLS data term, where the weights are proportiona
+l to the detector measurements 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "clinthorne1993preconditioning,depierro1994modified,elbakri2002statistical,thibault2007three"
+
+\end_inset
+
+.
+ Indeed, the actual measurements produced by the X-ray CT scanner represent
+ X-ray photon energy reaching the detector as compared to the energy leaving
+ the X-ray gun.
+ These are related to each other and to the linear attenuation coefficient
+ according to Beer-Lambert law 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "hsieh2009computed"
+
+\end_inset
+
+: 
+\begin_inset Formula 
+\[
+I_{t}=I_{o}e^{-\int\mu(l)dl}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $I_{t}$
+\end_inset
+
+ is the transmitted intensity as measured by the detector, 
+\begin_inset Formula $I_{o}$
+\end_inset
+
+ is the emitted intensity from the source, 
+\begin_inset Formula $\mu(l)$
+\end_inset
+
+ is the linear attenuation coefficient of the material as a function of
+ length 
+\begin_inset Formula $l$
+\end_inset
+
+.
+ The exponent represents the line integrals (projection data) we are dealing
+ with.
+ In particular, assuming that the X-ray photons are monochromatic (have
+ only one single energy) i.e.
+ ignoring 
+\emph on
+beam hardening
+\emph default
+, the projection line integral data at detector 
+\begin_inset Formula $i$
+\end_inset
+
+ is obtained from the physical measurements as 
+\begin_inset Formula 
+\begin{equation}
+p_{i}=-\ln\frac{I_{t}^{i}}{I_{o}^{i}}\label{eq:p_i}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $I_{t}^{i}$
+\end_inset
+
+ is the intensity measured by detector 
+\begin_inset Formula $i$
+\end_inset
+
+ and 
+\begin_inset Formula $I_{o}^{i}$
+\end_inset
+
+ is the emitted intensity.
+ The detector measurements are stochastic in nature, and assuming a Poisson
+ distribution with mean 
+\begin_inset Formula $I_{o}^{i}\exp(-p_{i})$
+\end_inset
+
+ we get 
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+A variable 
+\begin_inset Formula $x$
+\end_inset
+
+ follows a Poisson distribution with mean 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ if 
+\begin_inset Formula 
+\[
+x\sim\mbox{Poisson}(\lambda)\equiv P(x=X)=\frac{e^{-\lambda}\lambda^{x}}{x!}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+I_{t}^{i}\sim\mathbb{P}(I_{o}^{i}e^{-p_{i}})\approx\mathbb{P}(I_{o}^{i}e^{-A_{i}^{T}x}).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Using the ML approach, we maximize the log-likelihood of the measured data:
+ 
+\begin_inset Formula 
+\begin{equation}
+\mathcal{L}_{P}(x)=\sum_{i}I_{t}^{i}\ln\left(I_{o}^{i}e^{-A_{i}^{T}x}\right)-I_{o}^{i}e^{-A_{i}^{T}x}=\sum_{i}\phi_{i}\left(A_{i}^{T}x\right)\label{eq:Poisson-log-likelihood-full}
+\end{equation}
+
+\end_inset
+
+ where 
+\begin_inset Formula 
+\[
+\phi_{i}(q)=I_{t}^{i}\ln\left(I_{o}^{i}e^{-q}\right)-I_{o}^{i}e^{-q}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Applying a second-order Taylor's expansion for 
+\begin_inset Formula $\phi_{i}(q)$
+\end_inset
+
+ around an estimate of the 
+\begin_inset Formula $i$
+\end_inset
+
+th line integral 
+\begin_inset Formula $p_{i}$
+\end_inset
+
+ from Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:p_i"
+
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "elbakri2002statistical"
+
+\end_inset
+
+: 
+\begin_inset Formula 
+\begin{align*}
+\phi_{i}(q) & \approx\phi_{i}(p_{i})+\frac{d\phi_{i}}{dq}(p_{i})(q-p_{i})+\frac{1}{2}\frac{d^{2}\phi_{i}}{dq^{2}}(p_{i})(q-p_{i})^{2}\\
+ & =(I_{t}^{i}\ln I_{t}^{i}-I_{t}^{i})-\frac{I_{t}^{i}}{2}(q-p_{i})^{2}
+\end{align*}
+
+\end_inset
+
+The first term is independent of 
+\begin_inset Formula $q$
+\end_inset
+
+ and can be dropped (since we are interested in minimizing 
+\begin_inset Formula $\mathcal{L}_{P}(x)$
+\end_inset
+
+).
+ Substituting in Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:Poisson-log-likelihood-full"
+
+\end_inset
+
+, we end up with the approximated log-likelihood 
+\begin_inset Formula 
+\begin{equation}
+\mathcal{L}_{\text{G}}(x)\approx-\sum_{i}\frac{I_{t}^{i}}{2}\left(A_{i}^{T}x-p_{i}\right)^{2}=-\sum w_{i}\left(A_{i}^{T}x-p_{i}\right){}^{2}\label{eq:Poisson-log-likelihood-approx}
+\end{equation}
+
+\end_inset
+
+ where 
+\begin_inset Formula $w_{i}$
+\end_inset
+
+ is the weight for projection measurement 
+\begin_inset Formula $i$
+\end_inset
+
+ and is proportional to the measurement of the incident intensity on detector
+ 
+\begin_inset Formula $i$
+\end_inset
+
+ i.e.
+\begin_inset Formula 
+\[
+w_{i}\propto I_{t}^{i}.
+\]
+
+\end_inset
+
+Maximizing the likelihood is equivalent to minimizing the WLS data term
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+f_{\text{P}}(x)=\Vert Ax-p\Vert_{W}^{2}=\sum_{i=1}^{m}w_{i}(a_{i}^{T}x-p_{i})^{2}\label{eq:Poisson-data-term}
+\end{equation}
+
+\end_inset
+
+ where 
+\begin_inset Formula $\Vert x\Vert_{W}=x^{T}Wx$
+\end_inset
+
+ and 
+\begin_inset Formula $W=\diag(w_{i})\in\mathbb{R}^{m\times m}$
+\end_inset
+
+ is a diagonal matrix containing weights for each measurement.
+ 
+\end_layout
+
+\begin_layout Standard
+We can solve the proximal operator 
+\begin_inset Formula 
+\begin{equation}
+\prox_{\lambda f_{\text{P}}}(u)=\min_{x}\Vert Ax-p\Vert_{W}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.\label{eq:Poisson-data-term-proximal-operator-initial}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+as follows.
+ Define 
+\begin_inset Formula $\tilde{p}\in\mathbb{R}^{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $\tilde{A}\in\mathbb{R}^{m\times n}$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\begin{eqnarray*}
+\tilde{p} & = & W^{\frac{1}{2}}p\\
+\tilde{A} & = & W^{\frac{1}{2}}A
+\end{eqnarray*}
+
+\end_inset
+
+ where 
+\begin_inset Formula 
+\[
+W^{\frac{1}{2}}=\diag\left(\sqrt{w_{i}}\right).
+\]
+
+\end_inset
+
+We now get 
+\begin_inset Formula 
+\begin{eqnarray*}
+\Vert\tilde{A}x-\tilde{p}\Vert_{2}^{2} & = & (\tilde{A}x-\tilde{p})^{T}(\tilde{A}x-\tilde{p})\\
+ & = & \left(W^{\frac{1}{2}}(Ax-p)\right)^{T}\left(W^{\frac{1}{2}}(Ax-p)\right)\\
+ & = & (Ax-p)^{T}W^{\frac{1}{2}}W^{\frac{1}{2}}(Ax-p)\\
+ & = & \Vert Ax-p\Vert_{W}^{2}.
+\end{eqnarray*}
+
+\end_inset
+
+ Now this is in the form that can be solved with the algorithms in Table
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Prox-Operators"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+\prox_{\lambda f_{\text{P}}}(u)=\min_{x}\Vert\tilde{A}x-\tilde{p}\Vert^{2}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.
+\]
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+Laplace Noise
+\end_layout
+
+\begin_layout Plain Layout
+The 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+ data term minimizes the 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+ norm of the errors.
+ This is considered as a robust estimator, since it is less affected by
+ outliers 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "boyd2004convex,sidky2012convex"
+
+\end_inset
+
+.
+ It can also be considered a maximum likelihood estimation when the measurement
+ noise 
+\begin_inset Formula $\varepsilon_{i}$
+\end_inset
+
+ in Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:Noise-Model"
+
+\end_inset
+
+ follows a Laplace distribution 
+\begin_inset Formula $\varepsilon_{i}\sim\mbox{Laplace}(0,1)$
+\end_inset
+
+ (i.e.
+ has a pdf of the form 
+\begin_inset Formula $h(\varepsilon_{i})=\exp\left(-|\varepsilon_{i}|\right)$
+\end_inset
+
+) in which case the log-likelihood becomes 
+\begin_inset Formula 
+\begin{equation}
+\mathcal{L}_{1}(x)=-\sum_{i=1}^{m}\vert a_{i}^{T}x-p_{i}\vert.\label{eq:L1-Log-Likelihood}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+To use it we need to solve its proximal operator 
+\begin_inset Formula 
+\begin{equation}
+\prox_{\lambda f_{1}}(u)=\argmin_{x}\Vert Ax-p\Vert_{1}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.\label{eq:L1-data-term-proximal-operator}
+\end{equation}
+
+\end_inset
+
+We will use ADMM and variable splitting methods 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "boyd2011distributed,parikh2013proximal"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Plain Layout
+Define 
+\begin_inset Formula $z\in\mathbb{R}^{m}$
+\end_inset
+
+.
+ The problem in Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:L1-data-term-proximal-operator"
+
+\end_inset
+
+ is equivalent to 
+\begin_inset Formula 
+\begin{eqnarray*}
+\min_{x} & \Vert z-p\Vert_{1}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}\\
+\mbox{s.t.} & Ax=z.
+\end{eqnarray*}
+
+\end_inset
+
+Form the augmented 
+\emph on
+scaled 
+\emph default
+Lagrangian 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "boyd2011distributed,parikh2013proximal"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+\mathcal{L}_{\rho}(x,z,y)=\Vert z-p\Vert_{1}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}+\frac{\rho}{2}\Vert Ax-z+y\Vert_{2}^{2}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $y\in\mathbb{R}^{m}$
+\end_inset
+
+ is the dual variable.
+ Now this can be minimized ADMM by iterating minimizations w.r.t.
+ 
+\begin_inset Formula $x$
+\end_inset
+
+ and 
+\begin_inset Formula $z$
+\end_inset
+
+ and updating the dual variable 
+\begin_inset Formula $y$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $x$
+\end_inset
+
+ step: is equivalent to 
+\begin_inset Formula 
+\begin{align*}
+x^{(t+1)} & =\argmin_{x}\frac{\rho}{2}\Vert Ax-z^{(t)}+y^{(t)}\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}\\
+ & =\argmin_{x}\Vert\tilde{\rho}Ax-\tilde{\rho}(z^{(t)}-y^{(t)})\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\tilde{\rho}=\sqrt{\rho/2}$
+\end_inset
+
+, and is equivalent to the proximal operator of the 
+\begin_inset Formula $\ell_{2}$
+\end_inset
+
+ data term 
+\begin_inset Formula $f_{2}$
+\end_inset
+
+ in Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:L2-data-term-prox"
+
+\end_inset
+
+ with system matrix 
+\begin_inset Formula $\tilde{\rho}A$
+\end_inset
+
+ and projection measurements 
+\begin_inset Formula $\tilde{\rho}(z^{(t)}-y^{(t)})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $z$
+\end_inset
+
+ step: is equivalent to
+\begin_inset Formula 
+\begin{eqnarray*}
+z^{(t+1)} & = & \argmin_{z}\Vert z-p\Vert_{1}+\frac{\rho}{2}\Vert Ax^{(t+1)}-z+y^{(t)}\Vert_{2}^{2}\\
+ & = & p+\argmin_{w=z-p}\Vert w\Vert_{1}+\frac{\rho}{2}\Vert Ax^{(t+1)}+y^{(t)}-p-w\Vert_{2}^{2}\\
+ & = & p+\prox_{\rho^{-1}\ell_{1}}(Ax^{(t+1)}+y^{(t)}-p)
+\end{eqnarray*}
+
+\end_inset
+
+ where we changed variables 
+\begin_inset Formula $w=z-p$
+\end_inset
+
+.
+ The last term is the proximal operator of the 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+ norm, which is the component-wise soft thresholding function 
+\begin_inset Formula 
+\begin{equation}
+\prox_{\mu\ell_{1}}(u_{i})=S_{\mu}(u_{i})=\mbox{sign}(u_{i})\max\left(0,|u_{i}|-\mu\right)\label{eq:soft-thresholding}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $y$
+\end_inset
+
+ step: 
+\begin_inset Formula 
+\[
+y^{(t+1)}=y^{(t)}+Ax^{(t+1)}-z^{(t+1)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+The steps are summarized in Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:L1-SART-Proximal-Operator-ADMM"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Float algorithm
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:L1-SART-Proximal-Operator-ADMM"
+
+\end_inset
+
+
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+ Data Term Proximal Operator
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithmic}[1]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $A\in\mathbb{R}{}^{m\times n}$
+\end_inset
+
+, 
+\begin_inset Formula $u\in\mathbb{R}{}^{n}$
+\end_inset
+
+, 
+\begin_inset Formula $\lambda\in\mathbb{R}$
+\end_inset
+
+, 
+\begin_inset Formula $\alpha\in\mathbb{R}$
+\end_inset
+
+, 
+\begin_inset Formula $p\in\mathbb{R}{}^{m}$
+\end_inset
+
+, 
+\begin_inset Formula $\rho\in\mathbb{R}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+ Initialize 
+\begin_inset Formula 
+\begin{align*}
+z^{(0)}=y^{(0)}=0.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ForAll {
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $t=1\ldots T$
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Update 
+\begin_inset Formula $x$
+\end_inset
+
+: 
+\begin_inset Formula 
+\[
+x^{(t+1)}=\argmin_{x}\left\Vert \tilde{\rho}Ax-\tilde{\rho}(z^{(t)}-y^{(t)})\right\Vert _{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\tilde{\rho}=\sqrt{\rho/2}$
+\end_inset
+
+ by running Algoritm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:SART-Proximal-Operator"
+
+\end_inset
+
+ with system matrix 
+\begin_inset Formula $\tilde{\rho}A$
+\end_inset
+
+ and input projections 
+\begin_inset Formula $\tilde{\rho}(z^{(t)}-y^{(t)})$
+\end_inset
+
+ and parameters 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ and 
+\begin_inset Formula $\alpha$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Update 
+\begin_inset Formula $z$
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+z^{(t+1)}=p+S_{\rho^{-1}}\left(Ax^{(t+1)}+y^{(t)}-p\right)
+\]
+
+\end_inset
+
+ from Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:soft-thresholding"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Update 
+\begin_inset Formula $y$
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+y^{(t+1)}=y^{(t)}+Ax^{(t+1)}-z^{(t+1)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+Return
+\end_layout
+
+\end_inset
+
+ volume reconstruction 
+\begin_inset Formula $x^{\star}\in\mathbb{R}{}^{n}=\argmin_{x}\Vert Ax-p\Vert_{1}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithmic}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+ norm (the sum of the absolute errors): 
+\begin_inset Formula 
+\begin{equation}
+f_{1}(x)=\Vert Ax-p\Vert_{1}=\sum_{i=1}^{m}\vert a_{i}^{T}x-p_{i}\vert.\label{eq:L1-data-term}
+\end{equation}
+
+\end_inset
+
+It is a robust data term that is less sensitive to outliers and useful in
+ the presence of salt-and-pepper or shot noise 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sidky2012convex"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Plain Layout
+For example, in our case, 
+\begin_inset Formula 
+\[
+f(x)=\Vert Ax-p\Vert_{2}^{2}
+\]
+
+\end_inset
+
+which is a measure of how well the reconstruction fits the given projection
+ images.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Regularizers
+\end_layout
+
+\begin_layout Standard
+The regularizers impose constraints on the reconstruction volume.
+ We will consider three state of the art regularizers:
+\end_layout
+
+\begin_layout Subsubsection
+Isotropic Total Variation (ITV)
+\end_layout
+
+\begin_layout Standard
+It is the sum of the gradient magnitude at each voxel 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rudin1992nonlinear,sidky2012convex,chambolle2011first"
+
+\end_inset
+
+ i.e.
+ 
+\begin_inset Formula 
+\begin{equation}
+h_{\text{ITV}}(x)=\sigma\Vert x\Vert_{\text{TV}}=\sigma\sum_{i}\Vert\nabla x_{i}\Vert_{2}\label{eq:h-ITV}
+\end{equation}
+
+\end_inset
+
+ where 
+\begin_inset Formula $\nabla x_{i}=\left[\begin{smallmatrix}\nabla x_{i}^{1} & \nabla x_{i}^{2}\end{smallmatrix}\right]^{T}$
+\end_inset
+
+ is the discrete gradient at voxel 
+\begin_inset Formula $i$
+\end_inset
+
+ containing the horizontal forward different 
+\begin_inset Formula $\nabla x_{i}^{1}$
+\end_inset
+
+ and the vertical forward difference 
+\begin_inset Formula $\nabla x_{i}^{2}$
+\end_inset
+
+.
+ It can be represented in the form of Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:full-problem"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+h_{\text{ITV}}(x)=g_{\text{ITV}}(Kx)
+\]
+
+\end_inset
+
+by defining the matrix 
+\begin_inset Formula $K=D\in\mathbb{R}^{2n\times n}$
+\end_inset
+
+ to be the forward difference matrix that produces the discrete gradient
+ 
+\begin_inset Formula $\nabla x\in\mathbb{R}^{2n}$
+\end_inset
+
+: 
+\begin_inset Formula 
+\[
+\nabla x=\begin{bmatrix}\nabla x_{i}\\
+\vdots\\
+\nabla x_{n}
+\end{bmatrix}=Dx
+\]
+
+\end_inset
+
+ and defining for 
+\begin_inset Formula $u\in\mathbb{R}^{2n}=\begin{bmatrix}u_{1}^{T} & \cdots & u_{n}^{T}\end{bmatrix}^{T}$
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+g_{\text{ITV}}(u)=\sigma\sum_{i}\Vert u_{i}\Vert_{2}
+\]
+
+\end_inset
+
+ The proximal operator 
+\begin_inset Formula $\prox_{\lambda g_{\text{ITV}}}(u)$
+\end_inset
+
+ is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "esser2010general,chambolle2011first"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{equation}
+\prox_{\lambda g_{\text{ITV}}}(u_{i})=u-\frac{\lambda\sigma u_{i}}{\max(\lambda\sigma,\Vert u_{i}\Vert_{2})}\label{eq:ITV-prox}
+\end{equation}
+
+\end_inset
+
+ where 
+\begin_inset Formula $u_{i}\in\mathbb{R}^{2}$
+\end_inset
+
+ is the 
+\begin_inset Formula $i$
+\end_inset
+
+th component of 
+\begin_inset Formula $u$
+\end_inset
+
+.
+ Intuitively it projects back the vector 
+\begin_inset Formula $u_{i}$
+\end_inset
+
+ to be on the Euclidean ball of radius 
+\begin_inset Formula $\sigma$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Anisotropic Total Variation (ATV)
+\end_layout
+
+\begin_layout Standard
+It is a simplification of ITV 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sidky2008image,beck2009bfast,chambolle2010introduction,nien2015fast"
+
+\end_inset
+
+, and is defined as 
+\begin_inset Formula 
+\begin{equation}
+h_{\text{ATV}}(x)=\sigma\Vert\nabla x\Vert_{1}\label{eq:h-ATV}
+\end{equation}
+
+\end_inset
+
+ which is the 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+ norm of the gradient 
+\begin_inset Formula $\nabla x$
+\end_inset
+
+ of the volume.
+ This can be written in the form 
+\begin_inset Formula 
+\[
+h_{\text{ATV}}(x)=g_{\text{ATV}}(Kx)
+\]
+
+\end_inset
+
+ by defining 
+\begin_inset Formula $K=D$
+\end_inset
+
+ as in the ITV case and defining for 
+\begin_inset Formula $u\in\mathbb{R}^{2n}$
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+g_{\text{ATV}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}.
+\]
+
+\end_inset
+
+The proximal operator 
+\begin_inset Formula $\prox_{\lambda g_{\text{ATV}}}(u)$
+\end_inset
+
+ is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "esser2010general,chambolle2011first"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{equation}
+\prox_{\lambda g_{\text{ITV}}}(u_{i})=\sign(u_{i})\odot\max(0,\vert u_{i}\vert-\sigma)\label{eq:ATV-prox}
+\end{equation}
+
+\end_inset
+
+ which is the soft thresholding function 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sidky2012convex"
+
+\end_inset
+
+, where the max and product are component-wise operations.
+\end_layout
+
+\begin_layout Subsubsection
+Sum of Absolute Differences (SAD)
+\end_layout
+
+\begin_layout Standard
+It is an extension to the ATV by adding more forward differences around
+ each voxel 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gregson2012stochastic"
+
+\end_inset
+
+.
+ In particular, it sums the differences of the voxels in the 
+\begin_inset Formula $3\times3$
+\end_inset
+
+ neighborhood around each voxel 
+\begin_inset Formula 
+\begin{equation}
+h_{\text{SAD}}(x)=\sigma\sum_{i}\sum_{k\in\mathcal{N}(i)}\vert x_{i}-x_{k}\vert\label{eq:h-SAD}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\mathcal{\mathcal{N}}(i)$
+\end_inset
+
+ contains the voxels in the neighborhood around voxel 
+\begin_inset Formula $i$
+\end_inset
+
+.
+ It can be written similarly in the form 
+\begin_inset Formula 
+\[
+h_{\text{SAD}}(x)=g_{\text{SAD}}(Kx)
+\]
+
+\end_inset
+
+ by defining 
+\begin_inset Formula $K\in\mathbb{R}^{8n\times n}$
+\end_inset
+
+ that computes the 8 forward differences in the 
+\begin_inset Formula $3\times3$
+\end_inset
+
+ neighborhood and defining for 
+\begin_inset Formula $u\in\mathbb{R}^{8n}$
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+g_{\text{SAD}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}
+\]
+
+\end_inset
+
+ where 
+\begin_inset Formula $u_{i}\in\mathbb{R}^{8}$
+\end_inset
+
+.
+ The proximal operator 
+\begin_inset Formula $\prox_{\lambda g_{\text{ATV}}}(u)$
+\end_inset
+
+ is similar to the ATV case: 
+\begin_inset Formula 
+\begin{equation}
+\prox_{\lambda g_{\text{ITV}}}(u_{i})=\sign(u_{i})\odot\max(0,\vert u_{i}\vert-\sigma).\label{eq:SAD-prox}
+\end{equation}
+
+\end_inset
+
+The SAD prior has been shown 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gregson2012stochastic"
+
+\end_inset
+
+ to produce excellent results in stochastic tomography reconstruction.
+\end_layout
+
+\begin_layout Section
+Experiments
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Experiments"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Datasets
 \end_layout
 
 \begin_layout Standard
@@ -2824,11 +5105,38 @@ We clip the reconstruction estimate
 \end_inset
 
  to get rid of negative voxel values.
+ All experiments in this section are on one core of an Intel Xeon E5-280
+ 2.7 GHz with 64 GB RAM.
+ 
+\end_layout
+
+\begin_layout Subsection
+Iterative Algorithms Comparison
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Iterative-Algorithms-Comparison"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We first compare the different iterative algorithms presented in Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Iterative-Algorithms"
+
+\end_inset
+
+ on the three datasets.
  We set the number of subsets in OS-SQS to the number of projections to
  have a fair comparison with SART, since we noticed that increasing the
  number of subsets increases the convergence rate.
- All experiments in this section are run using ASTRA running on one core
- of an Intel Xeon E5-280 2.7 GHz with 64 GB RAM.
+ All experiments in this section are run using ASTRA, where we implemented
+ missing algorithms and modified existing ones to suit our needs e.g.
+ compute SNR, report run times, etc.
  We compare different values of 
 \begin_inset Formula $\alpha$
 \end_inset
@@ -2837,6 +5145,7 @@ We clip the reconstruction estimate
  We compare convergence per iteration since all methods are roughly equal
  in runtime, as each outer iteration contains (roughly) one forward and
  one backward projection.
+ We process the projections in a random order.
  This is confirmed in Fig.
  
 \begin_inset CommandInset ref
@@ -2848,6 +5157,11 @@ reference "fig:SNR-per-time-iterative"
 .
  Note that our implementation is not optimized for any of the methods, and
  the processing time is just an indication.
+ We initialize all methods with uniform volume 
+\begin_inset Formula $x^{(0)}=\mathbf{0}_{n}$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -2934,8 +5248,8 @@ key "herman2009fundamentals"
 
 \begin_layout Itemize
 Even though BICAV, SIRT, and BSSART have formal proofs of convergence, their
- convergence speed per iteration is in fact much lower than SART or OS-SQS.
- 
+ convergence speed per iteration is in fact much lower than SART or (this
+ version of) OS-SQS, that lack these proofs.
 \end_layout
 
 \begin_layout Itemize
@@ -2953,6 +5267,17 @@ The faster convergence and best results are achieved by SART, followed by
 \end_layout
 
 \begin_layout Itemize
+CGLS, that was used before for solving tomography problems 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ramani2012splitting,sidky2012convex"
+
+\end_inset
+
+, performs quite poorly compared to the other iterative algorithms.
+\end_layout
+
+\begin_layout Itemize
 Using plain iterative methods does not give acceptable results with fewer
  projections.
  Thus we focus next on using regularizers in the proximal framework with
@@ -2963,13 +5288,13 @@ Using plain iterative methods does not give acceptable results with fewer
 \begin_inset Float figure
 wide true
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -2998,7 +5323,40 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
+	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_60-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
 	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_180-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -3569,11 +5927,11 @@ name "fig:SNR-per-num-proj-iterative"
 
 \end_layout
 
-\begin_layout Section
-Proximal Operators
+\begin_layout Subsection
+Data Terms and Regularizers Comparison
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:Proximal-Operators"
+name "sub:Data-Terms-and-Regularizers-Comparison"
 
 \end_inset
 
@@ -3581,598 +5939,192 @@ name "sec:Proximal-Operators"
 \end_layout
 
 \begin_layout Standard
-Proximal algorithms are a class of optimization algorithms that are quite
- flexible and powerful 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "combettes2011proximal,boyd2011distributed,parikh2013proximal"
-
-\end_inset
-
-.
- They are generally used to efficiently solve non-smooth, constrained, distribut
-ed, or large scale optimization problems.
- They are more modular than other optimization problems, in the sense that
- they provide a few lines of code that depend on solving smaller conventional,
- and usually simpler, optimization problems called 
-\emph on
-proximal operator
-\emph default
-.
- The proximal operator 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "bauschke2011convex,combettes2011proximal,parikh2013proximal"
-
-\end_inset
-
- for a function 
-\begin_inset Formula $h(\cdot)$
-\end_inset
-
- is a generalization of projections on convex sets, and can be thought of
- intuitively as getting closer to the optimal solution while staying close
- to the current estimate.
- Formally it is defined as 
-\begin_inset Formula 
-\begin{equation}
-\prox_{\lambda h}(u)=\argmin_{x}h(x)+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2},\label{eq:prox-operator}
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $x,u\in\mathbb{R}^{n}$
-\end_inset
-
- and 
-\begin_inset Formula $\lambda$
-\end_inset
-
- is a regularization parameter.
- Many proximal operators of common functions are easy to compute, and often
- admit a closed form solution.
- Computing the proximal operator of a certain function opens the way to
- solving hard optimization problems involving this function and other regulariza
-tion terms e.g.
- smoothing norms or sparsity inducing norms, which otherwise is not generally
- easy.
- We will derive proximal operators for SART, ART, BICAV, and OS-SQS.
-\end_layout
-
-\begin_layout Subsection
-SART, ART, and BICAV
-\end_layout
-
-\begin_layout Standard
-ART, SART, and BICAV (approximately) solve the least-norm problem 
-\begin_inset Formula 
-\[
-x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\st Ax=p.
-\]
-
-\end_inset
-
- What we want is a solver for LS proejction error i.e.
- 
-\begin_inset Formula 
-\begin{equation}
-\mbox{prox}_{\lambda h}(u)=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-1-1}
-\end{equation}
-
-\end_inset
-
- This is equivalent to solving 
-\begin_inset Formula 
-\begin{equation}
-\min_{x}2\lambda\Vert Ax-p\Vert_{2}^{2}+\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-2}
-\end{equation}
-
-\end_inset
-
-Now introduce new variables as follows: let 
-\begin_inset Formula $y=\sqrt{2\lambda}(p-Ax)$
-\end_inset
-
- and 
-\begin_inset Formula $z=x-u$
-\end_inset
-
-.
- The problem becomes 
-\begin_inset Formula 
-\begin{eqnarray}
-\min_{y,z} & \Vert y\Vert_{2}^{2}+\Vert z\Vert_{2}^{2}\nonumber \\
-\st & y+\sqrt{2\lambda}Az=\sqrt{2\lambda}(p-Au).\label{eq:SART-prox-3}
-\end{eqnarray}
-
-\end_inset
-
-Rewriting Eq.
+We compare the different data terms and regularizers defined in Sec.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "eq:SART-prox-3"
+reference "sec:Proximal-Framework"
 
-\end_inset
-
- we arrive at the system 
-\begin_inset Formula 
-\begin{eqnarray*}
-\mbox{\ensuremath{\min}}_{y,z} & \left\Vert \left[\begin{array}{c}
-y\\
-z
-\end{array}\right]\right\Vert _{2}^{2}\\
-\mbox{subject to} & \left[\begin{array}{cc}
-I & \sqrt{2\lambda}A\end{array}\right]\left[\begin{array}{c}
-y\\
-z
-\end{array}\right]=\sqrt{2\lambda}\left(p-Au\right)
-\end{eqnarray*}
-
-\end_inset
-
-which can be written as 
-\begin_inset Formula 
-\begin{eqnarray*}
-\mbox{\ensuremath{\min}}_{\tilde{x}} & \left\Vert \tilde{x}\right\Vert _{2}^{2}\\
-\st & \tilde{A}\tilde{x}=\tilde{p},
-\end{eqnarray*}
-
-\end_inset
-
-where 
-\begin_inset Formula $\tilde{x}\in\mathbb{R}^{m+n}$
-\end_inset
-
-, 
-\begin_inset Formula $\tilde{A}\in\mathbb{R}^{m\times m+n}$
-\end_inset
-
-, and 
-\begin_inset Formula $\tilde{p}\in\mathbb{R}^{m}$
 \end_inset
 
 .
- This is now a consistent under-determined linear system, and can be solved
- using either ART, SART, or BICAV.
+ We solve the tomography proximal operator (step 3 in Alg.
  
-\end_layout
-
-\begin_layout Standard
-Although we introduced new variables 
-\begin_inset Formula $y$
-\end_inset
-
- and 
-\begin_inset Formula $z$
-\end_inset
-
- and increased the dimensionality of the problem from 
-\begin_inset Formula $n$
-\end_inset
-
- to 
-\begin_inset Formula $n+m$
-\end_inset
-
-, we can solve the modified algorithm efficiently with very little computational
- overhead.
- Instead of solving explicitly for the optimal 
-\begin_inset Formula $y^{\star}$
-\end_inset
-
- and 
-\begin_inset Formula $z^{\star}$
-\end_inset
-
-, we can manipulate the algorithm to solve directly for the optimal 
-\begin_inset Formula $x^{\star}.$
-\end_inset
-
- For example, for SART, the initialization and update equation for 
-\begin_inset Formula $\tilde{x}$
-\end_inset
-
- become 
-\begin_inset Formula 
-\begin{eqnarray}
-\tilde{x}_{j}^{(0)} & = & \mathbf{0},\nonumber \\
-\tilde{x}_{j}^{(t+1)} & = & \tilde{x}_{j}^{(t)}+\alpha\frac{\sum_{i\in\mathcal{S}}\frac{\tilde{p}_{i}-\sum_{k}\tilde{a}_{ik}\tilde{x}_{k}^{(t)}}{\sum_{k}\tilde{a}_{ik}}\tilde{a}_{ij}}{\sum_{i\in S}\tilde{a}_{ij}},\label{eq:SART-proximal-update-1}
-\end{eqnarray}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:LADMM-algorithm"
 
 \end_inset
 
-which can be expanded in terms of 
-\begin_inset Formula $y$
-\end_inset
-
-, 
-\begin_inset Formula $z$
-\end_inset
-
-, and 
-\begin_inset Formula $A$
-\end_inset
-
- as 
-\begin_inset Formula 
-\begin{eqnarray*}
-y^{(0)} & = & \mathbf{0}_{m}\\
-z^{(0)} & = & \mathbf{0}_{n}\\
-y_{j}^{(t+1)} & = & y_{j}^{(t)}+\frac{\alpha\sum_{i\in\mathcal{S}}\frac{\tilde{p}_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}z_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\delta_{ij}}{1},\\
-z_{j}^{(t+1)} & = & z_{j}^{(t)}+\alpha\frac{\sum_{i\in\mathcal{S}}\frac{\tilde{p}_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}z_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\sqrt{2\lambda}a_{ij}}{\sqrt{2\lambda}\sum_{i\in S}a_{ij}},
-\end{eqnarray*}
-
-\end_inset
-
-where 
-\begin_inset Formula $\delta_{ij}=1$
-\end_inset
-
- when 
-\begin_inset Formula $i=j$
-\end_inset
-
- and 0 otherwise.
- Using the fact that 
-\begin_inset Formula $z=x-u$
-\end_inset
-
- and 
-\begin_inset Formula $\tilde{p}_{i}=\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}u_{k}$
-\end_inset
-
- and simplifying we arrive at 
-\begin_inset Formula 
-\begin{eqnarray*}
-y^{(0)} & = & \mathbf{0}_{m}\\
-x^{(0)} & = & u\\
-y_{j}^{(t+1)} & = & y_{j}^{(t)}+\alpha\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\delta_{ij},\\
-x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\sqrt{2\lambda}a_{ij}}{\sqrt{2\lambda}\sum_{i\in S}a_{ij}}.
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Following the same line of reasoning, we can arrive at similar update formulas
- for both ART and BICAV.
- The steps are summarized in Table 
+) using 2 iterations of the SART proximal operator (from Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:Prox-Operators"
 
 \end_inset
 
-.
-\end_layout
+), using 
+\begin_inset Formula $\alpha=1.99$
+\end_inset
 
-\begin_layout Subsection
-OS-SQS
-\end_layout
+ with for 30 projections and 
+\begin_inset Formula $\alpha=1$
+\end_inset
 
-\begin_layout Standard
-We want to express the proximal operator problem in Eq.
+ for 90 projections.
+ (see Sec.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "eq:SART-prox-1-1"
+reference "sub:Iterative-Algorithms-Comparison"
 
-\end_inset
-
- in the form of a the LS problem that can be solved (approximately) by OS-SQS:
- 
-\begin_inset Formula 
-\[
-x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}.
-\]
-
-\end_inset
-
- Rewrite in the form 
-\begin_inset Formula 
-\begin{equation}
-\argmin_{x}2\lambda\Vert Ax-p\Vert_{2}^{2}+\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-2-1}
-\end{equation}
-
-\end_inset
-
-which is equivalent to 
-\begin_inset Formula 
-\begin{align*}
- & \argmin_{x}\left\Vert \left[\begin{array}{c}
-\sqrt{2\lambda}A\\
-I
-\end{array}\right]x-\left[\begin{array}{c}
-\sqrt{2\lambda}p\\
-u
-\end{array}\right]\right\Vert _{2}^{2}\\
- & \iff\argmin_{x}\left\Vert \tilde{A}x-\tilde{p}\right\Vert _{2}^{2}
-\end{align*}
-
-\end_inset
-
- where 
-\begin_inset Formula 
-\begin{eqnarray*}
-\tilde{A} & = & \left[\begin{array}{c}
-\sqrt{2\lambda}A\\
-I
-\end{array}\right]\in\mathbb{R}^{m+n\times n}\\
-\tilde{p} & = & \left[\begin{array}{c}
-\sqrt{2\lambda}p\\
-u
-\end{array}\right]\in\mathbb{R}^{m+n}.
-\end{eqnarray*}
-
-\end_inset
-
-The weighting matrix 
-\begin_inset Formula $\tilde{C}\in\mathbb{R}^{n\times n}$
-\end_inset
-
- now becomes now becomes 
-\begin_inset Formula 
-\begin{eqnarray*}
-\tilde{C} & = & \mbox{diag}(\tilde{A}^{T}\tilde{A}\mathbf{1})\\
- & = & \mbox{diag}\left((2\lambda A^{T}A+I)\mathbf{1}\right)\\
- & = & \mbox{diag}\left(2\lambda A^{T}A\mathbf{1}+\mathbf{1}\right)
-\end{eqnarray*}
-
-\end_inset
-
- and its diagonal entries are 
-\begin_inset Formula 
-\[
-\tilde{c}_{j}=2\lambda c_{j}+1
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Write the matrix update equation in terms of 
-\begin_inset Formula $\tilde{A}$
-\end_inset
-
- and 
-\begin_inset Formula $\tilde{p}$
-\end_inset
-
- as 
-\begin_inset Formula 
-\begin{align*}
-x^{(t+1)} & =x^{(t)}+\alpha s\tilde{C}^{-1}\tilde{A}_{S}^{T}\left(\tilde{p}_{S}-\tilde{A}_{S}x^{(t)}\right)\\
- & =x^{(t)}+\alpha s\tilde{C}^{-1}\left[\begin{smallmatrix}\sqrt{2\lambda}A_{S}^{T} & I_{S}\end{smallmatrix}\right]\left[\begin{smallmatrix}\sqrt{2\lambda}(p_{S}-A_{S}x^{(t)})\\
-u_{S}-x_{S}^{(t)}
-\end{smallmatrix}\right]\\
- & =x^{(t)}+\alpha s\tilde{C}^{-1}{\scriptstyle \left(2\lambda A_{S}^{T}(p_{S}-A_{S}x^{(t)})+I_{S}(u_{S}-x_{S}^{(t)})\right)}
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $u_{S}$
-\end_inset
-
- contains a subset of entries of 
-\begin_inset Formula $u$
-\end_inset
-
-, and similarly for 
-\begin_inset Formula $x_{S}^{(t)}$
-\end_inset
-
-.
- In component form 
-\begin_inset Formula 
-\begin{align*}
-x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{\tilde{c}_{j}}{\scriptstyle \left(2\lambda\sum_{i\in S}(p_{j}-\sum_{k}a_{ik}x_{k}^{(t)})a_{ij}+(u_{j}-x_{j}^{(t)})\delta_{jS}\right)}
-\end{align*}
-
-\end_inset
-
- where 
-\begin_inset Formula $\delta_{jS}=1$
-\end_inset
-
- if 
-\begin_inset Formula $j\in S$
-\end_inset
-
- and 0 otherwise.
- Note that we only include a subset from the second term 
-\begin_inset Formula $u-x^{(t)}$
-\end_inset
-
- per each inner iteration (each subset 
-\begin_inset Formula $S$
 \end_inset
 
 ).
+ We use 
+\begin_inset Formula $\sigma=0.1$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho=50$
+\end_inset
+
+ for 30 projections; 
+\begin_inset Formula $\sigma=0.5$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho=200$
+\end_inset
+
+ for 90 projections; and set 
+\begin_inset Formula $\mu=\nicefrac{1}{\rho\Vert K\Vert^{2}}$
+\end_inset
+
+.
+ We initialize all methods with uniform volume 
+\begin_inset Formula $x^{(0)}=\mathbf{0}_{n}$
+\end_inset
+
+.
+ We estimated the matrix norm 
+\begin_inset Formula $\Vert K\Vert$
+\end_inset
+
+ using the power method.
+ Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SNR-per-iter-data-term-and-reg-sart-prox"
+
+\end_inset
+
+ shows the results for the three datasets, where we plot against the number
+ of SART iterations.
+ We note the following: 
+\end_layout
+
+\begin_layout Itemize
+Using the proximal framework provides significantly better results than
+ the unregularized iterative methods in Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Iterative-Algorithms-Comparison"
+
+\end_inset
+
+.
+ This is expected since adding a powerful regularizer constrains the reconstruct
+ion to better resemble the ground truth.
+\end_layout
+
+\begin_layout Itemize
+The Poisson noise model 
+\begin_inset Formula $f_{\text{P}}(\cdot)$
+\end_inset
+
+ is better than the Gaussian noise model 
+\begin_inset Formula $f_{\text{G}}(\cdot)$
+\end_inset
+
+ for the three datasets.
+ This is consistent with the noise model used to generate the noisy simulated
+ sinograms, and with the physical nosie model in the real dataset.
+\end_layout
+
+\begin_layout Itemize
+For 90 projections, we need more regularization (
+\begin_inset Formula $\sigma=0.5$
+\end_inset
+
+) than for 30 projections (
+\begin_inset Formula $\sigma=0.1$
+\end_inset
+
+).
+ This is expected because using more projections adds more constraints (rows
+ in the projection matrix 
+\begin_inset Formula $A$
+\end_inset
+
+) that need better regularization to get good results.
+\end_layout
+
+\begin_layout Itemize
+The SAD regulairzer is better for all datasets.
+ ITV is better than ATV for 90 projections, while ATV is better for 30 projectio
+ns (except for the mouse dataset).
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float table
+\begin_inset Float figure
 wide true
 sideways false
 status open
 
 \begin_layout Plain Layout
-\begin_inset ERT
+\begin_inset Float figure
+wide false
+sideways false
 status collapsed
 
 \begin_layout Plain Layout
-
-
-\backslash
-center
-\end_layout
-
-\end_inset
-
-
-\begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="2">
-<features rotate="0" booktabs="true" tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0pt">
-<column alignment="center" valignment="top">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
 
 \begin_layout Plain Layout
-Method
-\end_layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
 
 \end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
+
+
+\end_layout
 
 \begin_layout Plain Layout
-Update Step
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-ART 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "gordon1970algebraic"
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
 
 \end_inset
 
 
 \end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\mbox{ for }i\in S\\
-x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\sqrt{2\lambda}a_{ij}\mbox{ for }j=1\ldots n
-\end{aligned}
-$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SART 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "andersen1984simultaneous"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\mbox{ for }i\in S\\
-x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\sqrt{2\lambda}a_{ij}}{\sqrt{2\lambda}\sum_{i\in S}a_{ij}}\mbox{ for }j=1\ldots n
-\end{aligned}
-$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BICAV 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "censor2001bicav"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{j}-\sqrt{2\lambda}\sum_{k}a_{jk}x_{k}^{(t)}-y_{j}^{(t)}}{2\lambda\sum_{k}a_{jk}^{2}+1}\mbox{ for }i\in S\\
-x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\sqrt{2\lambda}a_{ij}}{\sum_{i\in S}\{a_{ij}\ne0\}}\mbox{ for }j=1\ldots n
-\end{aligned}
-$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-OS-SQS 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "erdogan1999ordered"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{2\lambda c_{j}+1}\left(2\lambda\sum_{i\in S}(p_{j}-\sum_{k}a_{ik}x_{k}^{(t)})a_{ij}+(u_{j}-x_{j}^{(t)})\delta_{jS}\right)\mbox{ for }j=1\ldots n\end{aligned}
-$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
 
 \end_inset
 
@@ -4183,14 +6135,213 @@ $
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Summary of the proximal operators update steps.
-\begin_inset CommandInset label
-LatexCommand label
-name "tab:Prox-Operators"
+Modified Shepp-Logan
+\end_layout
 
 \end_inset
 
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NCAT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mouse
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SNR per iteration for the Gaussian (
+\emph on
+solid
+\emph default
+ curves) and Poisson (
+\emph on
+dashed
+\emph default
+ curves)noise models with ITV (
+\emph on
+blue
+\emph default
+), ATV (
+\emph on
+red
+\emph default
+), and SAD (
+\emph on
+green
+\emph default
+) regularizers.
+ The 
+\emph on
+black
+\emph default
+ curve shows the results for SART.
  See Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Data-Terms-and-Regularizers-Comparison"
+
+\end_inset
+
+.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SNR-per-iter-data-term-and-reg-sart-prox"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Proximal Operators Comparison
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Proximal-Operators-Comparison"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We compare the different proximal operators from Sec.
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -4198,1333 +6349,84 @@ reference "sec:Proximal-Operators"
 
 \end_inset
 
- for details.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Proximal Framework
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:Proximal-Framework"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Proximal Algorithm
-\end_layout
-
-\begin_layout Standard
-The overall problem we are interested in solving is a regularized data fitting
- problem.
- In particular, the problem we are interested in solving is 
-\begin_inset Formula 
-\begin{equation}
-\argmin_{x}f(x)+g(Kx),\label{eq:full-problem}
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $f(\cdot)$
-\end_inset
-
- is a data fitting term that measures how much the solution fits the data
- and that depends on the measurement noise model assumed, 
-\begin_inset Formula $K\in\mathbb{R}^{d\times n}$
-\end_inset
-
- is a matrix, and 
-\begin_inset Formula $g(\cdot)$
-\end_inset
-
- is a regularization term that imposes constraints on acceptable solutions.
- We will use the linearized ADMM method 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "boyd2011distributed,parikh2013proximal"
-
-\end_inset
-
- for solving this problem for different data terms and different regularizers.
- It rewrites Eq.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:full-problem"
-
-\end_inset
-
- into the equivalent form 
-\begin_inset Formula 
-\begin{align*}
-\argmin_{x,z} & f(x)+g(z)\\
-\st & Kx=z
-\end{align*}
-
-\end_inset
-
-it iterates the following steps 
-\begin_inset Formula 
-\begin{align*}
-x^{(t+1)} & =\mbox{prox}_{\mu f}\left(x^{(t)}-\rho\mu K^{T}(Kx^{(t)}-z^{(t)}+u^{(t)})\right)\\
-z^{(t+1)} & =\mbox{prox}_{\rho^{-1}g}\left(Kx^{(t+1)}+u^{(t)}\right)\\
-u^{(t+1)} & =u^{(t)}+Kx^{(t+1)}-z^{(t+1)}
-\end{align*}
-
-\end_inset
-
- where 
-\begin_inset Formula $\mu$
-\end_inset
-
- and 
-\begin_inset Formula $\rho$
-\end_inset
-
- are the parameters such that 
-\begin_inset Formula $\mu\rho\Vert K\Vert^{2}\le1$
-\end_inset
-
- where 
-\begin_inset Formula $\Vert K\Vert$
-\end_inset
-
- is the spectral norm of 
-\begin_inset Formula $K$
-\end_inset
-
- (maximum singular value).
- This framework is very flexible, and we will show how to solve for different
- data terms and different regularizers.
-\end_layout
-
-\begin_layout Subsection
-Data Terms
-\end_layout
-
-\begin_layout Standard
-We will consider the following data fidelity terms, which correspond to
- specific noise models:
-\end_layout
-
-\begin_layout Subsubsection
-Gaussian Noise
-\end_layout
-
-\begin_layout Standard
-Assume the measurements 
-\begin_inset Formula $p_{i}\forall i=1,\ldots m$
-\end_inset
-
- follow the model
-\begin_inset Formula 
-\begin{equation}
-p_{i}=a_{i}^{T}x+\varepsilon_{i}\label{eq:Gaussian-Noise-Model}
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $\varepsilon\sim\mathbb{N}(0,1)$
-\end_inset
-
-.
- The projection data log-likelihood is
-\begin_inset Formula 
-\begin{equation}
-\mathcal{L}_{G}(p)\propto-\sum_{i}\left(p_{i}-a_{i}^{T}x\right)^{2}\label{eq:Gaussian-Log-Likelihood}
-\end{equation}
-
-\end_inset
-
-and maximizing 
-\begin_inset Formula $\mathcal{L}_{G}(p)$
-\end_inset
-
- is equivalent to minimizing the LS 
-\begin_inset Formula $\ell_{2}$
-\end_inset
-
- norm data term
-\begin_inset Formula 
-\begin{equation}
-f_{G}(x)=\Vert Ax-p\Vert_{2}^{2}=\sum_{i=1}^{m}(A_{i}^{T}x-p_{i})^{2}.\label{eq:gaussian-data-term}
-\end{equation}
-
-\end_inset
-
-We can solve proximal operator 
-\begin_inset Formula $\prox_{\lambda f_{G}}(\cdot)$
-\end_inset
-
- directly using any of the algorithms from Table 
+ (SART, ART, OS-SQS, and BICAV) and Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:Prox-Operators"
 
 \end_inset
 
-.
-\end_layout
-
-\begin_layout Subsubsection
-Poisson Noise
-\end_layout
-
-\begin_layout Standard
-Assuming an 
-\emph on
-approximated
-\emph default
- Poisson nosie model leads to a WLS data term, where the weights are proportiona
-l to the detector measurements 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "clinthorne1993preconditioning,depierro1994modified,elbakri2002statistical,thibault2007three"
-
-\end_inset
-
-.
- Indeed, the actual measurements produced by the X-ray CT scanner represent
- X-ray photon energy reaching the detector as compared to the energy leaving
- the X-ray gun.
- These are related to each other and to the linear attenuation coefficient
- according to Beer-Lambert law 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "hsieh2009computed"
-
-\end_inset
-
-: 
-\begin_inset Formula 
-\[
-I_{t}=I_{o}e^{-\int\mu(l)dl}
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $I_{t}$
-\end_inset
-
- is the transmitted intensity as measured by the detector, 
-\begin_inset Formula $I_{o}$
-\end_inset
-
- is the emitted intensity from the source, 
-\begin_inset Formula $\mu(l)$
-\end_inset
-
- is the linear attenuation coefficient of the material as a function of
- length 
-\begin_inset Formula $l$
-\end_inset
-
-.
- The exponent represents the line integrals (projection data) we are dealing
- with.
- In particular, assuming that the X-ray photons are monochromatic (have
- only one single energy) i.e.
- ignoring 
-\emph on
-beam hardening
-\emph default
-, the projection line intergral data at detector 
-\begin_inset Formula $i$
-\end_inset
-
- is obtained from the physical measurements as 
-\begin_inset Formula 
-\begin{equation}
-p_{i}=-\ln\frac{I_{t}^{i}}{I_{o}^{i}}\label{eq:p_i}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-where 
-\begin_inset Formula $I_{t}^{i}$
-\end_inset
-
- is the intensity measured by detector 
-\begin_inset Formula $i$
-\end_inset
-
- and 
-\begin_inset Formula $I_{o}^{i}$
-\end_inset
-
- is the emitted intensity.
- The detector measurements are stochastic in nature, and assuming a Poisson
- distribution with mean 
-\begin_inset Formula $I_{o}^{i}\exp(-p_{i})$
-\end_inset
-
- we get 
-\begin_inset Note Note
-status collapsed
-
-\begin_layout Plain Layout
-A variable 
-\begin_inset Formula $x$
-\end_inset
-
- follows a Poisson distribution with mean 
-\begin_inset Formula $\lambda$
-\end_inset
-
- if 
-\begin_inset Formula 
-\[
-x\sim\mbox{Poisson}(\lambda)\equiv P(x=X)=\frac{e^{-\lambda}\lambda^{x}}{x!}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
+ using the best results from Sec.
  
-\begin_inset Formula 
-\[
-I_{t}^{i}\sim\mathbb{P}(I_{o}^{i}e^{-p_{i}})\approx\mathbb{P}(I_{o}^{i}e^{-A_{i}^{T}x}).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Using the ML approach, we maximize the log-likelihood of the measured data:
- 
-\begin_inset Formula 
-\begin{equation}
-\mathcal{L}_{P}(x)=\sum_{i}I_{t}^{i}\ln\left(I_{o}^{i}e^{-A_{i}^{T}x}\right)-I_{o}^{i}e^{-A_{i}^{T}x}=\sum_{i}\phi_{i}\left(A_{i}^{T}x\right)\label{eq:Poisson-log-likelihood-full}
-\end{equation}
-
-\end_inset
-
- where 
-\begin_inset Formula 
-\[
-\phi_{i}(q)=I_{t}^{i}\ln\left(I_{o}^{i}e^{-q}\right)-I_{o}^{i}e^{-q}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Applying a second-order Taylor's expansion for 
-\begin_inset Formula $\phi_{i}(q)$
-\end_inset
-
- around an estimate of the 
-\begin_inset Formula $i$
-\end_inset
-
-th line integral 
-\begin_inset Formula $p_{i}$
-\end_inset
-
- from Equation 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "eq:p_i"
+reference "sub:Data-Terms-and-Regularizers-Comparison"
 
-\end_inset
-
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "elbakri2002statistical"
-
-\end_inset
-
-: 
-\begin_inset Formula 
-\begin{align*}
-\phi_{i}(q) & \approx\phi_{i}(p_{i})+\frac{d\phi_{i}}{dq}(p_{i})(q-p_{i})+\frac{1}{2}\frac{d^{2}\phi_{i}}{dq^{2}}(p_{i})(q-p_{i})^{2}\\
- & =(I_{t}^{i}\ln I_{t}^{i}-I_{t}^{i})-\frac{I_{t}^{i}}{2}(q-p_{i})^{2}
-\end{align*}
-
-\end_inset
-
-The first term is independent of 
-\begin_inset Formula $q$
-\end_inset
-
- and can be dropped (since we are interested in minimizing 
-\begin_inset Formula $\mathcal{L}_{P}(x)$
-\end_inset
-
-).
- Substituting in Equation 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:Poisson-log-likelihood-full"
-
-\end_inset
-
-, we end up with the approximated log-likelihood 
-\begin_inset Formula 
-\begin{equation}
-\mathcal{L}_{P}(x)\approx-\sum_{i}\frac{I_{t}^{i}}{2}\left(A_{i}^{T}x-p_{i}\right)^{2}=-\sum w_{i}\left(A_{i}^{T}x-p_{i}\right){}^{2}\label{eq:Poisson-log-likelihood-approx}
-\end{equation}
-
-\end_inset
-
- where 
-\begin_inset Formula $w_{i}$
-\end_inset
-
- is the weight for projection measurement 
-\begin_inset Formula $i$
-\end_inset
-
- and is proportional to the measurement of the incident intensity on detector
- 
-\begin_inset Formula $i$
 \end_inset
 
  i.e.
-\begin_inset Formula 
-\[
-w_{i}\propto I_{t}^{i}.
-\]
-
-\end_inset
-
-Maximizing the likelihood is equivalent to minimizing the WLS data term
+ Poisson noise model and SAD regularizer.
  
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-f_{P}(x)=\Vert Ax-p\Vert_{W}^{2}=\sum_{i=1}^{m}w_{i}(a_{i}^{T}x-p_{i})^{2}\label{eq:Poisson-data-term}
-\end{equation}
-
-\end_inset
-
- where 
-\begin_inset Formula $\Vert x\Vert_{W}=x^{T}Wx$
-\end_inset
-
- and 
-\begin_inset Formula $W=\diag(w_{i})\in\mathbb{R}^{m\times m}$
-\end_inset
-
- is a diagonal matrix containing weights for each measurement.
- 
-\end_layout
-
-\begin_layout Standard
-We can solve the proximal operator 
-\begin_inset Formula 
-\begin{equation}
-\prox_{\lambda f_{P}}(u)=\min_{x}\Vert Ax-p\Vert_{W}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.\label{eq:Poisson-data-term-proximal-operator-initial}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-as follows.
- Define 
-\begin_inset Formula $\tilde{p}\in\mathbb{R}^{m}$
-\end_inset
-
- and 
-\begin_inset Formula $\tilde{A}\in\mathbb{R}^{m\times n}$
-\end_inset
-
- as 
-\begin_inset Formula 
-\begin{eqnarray*}
-\tilde{p} & = & W^{\frac{1}{2}}p\\
-\tilde{A} & = & W^{\frac{1}{2}}A
-\end{eqnarray*}
-
-\end_inset
-
- where 
-\begin_inset Formula 
-\[
-W^{\frac{1}{2}}=\diag\left(\sqrt{w_{i}}\right).
-\]
-
-\end_inset
-
-We now get 
-\begin_inset Formula 
-\begin{eqnarray*}
-\Vert\tilde{A}x-\tilde{p}\Vert_{2}^{2} & = & (\tilde{A}x-\tilde{p})^{T}(\tilde{A}x-\tilde{p})\\
- & = & \left(W^{\frac{1}{2}}(Ax-p)\right)^{T}\left(W^{\frac{1}{2}}(Ax-p)\right)\\
- & = & (Ax-p)^{T}W^{\frac{1}{2}}W^{\frac{1}{2}}(Ax-p)\\
- & = & \Vert Ax-p\Vert_{W}^{2}.
-\end{eqnarray*}
-
-\end_inset
-
- Now this is in the form that can be solved with the algorithms in Table
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "tab:Prox-Operators"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\[
-\prox_{\lambda f_{P}}(u)=\min_{x}\Vert\tilde{A}x-\tilde{p}\Vert^{2}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.
-\]
-
-\end_inset
-
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status collapsed
-
-\begin_layout Plain Layout
-Laplace Noise
-\end_layout
-
-\begin_layout Plain Layout
-The 
-\begin_inset Formula $\ell_{1}$
-\end_inset
-
- data term minimizes the 
-\begin_inset Formula $\ell_{1}$
-\end_inset
-
- norm of the errors.
- This is considered as a robust estimator, since it is less affected by
- outliers 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "boyd2004convex,sidky2012convex"
-
-\end_inset
-
-.
- It can also be considered a maximum likelihood estimation when the measurement
- noise 
-\begin_inset Formula $\varepsilon_{i}$
-\end_inset
-
- in Eq.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:Noise-Model"
-
-\end_inset
-
- follows a Laplace distribution 
-\begin_inset Formula $\varepsilon_{i}\sim\mbox{Laplace}(0,1)$
-\end_inset
-
- (i.e.
- has a pdf of the form 
-\begin_inset Formula $h(\varepsilon_{i})=\exp\left(-|\varepsilon_{i}|\right)$
-\end_inset
-
-) in which case the log-likelihood becomes 
-\begin_inset Formula 
-\begin{equation}
-\mathcal{L}_{1}(x)=-\sum_{i=1}^{m}\vert a_{i}^{T}x-p_{i}\vert.\label{eq:L1-Log-Likelihood}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-To use it we need to solve its proximal operator 
-\begin_inset Formula 
-\begin{equation}
-\prox_{\lambda f_{1}}(u)=\argmin_{x}\Vert Ax-p\Vert_{1}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.\label{eq:L1-data-term-proximal-operator}
-\end{equation}
-
-\end_inset
-
-We will use ADMM and variable splitting methods 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "boyd2011distributed,parikh2013proximal"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Plain Layout
-Define 
-\begin_inset Formula $z\in\mathbb{R}^{m}$
-\end_inset
-
-.
- The problem in Equation 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:L1-data-term-proximal-operator"
-
-\end_inset
-
- is equivalent to 
-\begin_inset Formula 
-\begin{eqnarray*}
-\min_{x} & \Vert z-p\Vert_{1}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}\\
-\mbox{s.t.} & Ax=z.
-\end{eqnarray*}
-
-\end_inset
-
-Form the augmented 
-\emph on
-scaled 
-\emph default
-Lagriangian 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "boyd2011distributed,parikh2013proximal"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\[
-\mathcal{L}_{\rho}(x,z,y)=\Vert z-p\Vert_{1}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}+\frac{\rho}{2}\Vert Ax-z+y\Vert_{2}^{2}
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $y\in\mathbb{R}^{m}$
-\end_inset
-
- is the dual variable.
- Now this can be minimized ADMM by iterating minimizations w.r.t.
- 
-\begin_inset Formula $x$
-\end_inset
-
- and 
-\begin_inset Formula $z$
-\end_inset
-
- and updating the dual variable 
-\begin_inset Formula $y$
-\end_inset
-
-:
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $x$
-\end_inset
-
- step: is equivalent to 
-\begin_inset Formula 
-\begin{align*}
-x^{(t+1)} & =\argmin_{x}\frac{\rho}{2}\Vert Ax-z^{(t)}+y^{(t)}\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}\\
- & =\argmin_{x}\Vert\tilde{\rho}Ax-\tilde{\rho}(z^{(t)}-y^{(t)})\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $\tilde{\rho}=\sqrt{\rho/2}$
-\end_inset
-
-, and is equivalent to the proximal operator of the 
-\begin_inset Formula $\ell_{2}$
-\end_inset
-
- data term 
-\begin_inset Formula $f_{2}$
-\end_inset
-
- in Equation 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:L2-data-term-prox"
-
-\end_inset
-
- with system matrix 
-\begin_inset Formula $\tilde{\rho}A$
-\end_inset
-
- and projection measurements 
-\begin_inset Formula $\tilde{\rho}(z^{(t)}-y^{(t)})$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $z$
-\end_inset
-
- step: is equivalent to
-\begin_inset Formula 
-\begin{eqnarray*}
-z^{(t+1)} & = & \argmin_{z}\Vert z-p\Vert_{1}+\frac{\rho}{2}\Vert Ax^{(t+1)}-z+y^{(t)}\Vert_{2}^{2}\\
- & = & p+\argmin_{w=z-p}\Vert w\Vert_{1}+\frac{\rho}{2}\Vert Ax^{(t+1)}+y^{(t)}-p-w\Vert_{2}^{2}\\
- & = & p+\prox_{\rho^{-1}\ell_{1}}(Ax^{(t+1)}+y^{(t)}-p)
-\end{eqnarray*}
-
-\end_inset
-
- where we changed variables 
-\begin_inset Formula $w=z-p$
-\end_inset
-
-.
- The last term is the proximal operator of the 
-\begin_inset Formula $\ell_{1}$
-\end_inset
-
- norm, which is the component-wise soft thresholding function 
-\begin_inset Formula 
-\begin{equation}
-\prox_{\mu\ell_{1}}(u_{i})=S_{\mu}(u_{i})=\mbox{sign}(u_{i})\max\left(0,|u_{i}|-\mu\right)\label{eq:soft-thresholding}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $y$
-\end_inset
-
- step: 
-\begin_inset Formula 
-\[
-y^{(t+1)}=y^{(t)}+Ax^{(t+1)}-z^{(t+1)}
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-The steps are summarized in Algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "alg:L1-SART-Proximal-Operator-ADMM"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Float algorithm
-placement h
-wide false
+\begin_inset Float figure
+wide true
 sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "alg:L1-SART-Proximal-Operator-ADMM"
-
-\end_inset
-
-
-\begin_inset Formula $\ell_{1}$
-\end_inset
-
- Data Term Proximal Operator
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{algorithmic}[1]
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-Require
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Formula $A\in\mathbb{R}{}^{m\times n}$
-\end_inset
-
-, 
-\begin_inset Formula $u\in\mathbb{R}{}^{n}$
-\end_inset
-
-, 
-\begin_inset Formula $\lambda\in\mathbb{R}$
-\end_inset
-
-, 
-\begin_inset Formula $\alpha\in\mathbb{R}$
-\end_inset
-
-, 
-\begin_inset Formula $p\in\mathbb{R}{}^{m}$
-\end_inset
-
-, 
-\begin_inset Formula $\rho\in\mathbb{R}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-State
-\end_layout
-
-\end_inset
-
- Initialize 
-\begin_inset Formula 
-\begin{align*}
-z^{(0)}=y^{(0)}=0.
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-ForAll {
-\end_layout
-
-\end_inset
-
-
-\begin_inset Formula $t=1\ldots T$
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-Update 
-\begin_inset Formula $x$
-\end_inset
-
-: 
-\begin_inset Formula 
-\[
-x^{(t+1)}=\argmin_{x}\left\Vert \tilde{\rho}Ax-\tilde{\rho}(z^{(t)}-y^{(t)})\right\Vert _{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $\tilde{\rho}=\sqrt{\rho/2}$
-\end_inset
-
- by running Algoritm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "alg:SART-Proximal-Operator"
-
-\end_inset
-
- with system matrix 
-\begin_inset Formula $\tilde{\rho}A$
-\end_inset
-
- and input projections 
-\begin_inset Formula $\tilde{\rho}(z^{(t)}-y^{(t)})$
-\end_inset
-
- and parameters 
-\begin_inset Formula $\lambda$
-\end_inset
-
- and 
-\begin_inset Formula $\alpha$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Update 
-\begin_inset Formula $z$
-\end_inset
-
- 
-\begin_inset Formula 
-\[
-z^{(t+1)}=p+S_{\rho^{-1}}\left(Ax^{(t+1)}+y^{(t)}-p\right)
-\]
-
-\end_inset
-
- from Equation 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:soft-thresholding"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Update 
-\begin_inset Formula $y$
-\end_inset
-
- 
-\begin_inset Formula 
-\[
-y^{(t+1)}=y^{(t)}+Ax^{(t+1)}-z^{(t+1)}
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
 status open
 
 \begin_layout Plain Layout
-
-
-\backslash
-EndFor
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-Return
-\end_layout
-
-\end_inset
-
- volume reconstruction 
-\begin_inset Formula $x^{\star}\in\mathbb{R}{}^{n}=\argmin_{x}\Vert Ax-p\Vert_{1}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}$
-\end_inset
-
- 
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{algorithmic}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula $\ell_{1}$
-\end_inset
-
- norm (the sum of the absolute errors): 
-\begin_inset Formula 
-\begin{equation}
-f_{1}(x)=\Vert Ax-p\Vert_{1}=\sum_{i=1}^{m}\vert a_{i}^{T}x-p_{i}\vert.\label{eq:L1-data-term}
-\end{equation}
-
-\end_inset
-
-It is a robust data term that is less sensitive to outliers and useful in
- the presence of salt-and-pepper or shot noise 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "sidky2012convex"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Plain Layout
-For example, in our case, 
-\begin_inset Formula 
-\[
-f(x)=\Vert Ax-p\Vert_{2}^{2}
-\]
-
-\end_inset
-
-which is a measure of how well the reconstruction fits the given projection
- images.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Regularizers
-\end_layout
-
-\begin_layout Standard
-The regularizers impose constraints on the reconstruction volume.
- We will consider three state of the art regularizers:
-\end_layout
-
-\begin_layout Subsubsection
-Isotropic Total Variation (ITV)
-\end_layout
-
-\begin_layout Standard
-It is the sum of the gradient magnitude at each voxel 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "rudin1992nonlinear,sidky2012convex,chambolle2011first"
-
-\end_inset
-
- i.e.
- 
-\begin_inset Formula 
-\begin{equation}
-h_{\text{ITV}}(x)=\sigma\Vert x\Vert_{\text{TV}}=\sigma\sum_{i}\Vert\nabla x_{i}\Vert_{2}\label{eq:h-ITV}
-\end{equation}
-
-\end_inset
-
- where 
-\begin_inset Formula $\nabla x_{i}=\left[\begin{smallmatrix}\nabla x_{i}^{1} & \nabla x_{i}^{2}\end{smallmatrix}\right]^{T}$
-\end_inset
-
- is the discrete gradient at voxel 
-\begin_inset Formula $i$
-\end_inset
-
- containing the horizontal forward differen 
-\begin_inset Formula $\nabla x_{i}^{1}$
-\end_inset
-
- and the vertical forward difference 
-\begin_inset Formula $\nabla x_{i}^{2}$
-\end_inset
-
-.
- It can be represented in the form of Eq.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:full-problem"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\[
-h_{\text{ITV}}(x)=g_{\text{ITV}}(Kx)
-\]
-
-\end_inset
-
-by defining the matrix 
-\begin_inset Formula $K=D\in\mathbb{R}^{2n\times n}$
-\end_inset
-
- to be the forward difference matrix that produces the discrete gradient
- 
-\begin_inset Formula $\nabla x\in\mathbb{R}^{2n}$
-\end_inset
-
-: 
-\begin_inset Formula 
-\[
-\nabla x=\begin{bmatrix}\nabla x_{i}\\
-\vdots\\
-\nabla x_{n}
-\end{bmatrix}=Dx
-\]
-
-\end_inset
-
- and defining for 
-\begin_inset Formula $u\in\mathbb{R}^{2n}=\begin{bmatrix}u_{1}^{T} & \cdots & u_{n}^{T}\end{bmatrix}^{T}$
-\end_inset
-
- 
-\begin_inset Formula 
-\[
-g_{\text{ITV}}(u)=\sigma\sum_{i}\Vert u_{i}\Vert_{2}
-\]
-
-\end_inset
-
- The proximal operator 
-\begin_inset Formula $\prox_{\lambda g_{\text{ITV}}}(u)$
-\end_inset
-
- is 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "esser2010general,chambolle2011first"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\[
-\prox_{\lambda g_{\text{ITV}}}(u_{i})=\frac{\sigma u_{i}}{\max(\sigma,\Vert u_{i}\Vert_{2})}
-\]
-
-\end_inset
-
- where 
-\begin_inset Formula $u_{i}\in\mathbb{R}^{2}$
-\end_inset
-
- is the 
-\begin_inset Formula $i$
-\end_inset
-
-th component of 
-\begin_inset Formula $u$
-\end_inset
-
-.
- Intuitively it projects back the vector 
-\begin_inset Formula $u_{i}$
-\end_inset
-
- to be on the Euclidean ball of radius 
-\begin_inset Formula $\sigma$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsubsection
-Anisotropic Total Variation (ATV)
-\end_layout
-
-\begin_layout Standard
-It is a simplification of ITV 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "sidky2008image,beck2009bfast,chambolle2010introduction,nien2015fast"
-
-\end_inset
-
- , and is defined as 
-\begin_inset Formula 
-\begin{equation}
-h_{\text{ATV}}(x)=\sigma\Vert\nabla x\Vert_{1}\label{eq:h-ATV}
-\end{equation}
-
-\end_inset
-
- which is the 
-\begin_inset Formula $\ell_{1}$
-\end_inset
-
- norm of the gradient 
-\begin_inset Formula $\nabla x$
-\end_inset
-
- of the volume.
- This can be written in the form 
-\begin_inset Formula 
-\[
-h_{\text{ATV}}(x)=g_{\text{ATV}}(Kx)
-\]
-
-\end_inset
-
- by defining 
-\begin_inset Formula $K=D$
-\end_inset
-
- as in the ITV case and defining for 
-\begin_inset Formula $u\in\mathbb{R}^{2n}$
-\end_inset
-
- 
-\begin_inset Formula 
-\[
-g_{\text{ATV}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}.
-\]
-
-\end_inset
-
-The proximal operator 
-\begin_inset Formula $\prox_{\lambda g_{\text{ATV}}}(u)$
-\end_inset
-
- is 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "esser2010general,chambolle2011first"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\[
-\prox_{\lambda g_{\text{ITV}}}(u_{i})=\sign(u_{i})\odot\max(0,\vert u_{i}\vert-\sigma)
-\]
-
-\end_inset
-
- which is the soft thresholding function 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "sidky2012convex"
-
-\end_inset
-
-, where the max and product are component-wise operations.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float algorithm
-placement h
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
 
 \begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
 
 \begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
 
 
-\backslash
-protect
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Plain Layout
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "alg:CP-algorithm"
-
-\end_inset
-
-CP Algorithm (Chambolle-Pock Primal-Dual)
+Modified Shepp-Logan
 \end_layout
 
 \end_inset
@@ -5532,15 +6434,48 @@ CP Algorithm (Chambolle-Pock Primal-Dual)
 
 \end_layout
 
-\begin_layout Plain Layout
-\begin_inset ERT
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
 status collapsed
 
 \begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
 
 
-\backslash
-begin{algorithmic}[1]
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -5549,286 +6484,136 @@ begin{algorithmic}[1]
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset ERT
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NCAT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
 status collapsed
 
 \begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
 
 
-\backslash
-Require
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mouse
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SNR per iteration for the Gaussian (
+\emph on
+solid
+\emph default
+ curves) and Poisson (
+\emph on
+dashed
+\emph default
+ curves)noise models with ITV (
+\emph on
+blue
+\emph default
+), ATV (
+\emph on
+red
+\emph default
+), and SAD (
+\emph on
+green
+\emph default
+) regularizers.
+ The 
+\emph on
+black
+\emph default
+ curve shows the results for SART.
+ See Sec.
  
-\begin_inset Formula $K\in\mathbb{R}{}^{d\times n}$
-\end_inset
-
-, 
-\begin_inset Formula $\theta\in[0,1]$
-\end_inset
-
-, 
-\begin_inset Formula $\lambda,\mu$
-\end_inset
-
- such that 
-\begin_inset Formula $\mu\lambda\Vert K\Vert^{2}<1$
-\end_inset
-
-, 
-\begin_inset Formula $\sigma\in\mathbb{R}$
-\end_inset
-
-, initial values 
-\begin_inset Formula $x^{(0)}\in\mathbb{R}^{n}$
-\end_inset
-
- and 
-\begin_inset Formula $z^{(0)}\in\mathbb{R}^{d}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-State
-\end_layout
-
-\end_inset
-
- Initialize 
-\begin_inset Formula 
-\[
-\bar{x}^{(0)}=x^{(0)}
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-ForAll
-\end_layout
-
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\end_inset
-
-
-\begin_inset Formula $t=1\ldots T$
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{eqnarray*}
-z^{(t+1)} & = & \prox_{\mu g^{*}}\left(z^{(t)}+\mu K\bar{x}^{(t)}\right)\\
-x^{(t+1)} & = & \prox_{\lambda f}\left(x^{(t)}-\lambda K^{T}z^{(t+1)}\right)\\
-\bar{x}^{(t+1)} & = & x^{(t+1)}+\theta(x^{(t+1)}-x^{(t)})
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-EndFor
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-Return
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Formula $x^{(T)}\in\mathbb{R}{}^{n}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{algorithmic}
-\end_layout
-
-\end_inset
-
- 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Sum of Absolute Differences (SAD)
-\end_layout
-
-\begin_layout Standard
-It is an extension to the ATV by adding more forward differences around
- each voxel 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "gregson2012stochastic"
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Data-Terms-and-Regularizers-Comparison"
 
 \end_inset
 
 .
- In particular, it sums the differences of the voxels in the 
-\begin_inset Formula $3\times3$
-\end_inset
-
- neighborhood around each voxel 
-\begin_inset Formula 
-\begin{equation}
-h_{\text{SAD}}(x)=\sigma\sum_{i}\sum_{k\in\mathcal{N}(i)}\vert x_{i}-x_{k}\vert\label{eq:h-SAD}
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $\mathcal{\mathcal{N}}(i)$
-\end_inset
-
- contains the voxels in the neighborhood around voxel 
-\begin_inset Formula $i$
-\end_inset
-
-.
- It can be written similarly in the form 
-\begin_inset Formula 
-\[
-h_{\text{SAD}}(x)=g_{\text{SAD}}(Kx)
-\]
-
-\end_inset
-
- by defining 
-\begin_inset Formula $ $
-\end_inset
-
- as in the ITV case and defining for 
-\begin_inset Formula $u\in\mathbb{R}^{2n}$
-\end_inset
-
  
-\begin_inset Formula 
-\[
-g_{\text{ATV}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}.
-\]
-
-\end_inset
-
-The proximal operator 
-\begin_inset Formula $\prox_{\lambda g_{\text{ATV}}}(u)$
-\end_inset
-
- is 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "esser2010general,chambolle2011first"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\[
-\prox_{\lambda g_{\text{ITV}}}(u_{i})=\sign(u_{i})\odot\max(0,\vert u_{i}\vert-\sigma)
-\]
-
-\end_inset
-
- which is the soft thresholding function 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "sidky2012convex"
-
-\end_inset
-
-, where the max and product are component-wise operations.
-\end_layout
-
-\begin_layout Standard
-It has been shown 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "gregson2012stochastic"
-
-\end_inset
-
- to produce excellent results in stochastic tomography reconstruction.
-\end_layout
-
-\begin_layout Section
-Experiments
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:Experiments"
+name "fig:SNR-per-iter-prox-operator-comparison"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 

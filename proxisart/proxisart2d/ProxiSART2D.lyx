@@ -3240,7 +3240,7 @@ reference "alg:LADMM-algorithm"
 placement h
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -3339,6 +3339,10 @@ State
 \end_inset
 
  Initialize 
+\begin_inset Formula $u^{(0)}=\mathbf{0}_{d}$
+\end_inset
+
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -3380,14 +3384,64 @@ status collapsed
 
 \end_inset
 
- 
-\begin_inset Formula 
-\begin{align*}
-x^{(t+1)} & =\mbox{prox}_{\mu f}\left(x^{(t)}-\rho\mu K^{T}(Kx^{(t)}-z^{(t)}+u^{(t)})\right)\\
-z^{(t+1)} & =\mbox{prox}_{\rho^{-1}g}\left(Kx^{(t+1)}+u^{(t)}\right)\\
-u^{(t+1)} & =u^{(t)}+Kx^{(t+1)}-z^{(t+1)}
-\end{align*}
 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $x^{(t+1)}=\mbox{prox}_{\mu f}\left(x^{(t)}-\rho\mu K^{T}(Kx^{(t)}-z^{(t)}+u^{(t)})\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $z^{(t+1)}=\mbox{prox}_{\rho^{-1}g}\left(Kx^{(t+1)}+u^{(t)}\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $u^{(t+1)}=u^{(t)}+Kx^{(t+1)}-z^{(t+1)}$
 \end_inset
 
 
@@ -3423,7 +3477,7 @@ Return
 \end_inset
 
  
-\begin_inset Formula $x^{(T)}\in\mathbb{R}{}^{n}$
+\begin_inset Formula $x^{(T)}=\argmin_{x}f(x)+g(Kx)$
 \end_inset
 
 
@@ -3484,13 +3538,13 @@ where
  The projection data log-likelihood is
 \begin_inset Formula 
 \begin{equation}
-\mathcal{L}_{G}(p)\propto-\sum_{i}\left(p_{i}-a_{i}^{T}x\right)^{2}\label{eq:Gaussian-Log-Likelihood}
+\mathcal{L}_{\text{G}}(p)\propto-\sum_{i}\left(p_{i}-a_{i}^{T}x\right)^{2}\label{eq:Gaussian-Log-Likelihood}
 \end{equation}
 
 \end_inset
 
 and maximizing 
-\begin_inset Formula $\mathcal{L}_{G}(p)$
+\begin_inset Formula $\mathcal{L}_{\text{G}}(p)$
 \end_inset
 
  is equivalent to minimizing the LS 
@@ -3500,13 +3554,13 @@ and maximizing
  norm data term
 \begin_inset Formula 
 \begin{equation}
-f_{G}(x)=\Vert Ax-p\Vert_{2}^{2}=\sum_{i=1}^{m}(A_{i}^{T}x-p_{i})^{2}.\label{eq:gaussian-data-term}
+f_{\text{G}}(x)=\Vert Ax-p\Vert_{2}^{2}=\sum_{i=1}^{m}(A_{i}^{T}x-p_{i})^{2}.\label{eq:gaussian-data-term}
 \end{equation}
 
 \end_inset
 
 We can solve proximal operator 
-\begin_inset Formula $\prox_{\lambda f_{G}}(\cdot)$
+\begin_inset Formula $\prox_{\lambda f_{\text{G}}}(\cdot)$
 \end_inset
 
  directly using any of the algorithms from Table 
@@ -3729,7 +3783,7 @@ reference "eq:Poisson-log-likelihood-full"
 , we end up with the approximated log-likelihood 
 \begin_inset Formula 
 \begin{equation}
-\mathcal{L}_{P}(x)\approx-\sum_{i}\frac{I_{t}^{i}}{2}\left(A_{i}^{T}x-p_{i}\right)^{2}=-\sum w_{i}\left(A_{i}^{T}x-p_{i}\right){}^{2}\label{eq:Poisson-log-likelihood-approx}
+\mathcal{L}_{\text{G}}(x)\approx-\sum_{i}\frac{I_{t}^{i}}{2}\left(A_{i}^{T}x-p_{i}\right)^{2}=-\sum w_{i}\left(A_{i}^{T}x-p_{i}\right){}^{2}\label{eq:Poisson-log-likelihood-approx}
 \end{equation}
 
 \end_inset
@@ -3762,7 +3816,7 @@ Maximizing the likelihood is equivalent to minimizing the WLS data term
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-f_{P}(x)=\Vert Ax-p\Vert_{W}^{2}=\sum_{i=1}^{m}w_{i}(a_{i}^{T}x-p_{i})^{2}\label{eq:Poisson-data-term}
+f_{\text{P}}(x)=\Vert Ax-p\Vert_{W}^{2}=\sum_{i=1}^{m}w_{i}(a_{i}^{T}x-p_{i})^{2}\label{eq:Poisson-data-term}
 \end{equation}
 
 \end_inset
@@ -3783,7 +3837,7 @@ f_{P}(x)=\Vert Ax-p\Vert_{W}^{2}=\sum_{i=1}^{m}w_{i}(a_{i}^{T}x-p_{i})^{2}\label
 We can solve the proximal operator 
 \begin_inset Formula 
 \begin{equation}
-\prox_{\lambda f_{P}}(u)=\min_{x}\Vert Ax-p\Vert_{W}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.\label{eq:Poisson-data-term-proximal-operator-initial}
+\prox_{\lambda f_{\text{P}}}(u)=\min_{x}\Vert Ax-p\Vert_{W}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.\label{eq:Poisson-data-term-proximal-operator-initial}
 \end{equation}
 
 \end_inset
@@ -3840,7 +3894,7 @@ reference "tab:Prox-Operators"
  
 \begin_inset Formula 
 \[
-\prox_{\lambda f_{P}}(u)=\min_{x}\Vert\tilde{A}x-\tilde{p}\Vert^{2}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.
+\prox_{\lambda f_{\text{P}}}(u)=\min_{x}\Vert\tilde{A}x-\tilde{p}\Vert^{2}+\frac{1}{2\lambda}\Vert x-u\Vert^{2}.
 \]
 
 \end_inset
@@ -5102,6 +5156,11 @@ reference "fig:SNR-per-time-iterative"
 .
  Note that our implementation is not optimized for any of the methods, and
  the processing time is just an indication.
+ We initialize all methods with uniform volume 
+\begin_inset Formula $x^{(0)}=\mathbf{0}_{n}$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -5188,8 +5247,8 @@ key "herman2009fundamentals"
 
 \begin_layout Itemize
 Even though BICAV, SIRT, and BSSART have formal proofs of convergence, their
- convergence speed per iteration is in fact much lower than SART or OS-SQS.
- 
+ convergence speed per iteration is in fact much lower than SART or (this
+ version of) OS-SQS, that lack these proofs.
 \end_layout
 
 \begin_layout Itemize
@@ -5228,7 +5287,7 @@ Using plain iterative methods does not give acceptable results with fewer
 \begin_inset Float figure
 wide true
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -5263,7 +5322,40 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
+	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_60-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
 	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_180-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -5818,6 +5910,699 @@ s used.
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:SNR-per-num-proj-iterative"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Data Terms and Regularizers Comparison
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Data-Terms-and-Regularizers-Comparison"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We compare the different data terms and regularizers defined in Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Proximal-Framework"
+
+\end_inset
+
+.
+ We solve the tomography proximal operator (step 3 in Alg.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:LADMM-algorithm"
+
+\end_inset
+
+) using 2 iterations of the SART proximal operator (from Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Prox-Operators"
+
+\end_inset
+
+), using 
+\begin_inset Formula $\alpha=1.99$
+\end_inset
+
+ with for 30 projections and 
+\begin_inset Formula $\alpha=1$
+\end_inset
+
+ for 90 projections.
+ (see Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Iterative-Algorithms-Comparison"
+
+\end_inset
+
+).
+ We use 
+\begin_inset Formula $\sigma=0.1$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho=50$
+\end_inset
+
+ for 30 projections; 
+\begin_inset Formula $\sigma=0.5$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho=200$
+\end_inset
+
+ for 90 projections; and set 
+\begin_inset Formula $\mu=\nicefrac{1}{\rho\Vert K\Vert^{2}}$
+\end_inset
+
+.
+ We initialize all methods with uniform volume 
+\begin_inset Formula $x^{(0)}=\mathbf{0}_{n}$
+\end_inset
+
+.
+ We estimated the matrix norm 
+\begin_inset Formula $\Vert K\Vert$
+\end_inset
+
+ using the power method.
+ Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SNR-per-iter-data-term-and-reg-sart-prox"
+
+\end_inset
+
+ shows the results for the three datasets, where we plot against the number
+ of SART iterations.
+ We note the following: 
+\end_layout
+
+\begin_layout Itemize
+Using the proximal framework provides significantly better results than
+ the unregularized iterative methods in Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Iterative-Algorithms-Comparison"
+
+\end_inset
+
+.
+ This is expected since adding a powerful regularizer constrains the reconstruct
+ion to better resemble the ground truth.
+\end_layout
+
+\begin_layout Itemize
+The Poisson noise model 
+\begin_inset Formula $f_{\text{P}}(\cdot)$
+\end_inset
+
+ is better than the Gaussian noise model 
+\begin_inset Formula $f_{\text{G}}(\cdot)$
+\end_inset
+
+ for the three datasets.
+ This is consistent with the noise model used to generate the noisy simulated
+ sinograms, and with the physical nosie model in the real dataset.
+\end_layout
+
+\begin_layout Itemize
+For 90 projections, we need more regularization (
+\begin_inset Formula $\sigma=0.5$
+\end_inset
+
+) than for 30 projections (
+\begin_inset Formula $\sigma=0.1$
+\end_inset
+
+).
+ This is expected because using more projections adds more constraints (rows
+ in the projection matrix 
+\begin_inset Formula $A$
+\end_inset
+
+) that need better regularization to get good results.
+\end_layout
+
+\begin_layout Itemize
+The SAD regulairzer is better for all datasets.
+ ITV is better than ATV for 90 projections, while ATV is better for 30 projectio
+ns (except for the mouse dataset).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Modified Shepp-Logan
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NCAT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mouse
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SNR per iteration for the Gaussian (
+\emph on
+solid
+\emph default
+ curves) and Poisson (
+\emph on
+dashed
+\emph default
+ curves)noise models with ITV (
+\emph on
+blue
+\emph default
+), ATV (
+\emph on
+red
+\emph default
+), and SAD (
+\emph on
+green
+\emph default
+) regularizers.
+ The 
+\emph on
+black
+\emph default
+ curve shows the results for SART.
+ See Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Data-Terms-and-Regularizers-Comparison"
+
+\end_inset
+
+.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SNR-per-iter-data-term-and-reg-sart-prox"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Proximal Operators Comparison
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Proximal-Operators-Comparison"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We compare the different proximal operators from Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Proximal-Operators"
+
+\end_inset
+
+ (SART, ART, OS-SQS, and BICAV) and Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Prox-Operators"
+
+\end_inset
+
+ using the best results from Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Data-Terms-and-Regularizers-Comparison"
+
+\end_inset
+
+ i.e.
+ Poisson noise model and SAD regularizer.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Modified Shepp-Logan
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NCAT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mouse
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SNR per iteration for the Gaussian (
+\emph on
+solid
+\emph default
+ curves) and Poisson (
+\emph on
+dashed
+\emph default
+ curves)noise models with ITV (
+\emph on
+blue
+\emph default
+), ATV (
+\emph on
+red
+\emph default
+), and SAD (
+\emph on
+green
+\emph default
+) regularizers.
+ The 
+\emph on
+black
+\emph default
+ curve shows the results for SART.
+ See Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Data-Terms-and-Regularizers-Comparison"
+
+\end_inset
+
+.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SNR-per-iter-prox-operator-comparison"
 
 \end_inset
 

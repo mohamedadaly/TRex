@@ -7,8 +7,8 @@
 % Contact: astra@uantwerpen.be
 % Website: http://sf.net/projects/astra-toolbox
 % -----------------------------------------------------------------------
-addpath matlab/tools/
-addpath bin/x64/Release/
+% addpath matlab/tools/
+% addpath bin/x64/Release/
 colormap gray
 
 vol_geom = astra_create_vol_geom(256, 256);
@@ -281,7 +281,7 @@ alg_params = struct('iter',10, 'alpha',2, 'min_val',0, 'precon',0, ...
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('ART-PROX');
+cfg = astra_struct('SART');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
@@ -290,7 +290,7 @@ cfg.option.UseMinConstraint = 1;
 cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
-cfg.option.Alpha = 1;
+cfg.option.Alpha = 2;
 cfg.option.Lambda = 1e3;
 cfg.option.ComputeIterationMetrics = 1;
 cfg.option.GTReconstructionId = P_id;
@@ -299,6 +299,8 @@ cfg.option.ClearReconstruction = 1;
 cfg.option.PreconditionerId = -1; %prec_id;
 cfg.option.UseJacobiPreconditioner = 1;
 cfg.option.UseBSSART = 0;
+cfg.option.ProjectionOrder = 'sequential'; 'random';
+cfg.option.ProjectionOrderList = subset_start(30)-1;
 astra_mex_data2d('set', wi_id, sqrt(wi)); %ones(size(wi)));
 cfg.option.WlsWeightDataId = -1;wi_id;
 % cfg.option.ProjectionOrder = 'random';

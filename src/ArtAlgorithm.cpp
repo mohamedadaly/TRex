@@ -136,8 +136,8 @@ bool CArtAlgorithm::initialize(const Config& _cfg)
 	}
 
 	// ray order
-	string projOrder = _cfg.self.getOption("RayOrder", "sequential");
-	CC.markOptionParsed("RayOrder");
+	string projOrder = _cfg.self.getOption("ProjectionOrder", "sequential");
+	CC.markOptionParsed("ProjectionOrder");
 	m_iCurrentRay = 0;
 	m_iRayCount = m_pProjector->getProjectionGeometry()->getProjectionAngleCount() * 
 		m_pProjector->getProjectionGeometry()->getDetectorCount();
@@ -148,6 +148,56 @@ bool CArtAlgorithm::initialize(const Config& _cfg)
 			m_piProjectionOrder[i] = (int)floor((float)i / m_pProjector->getProjectionGeometry()->getDetectorCount());
 			m_piDetectorOrder[i] = i % m_pProjector->getProjectionGeometry()->getDetectorCount();
 		}
+	} else if (projOrder == "random") {
+		srand(123);
+		//
+		// Shuffle the order of projections, and process rays in order in each projection
+		//
+		int iNumProj = m_pProjector->getProjectionGeometry()->getProjectionAngleCount();
+		int* pRandProjOrder = new int[iNumProj];
+		for (int i = 0; i < iNumProj; i++) {
+			pRandProjOrder[i] = i;
+		}
+		// randomize projection order as in SART
+		for (int i = 0; i < iNumProj - 1; i++) {
+			int k = (rand() % (iNumProj - i));
+			int t = pRandProjOrder[i];
+			pRandProjOrder[i] = pRandProjOrder[i + k];
+			pRandProjOrder[i + k] = t;
+		}
+		// fill in ray order
+		int iRaysPerProj = m_pProjector->getProjectionGeometry()->getDetectorCount();
+		m_piProjectionOrder = new int[m_iRayCount];
+		m_piDetectorOrder = new int[m_iRayCount];
+		for (int i = 0; i < iNumProj; ++i) {
+			for (int d = 0; d < iRaysPerProj; ++d) {
+				int iRayInd = i * iRaysPerProj + d;
+				m_piProjectionOrder[iRayInd] = pRandProjOrder[i];
+				m_piDetectorOrder[iRayInd] = d;
+			}
+		}
+		delete [] pRandProjOrder;
+
+		//
+		// Shuffle the order of rays
+		//
+		//m_piProjectionOrder = new int[m_iRayCount];
+		//m_piDetectorOrder = new int[m_iRayCount];
+		//for (int i = 0; i < m_iRayCount; i++) {
+		//	m_piProjectionOrder[i] = (int)floor((float)i / m_pProjector->getProjectionGeometry()->getDetectorCount());
+		//	m_piDetectorOrder[i] = i % m_pProjector->getProjectionGeometry()->getDetectorCount();
+		//}
+		//// randomize
+		//for (int i = 0; i < m_iRayCount; i++) {
+		//	int k = (rand() % (m_iRayCount - i));
+		//	int t1 = m_piProjectionOrder[i];
+		//	m_piProjectionOrder[i] = m_piProjectionOrder[i + k];
+		//	m_piProjectionOrder[i + k] = t1;
+
+		//	int t2 = m_piDetectorOrder[i];
+		//	m_piDetectorOrder[i] = m_piDetectorOrder[i + k];
+		//	m_piDetectorOrder[i + k] = t2;
+		//}
 	} else if (projOrder == "custom") {
 		vector<float32> rayOrderList = _cfg.self.getOptionNumericalArray("RayOrderList");
 		m_iRayCount = rayOrderList.size() / 2;

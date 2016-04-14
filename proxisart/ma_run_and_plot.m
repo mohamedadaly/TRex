@@ -208,7 +208,9 @@ eval(plt);
     end
 
     % SNR plot
-    snr_fig = figure('Name',snr_file, 'Position',[1, 1, 800, 800]);
+    fig_size = [800, 800];
+    if isfield(arg, 'fig_size'), fig_size = arg.fig_size; end
+    snr_fig = figure('Name',snr_file, 'Position',[1, 1, fig_size]);
     hold on;
     
     legends = cell(size(results));
@@ -238,6 +240,11 @@ eval(plt);
       xlim([1 max_it]);
     end
     ylabel('SNR (db)');    
+    % exclude certain plots from legend
+    if isfield(arg, 'exclude_legend')
+      legends(arg.exclude_legend) = [];
+      handles(arg.exclude_legend) = [];
+    end;
     hleg = legendflex(handles, legends, 'anchor',{'se','se'}, ...
       'ref',gca, 'buffer',[-10 2], 'ncol',arg.legend_cols, ...
       'box','on', 'padding',[2, 1, 6]);
@@ -246,7 +253,13 @@ eval(plt);
 %     set(hleg, 'box','off');
 %     legHdl = gridLegend(gca, arg.legend_cols, legends, ...
 %       'Location','SouthEast'); 
-
+    % title
+    if isfield(arg,'title') 
+      switch arg.title
+        % number of projections
+        case 'num_proj', title(sprintf('%d Projections', arg.num_proj));
+      end
+    end
     
     % save figure
     save_fig(snr_file, snr_fig, 'pdf', '-fonts');
@@ -332,7 +345,9 @@ eval(plt);
     end
 
     % SNR plot
-    snr_fig = figure('Name',snr_file, 'Position',[1, 1, 800, 800]);
+    fig_size = [800, 800];
+    if isfield(arg, 'fig_size'), fig_size = arg.fig_size; end
+    snr_fig = figure('Name',snr_file, 'Position',[1, 1, fig_size]);
     hold on;
 
     legends = cell(size(results));

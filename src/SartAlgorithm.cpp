@@ -141,6 +141,7 @@ bool CSartAlgorithm::initialize(const Config& _cfg)
 			m_piProjectionOrder[i] = i;
 		}
 	} else if (projOrder == "random") {
+		srand(123);
 		m_piProjectionOrder = new int[m_iProjectionCount];
 		for (int i = 0; i < m_iProjectionCount; i++) {
 			m_piProjectionOrder[i] = i;
