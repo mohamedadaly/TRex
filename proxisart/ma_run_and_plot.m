@@ -204,7 +204,7 @@ eval(plt);
     else
       rr = load(mat_file);
       results = rr.results;
-      algs = rr.algs;
+%       algs = rr.algs;
     end
 
     % SNR plot

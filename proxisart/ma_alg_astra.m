@@ -52,9 +52,14 @@ sino_id = astra_mex_data2d('create', '-sino', in_params.proj_geom, ...
 
 % WLS?
 if isfield(alg_params,'wls') && alg_params.wls
-  % Set the sqrt of the weights as input
+  % get the nth root
+  rt = 2;
+  % multiply by 2 to prepare for wls i.e. we first apply wls_rt root and
+  % then apply a sqrt to feed to wls
+  if isfield(alg_params, 'wls_rt'), rt = alg_params.wls_rt * 2; end
+  % Set the nth of the weights as input
   wi_id = astra_mex_data2d('create', '-sino', in_params.proj_geom, ...
-    sqrt(in_params.wi));
+    nthroot(in_params.wi, rt));
 else
   wi_id = -1;
 end;

@@ -3222,6 +3222,13 @@ name "sec:Proximal-Framework"
 
 \begin_layout Subsection
 Proximal Algorithm
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Proximal-Algorithm"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3558,6 +3565,13 @@ end{algorithmic}
 
 \begin_layout Subsection
 Data Terms
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Data-Terms"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3861,6 +3875,29 @@ w_{i}\propto I_{t}^{i}.
 
 \end_inset
 
+ Typically, the weights 
+\begin_inset Formula $w_{i}$
+\end_inset
+
+ are normalized to have a maximum of 1, and we could apply any non-decreasing
+ mapping on 
+\begin_inset Formula $w_{i}$
+\end_inset
+
+, e.g.
+ the square root, before feeding into the ooptimization problem, see Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Mapping-Functions-Comparison"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
 Maximizing the likelihood is equivalent to minimizing the WLS data term
  
 \end_layout
@@ -4521,11 +4558,69 @@ which is a measure of how well the reconstruction fits the given projection
 
 \begin_layout Subsection
 Regularizers
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Regularizers"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 The regularizers impose constraints on the reconstruction volume.
- We will consider three state of the art regularizers:
+ We will consider four regularizers:
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset Formula $\ell_{2}$
+\end_inset
+
+ norm (L2)
+\end_layout
+
+\begin_layout Standard
+It is the simplest regularizer that penalizes volumes that have higher 
+\begin_inset Formula $\ell_{2}$
+\end_inset
+
+ norm 
+\begin_inset Formula 
+\begin{equation}
+h_{\ell_{2}}(x)=\sigma\Vert x\Vert_{2}^{2}\label{eq:h-L2}
+\end{equation}
+
+\end_inset
+
+ where 
+\begin_inset Formula 
+\[
+\Vert x\Vert_{2}^{2}=\sum_{i}x_{i}^{2}.
+\]
+
+\end_inset
+
+ To apply this prior, we only need to run the proximal operators of Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Proximal-Operators"
+
+\end_inset
+
+ with input 
+\begin_inset Formula $u=\mathbf{0}_{n}$
+\end_inset
+
+ in Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:prox-operator"
+
+\end_inset
+
+, and there is no need for the ADMM algorithm.
 \end_layout
 
 \begin_layout Subsubsection
@@ -5979,6 +6074,387 @@ name "fig:SNR-per-num-proj-iterative"
 \end_layout
 
 \begin_layout Subsection
+Mapping Functions Comparison
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Mapping-Functions-Comparison"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We investigate different mapping functions for the Poisson noise model 
+\begin_inset Formula $f_{\text{P}}(\cdot)$
+\end_inset
+
+ in Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:Poisson-data-term"
+
+\end_inset
+
+ using the 
+\begin_inset Formula $\ell_{2}$
+\end_inset
+
+ norm regularizer i.e.
+ just run the proximal operators from Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Prox-Operators"
+
+\end_inset
+
+ with input 
+\begin_inset Formula $u=\mathbf{0}_{n}$
+\end_inset
+
+.
+ We compare applying different mapping functions on the weights, since we
+ noticed it improves the performance for some proximal operators.
+ In particular, we try three functions: identity 
+\begin_inset Formula $r_{1}(w_{i})=w_{i}$
+\end_inset
+
+, the square root 
+\begin_inset Formula $r_{2}=\sqrt{w_{i}}$
+\end_inset
+
+, and the cubic root 
+\begin_inset Formula $r_{3}=\sqrt[3]{w_{i}}$
+\end_inset
+
+.
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SNR-per-iter-data-term-l2-prior"
+
+\end_inset
+
+ shows results for the three datasets for 15, 30, and 90 projections with
+ 
+\begin_inset Formula $\sigma=0.5$
+\end_inset
+
+ i.e.
+ 
+\begin_inset Formula $\lambda=1$
+\end_inset
+
+ in Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:prox-operator"
+
+\end_inset
+
+.
+ We note the following:
+\end_layout
+
+\begin_layout Itemize
+Using mapping 
+\begin_inset Formula $r_{1}$
+\end_inset
+
+ (Poiss-1 in the Fig.) is generally worse than 
+\begin_inset Formula $r_{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $r_{3}$
+\end_inset
+
+, specially for BICAV, ART, and SART.
+ We believe this is due to the normalizing matrix 
+\begin_inset Formula $C$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/wls-l2-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/wls-l2-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/wls-l2-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Modified Shepp-Logan
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/wls-l2-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/wls-l2-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/wls-l2-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NCAT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/wls-l2-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/wls-l2-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/wls-l2-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mouse
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SNR per iteration for the Gaussian (
+\emph on
+solid
+\emph default
+ curves) and Poisson noise models with mapping functions 
+\begin_inset Formula $r_{1}$
+\end_inset
+
+ (asterisk), 
+\begin_inset Formula $r_{2}$
+\end_inset
+
+ (square), and 
+\begin_inset Formula $r_{3}$
+\end_inset
+
+ (triangle).
+ See Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Mapping-Functions-Comparison"
+
+\end_inset
+
+.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SNR-per-iter-data-term-l2-prior"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
 Data Terms and Regularizers Comparison
 \begin_inset CommandInset label
 LatexCommand label
@@ -6137,7 +6613,7 @@ The SAD regularizer is better for all datasets.
 \begin_inset Float figure
 wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure

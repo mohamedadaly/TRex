@@ -24,7 +24,8 @@ sino = in_params.sino';
 
 % WLS solution for Poisson noise: multiply both sinogram and A by wi
 if alg_params.wls
-  in_params.wi = sqrt(in_params.wi');
+%   in_params.wi = sqrt(in_params.wi');
+  in_params.wi = (in_params.wi .^ (1/6))';
   in_params.A = bsxfun(@(x,y)(x .* y), in_params.A, in_params.wi(:));
   sino = in_params.wi .* sino;
 end
