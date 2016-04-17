@@ -5027,7 +5027,8 @@ target "http://www.exxim-cc.com/"
 \emph on
 ground truth
 \emph default
- volume.
+ volume, but we note that results on this dataset should be taken with a
+ grain of salt.
  We measure performance in terms of SNR (signal-to-noise ratio) defined
  as 
 \begin_inset Formula 
@@ -6074,7 +6075,7 @@ name "fig:SNR-per-num-proj-iterative"
 \end_layout
 
 \begin_layout Subsection
-Mapping Functions Comparison
+Poisson Model Mapping Functions Comparison
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Mapping-Functions-Comparison"
@@ -6085,18 +6086,11 @@ name "sub:Mapping-Functions-Comparison"
 \end_layout
 
 \begin_layout Standard
-We compare different mapping functions defined in Sec.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Data-Terms"
-
-\end_inset
-
- defined for the Poisson noise model 
+We investigate different mapping functions for the Poisson noise model 
 \begin_inset Formula $f_{\text{P}}(\cdot)$
 \end_inset
 
+ in Eq.
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -6143,14 +6137,13 @@ reference "fig:SNR-per-iter-data-term-l2-prior"
 
 \end_inset
 
- shows results for the three datasets for 15, 30, and 90 projections with
- 
-\begin_inset Formula $\sigma=0.5$
+ shows results for the three datasets for 30 projections with 
+\begin_inset Formula $\sigma=1$
 \end_inset
 
  i.e.
  
-\begin_inset Formula $\lambda=1$
+\begin_inset Formula $\lambda=0.5$
 \end_inset
 
  in Eq.
@@ -6170,7 +6163,7 @@ Using mapping
 \begin_inset Formula $r_{1}$
 \end_inset
 
- (Poiss-1 in the Fig.) is generally worse than 
+ is generally worse than 
 \begin_inset Formula $r_{2}$
 \end_inset
 
@@ -6178,12 +6171,20 @@ Using mapping
 \begin_inset Formula $r_{3}$
 \end_inset
 
-, specially for BICAV, ART, and SART.
+, especially for BICAV, ART, and SART.
  We believe this is due to the normalizing matrix 
 \begin_inset Formula $C$
 \end_inset
 
- 
+, where in this case it includes squares of entries in the matrix 
+\begin_inset Formula $A$
+\end_inset
+
+ that are typically 
+\begin_inset Formula $<1$
+\end_inset
+
+, which make them esmaller
 \end_layout
 
 \begin_layout Standard
