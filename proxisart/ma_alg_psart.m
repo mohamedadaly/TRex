@@ -94,6 +94,10 @@ iters = cumsum(iters);
     if strcmp(alg_params.data, 'wls')
       % Set WLS inside the prox solver
       alg_params.prox_params.wls = 1;
+      alg_params.prox_params.wls_rt = 1;
+      if isfield(alg_params, 'wls_rt')
+        alg_params.prox_params.wls_rt = alg_params.wls_rt;
+      end
     end;
     
     % initialize from FBP

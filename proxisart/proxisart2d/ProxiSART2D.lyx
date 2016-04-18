@@ -6219,13 +6219,13 @@ Using the Poisson noise model (specially with
 \begin_inset Float figure
 wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6265,7 +6265,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/wls-wt-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	filename plots/wls-wt-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6297,7 +6297,7 @@ Modified Shepp-Logan
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6337,7 +6337,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/wls-wt-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	filename plots/wls-wt-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6409,7 +6409,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/wls-wt-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
+	filename plots/wls-wt-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -7005,7 +7005,7 @@ reference "sub:Data-Terms-and-Regularizers-Comparison"
 \begin_inset Float figure
 wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
