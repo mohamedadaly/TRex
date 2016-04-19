@@ -5660,7 +5660,11 @@ Mouse
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Convergence of Iterative Algorithms.
+
+\series bold
+Iterative Algorithms Comparison
+\series default
+.
  Plots show SNR per iteration.
  Solid lines have 
 \begin_inset Formula $\alpha=1$
@@ -5858,7 +5862,12 @@ Mouse
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-SNR per running time for 90 projections.
+
+\series bold
+Running Time Comparison
+\series default
+.
+ Curves show SNR per running time for 90 projections.
  Compare with Fig.
  
 \begin_inset CommandInset ref
@@ -6051,7 +6060,11 @@ Mouse
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Effect of the number of projections.
+
+\series bold
+Effect of the number of projections
+\series default
+.
  Plots show the maximum SNR achieved over 30 iterations per number of projection
 s used.
  
@@ -6184,14 +6197,42 @@ Using mapping
 \begin_inset Formula $<1$
 \end_inset
 
-, which make them esmaller
+.
+ This makes them even smaller, and taking the square or cubic root of the
+ weights, which are also 
+\begin_inset Formula $<1$
+\end_inset
+
+, makes them bigger to counter-balance the former effect, and make the two
+ terms of the optimization problem in Eq.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:prox-operator"
+
+\end_inset
+
+ of the same order.
+\end_layout
+
+\begin_layout Itemize
+Using the Poisson noise model (specially with 
+\begin_inset Formula $r_{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $r_{3}$
+\end_inset
+
+) is generally better than the standard algorithm, and helps improve the
+ performance.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
 wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -6215,7 +6256,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/wls-l2-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	filename plots/wls-wt-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6226,7 +6267,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/wls-l2-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	filename plots/wls-wt-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6237,7 +6278,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/wls-l2-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	filename plots/wls-wt-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6287,7 +6328,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/wls-l2-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	filename plots/wls-wt-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6298,7 +6339,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/wls-l2-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	filename plots/wls-wt-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6309,7 +6350,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/wls-l2-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	filename plots/wls-wt-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6341,7 +6382,7 @@ NCAT
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6359,7 +6400,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/wls-l2-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
+	filename plots/wls-wt-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6370,7 +6411,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/wls-l2-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	filename plots/wls-wt-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6381,7 +6422,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/wls-l2-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
+	filename plots/wls-wt-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6416,23 +6457,49 @@ Mouse
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-SNR per iteration for the Gaussian (
-\emph on
-solid
-\emph default
- curves) and Poisson noise models with mapping functions 
+
+\series bold
+Poisson Model Mapping Functions Comparison
+\series default
+.
+ Curves show SNR per iteration for the Poisson noise models with mapping
+ functions 
 \begin_inset Formula $r_{1}$
 \end_inset
 
- (asterisk), 
+ (
+\emph on
+asterisk
+\emph default
+s), 
 \begin_inset Formula $r_{2}$
 \end_inset
 
- (square), and 
+ (
+\emph on
+square
+\emph default
+s), and 
 \begin_inset Formula $r_{3}$
 \end_inset
 
- (triangle).
+ (
+\emph on
+triangle
+\emph default
+s).
+ The standard algorithms from Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Iterative-Methods"
+
+\end_inset
+
+ are denoted by 
+\emph on
+diamonds
+\emph default
+.
  See Sec.
  
 \begin_inset CommandInset ref
@@ -6846,7 +6913,12 @@ Mouse
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-SNR per iteration for the Gaussian (
+
+\series bold
+Data Terms and Regularizers Comparison
+\series default
+.
+ Plots show SNR per iteration for the Gaussian (
 \emph on
 solid
 \emph default
@@ -6928,7 +7000,7 @@ reference "tab:Prox-Operators"
 
 \end_inset
 
- using the best results from Sec.
+ using the best regularizer Sec.
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -6936,21 +7008,32 @@ reference "sub:Data-Terms-and-Regularizers-Comparison"
 
 \end_inset
 
- i.e.
- Poisson noise model and SAD regularizer.
+, i.e.
+ SAD regularizer, and both the Poisson and Gaussian noise models.
+ We use 
+\begin_inset Formula $r_{3}(\cdot)$
+\end_inset
+
+ mapping for the Poisson model.
  We set 
 \begin_inset Formula $\sigma=0.1$
 \end_inset
 
-; 
+ and 
 \begin_inset Formula $\rho=50$
 \end_inset
 
- for SART, ART, and BICAV, and 
-\begin_inset Formula $\rho=1$
-\end_inset
+ for 30 projections.
+ We note the following:
+\end_layout
 
- for OS-SQS (which gave better results).
+\begin_layout Itemize
+The Poisson model is consistently better than the Gaussian model for all
+ operators.
+\end_layout
+
+\begin_layout Itemize
+SART proximal operator is generally better than other proximal operators
 \end_layout
 
 \begin_layout Standard
@@ -6963,7 +7046,7 @@ status open
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -7024,7 +7107,7 @@ Modified Shepp-Logan
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -7085,7 +7168,7 @@ NCAT
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -7149,7 +7232,12 @@ Mouse
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-SNR per iteration for the Gaussian (
+
+\series bold
+Proximal Operators Comparison
+\series default
+.
+ Plots show SNR per iteration for the Gaussian (
 \emph on
 solid
 \emph default
@@ -7157,29 +7245,12 @@ solid
 \emph on
 dashed
 \emph default
- curves)noise models with ITV (
-\emph on
-blue
-\emph default
-), ATV (
-\emph on
-red
-\emph default
-), and SAD (
-\emph on
-green
-\emph default
-) regularizers.
- The 
-\emph on
-black
-\emph default
- curve shows the results for SART.
+ curves) noise models with SAD regularizer.
  See Sec.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Data-Terms-and-Regularizers-Comparison"
+reference "sub:Proximal-Operators-Comparison"
 
 \end_inset
 

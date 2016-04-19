@@ -256,8 +256,8 @@ alg_params = struct('iter',5, 'alpha',1.99, 'min_val',0, 'precon',0, ...
 %%    SQS
 % --> debug sqs
 alg_params = struct('iter',5, 'alpha',1, 'min_val',0, 'precon',0, ...
-  'wls',0, 'BSSART',0, 'prox','sqs', 'lambda',1e0, 'nsubsets',30, 'sqs',1, ...
-  'init_fbp',0, 'nu',1);
+  'wls',1, 'BSSART',0, 'prox','sqs', 'lambda',1e0, 'nsubsets',30, 'sqs',1, ...
+  'init_fbp',0, 'nu',1, 'wls_rt',3);
 [rec, times, snrs, iters] = ma_alg_sart(in_params, alg_params);
 [times snrs iters]
 
@@ -291,7 +291,7 @@ cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
 cfg.option.Alpha = 1;
-cfg.option.Lambda = 1e3;
+cfg.option.Lambda = 1e0;
 cfg.option.ComputeIterationMetrics = 1;
 cfg.option.GTReconstructionId = P_id;
 cfg.option.IterationMetricsId = metrics_id;

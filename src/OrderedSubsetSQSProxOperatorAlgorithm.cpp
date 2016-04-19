@@ -347,6 +347,8 @@ void COrderedSubsetSQSProxOperatorAlgorithm::run(int _iNrIterations)
 			//Update all the voxels, not sure if wrong, but gives better results ...
 			// Add alpha * tempVol / TotalPixel
 			*m_pTempVol /= *m_pTotalPixelWeight;
+			// CHECK if division is correct!!
+			//*m_pTempVol *= m_fAlpha / m_iProjectionCount;
 			*m_pTempVol *= m_fAlpha;
 			*m_pReconstruction += *m_pTempVol;
 
@@ -358,7 +360,8 @@ void COrderedSubsetSQSProxOperatorAlgorithm::run(int _iNrIterations)
 			//	float32 val = m_pTempVol->getData()[i];
 			//	// Update alpha * tempVol / TotalPixel
 			//	val /= m_pTotalPixelWeight->getData()[i];
-			//	val *= m_fAlpha;
+			//	// CHECK if division here is correct!!
+			//	val *= m_fAlpha / m_iProjectionCount;  
 			//	// Update voxel
 			//	m_pReconstruction->getData()[i] += val;
 			//}			

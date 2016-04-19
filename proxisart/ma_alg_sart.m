@@ -23,7 +23,7 @@ sino = in_params.sino';
 
 % WLS solution for Poisson noise: multiply both sinogram and A by wi
 if alg_params.wls
-  in_params.wi = sqrt(in_params.wi');
+  in_params.wi = nthroot(in_params.wi', 2 * alg_params.wls_rt);
   in_params.A = bsxfun(@(x,y)(x .* y), in_params.A, in_params.wi(:));
   sino = in_params.wi .* sino;
 end
@@ -133,9 +133,11 @@ for it = 1:alg_params.iter
         % backproject and add
         bp = 2 * alg_params.lambda * (in_params.A(arows,:)' * diff(:));
         % subset from volume to update 
-        vsubset = ceil(length(rec(:)) / inner_iter);
-        vids = (vsubset * (v-1) + 1 : min(length(rec(:)),vsubset*v))';
-        bp(vids) = bp(vids) + (in_params.prox_in(vids) - rec(vids)) * alg_params.nu;
+%         vsubset = ceil(length(rec(:)) / inner_iter);
+%         vids = (vsubset * (v-1) + 1 : min(length(rec(:)),vsubset*v))';
+        vids = (1:length(rec(:)))';
+        bp(vids) = bp(vids) + (in_params.prox_in(vids) - rec(vids)) * ...
+          alg_params.nu / alg_params.nsubsets;
         % divide
         bp = bp ./ sum_cols;
 

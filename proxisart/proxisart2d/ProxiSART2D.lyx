@@ -3889,7 +3889,7 @@ w_{i}\propto I_{t}^{i}.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Mapping-Functions-Comparison"
+reference "sub:Poisson-Mapping-Functions-Comparison"
 
 \end_inset
 
@@ -4569,17 +4569,21 @@ name "sub:Regularizers"
 
 \begin_layout Standard
 The regularizers impose constraints on the reconstruction volume.
- We will consider four regularizers:
+ We consider the following regularizers:
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
 \begin_inset Formula $\ell_{2}$
 \end_inset
 
  norm (L2)
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 It is the simplest regularizer that penalizes volumes that have higher 
 \begin_inset Formula $\ell_{2}$
 \end_inset
@@ -4621,6 +4625,11 @@ reference "eq:prox-operator"
 \end_inset
 
 , and there is no need for the ADMM algorithm.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -5660,7 +5669,11 @@ Mouse
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Convergence of Iterative Algorithms.
+
+\series bold
+Iterative Algorithms Comparison
+\series default
+.
  Plots show SNR per iteration.
  Solid lines have 
 \begin_inset Formula $\alpha=1$
@@ -5858,7 +5871,12 @@ Mouse
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-SNR per running time for 90 projections.
+
+\series bold
+Running Time Comparison
+\series default
+.
+ Curves show SNR per running time for 90 projections.
  Compare with Fig.
  
 \begin_inset CommandInset ref
@@ -6051,7 +6069,11 @@ Mouse
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Effect of the number of projections.
+
+\series bold
+Effect of the number of projections
+\series default
+.
  Plots show the maximum SNR achieved over 30 iterations per number of projection
 s used.
  
@@ -6078,7 +6100,7 @@ name "fig:SNR-per-num-proj-iterative"
 Poisson Model Mapping Functions Comparison
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:Mapping-Functions-Comparison"
+name "sub:Poisson-Mapping-Functions-Comparison"
 
 \end_inset
 
@@ -6138,11 +6160,6 @@ reference "fig:SNR-per-iter-data-term-l2-prior"
 \end_inset
 
  shows results for the three datasets for 30 projections with 
-\begin_inset Formula $\sigma=1$
-\end_inset
-
- i.e.
- 
 \begin_inset Formula $\lambda=0.5$
 \end_inset
 
@@ -6171,12 +6188,16 @@ Using mapping
 \begin_inset Formula $r_{3}$
 \end_inset
 
-, especially for BICAV, ART, and SART.
+, especially for BICAV, ART, and OS-SQS.
  We believe this is due to the normalizing matrix 
 \begin_inset Formula $C$
 \end_inset
 
-, where in this case it includes squares of entries in the matrix 
+, where in this case it includes sum of 
+\emph on
+squares
+\emph default
+ of entries in the matrix 
 \begin_inset Formula $A$
 \end_inset
 
@@ -6200,6 +6221,15 @@ reference "eq:prox-operator"
 \end_inset
 
  of the same order.
+ This is not the case in SART where the 
+\begin_inset Formula $C$
+\end_inset
+
+ matrix contains sums of entries of 
+\begin_inset Formula $A$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Itemize
@@ -6213,6 +6243,7 @@ Using the Poisson noise model (specially with
 
 ) is generally better than the standard algorithm, and helps improve the
  performance.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -6225,7 +6256,7 @@ status collapsed
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6297,7 +6328,7 @@ Modified Shepp-Logan
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6369,7 +6400,7 @@ NCAT
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6444,7 +6475,13 @@ Mouse
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-SNR per iteration for the Poisson noise models with mapping functions 
+
+\series bold
+Poisson Model Mapping Functions Comparison
+\series default
+.
+ Curves show SNR per iteration for the Poisson noise models with mapping
+ functions 
 \begin_inset Formula $r_{1}$
 \end_inset
 
@@ -6485,7 +6522,7 @@ diamonds
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Mapping-Functions-Comparison"
+reference "sub:Poisson-Mapping-Functions-Comparison"
 
 \end_inset
 
@@ -6675,7 +6712,7 @@ status collapsed
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6894,7 +6931,12 @@ Mouse
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-SNR per iteration for the Gaussian (
+
+\series bold
+Data Terms and Regularizers Comparison
+\series default
+.
+ Plots show SNR per iteration for the Gaussian (
 \emph on
 solid
 \emph default
@@ -6976,7 +7018,16 @@ reference "tab:Prox-Operators"
 
 \end_inset
 
- using the best results from Sec.
+ using our proximal framework in Alg.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:LADMM-algorithm"
+
+\end_inset
+
+.
+ We use the best regularizer from Sec.
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -6984,34 +7035,62 @@ reference "sub:Data-Terms-and-Regularizers-Comparison"
 
 \end_inset
 
- i.e.
- Poisson noise model and SAD regularizer.
+, i.e.
+ SAD regularizer, and both the Poisson and Gaussian noise models.
+ For the Poisson model, we use 
+\begin_inset Formula $r_{1}$
+\end_inset
+
+ mapping for SART, and 
+\begin_inset Formula $r_{3}$
+\end_inset
+
+ for ART, BICAV, and OS-SQS since 
+\begin_inset Formula $r_{1}$
+\end_inset
+
+ does produce good results (see Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Poisson-Mapping-Functions-Comparison"
+
+\end_inset
+
+).
  We set 
 \begin_inset Formula $\sigma=0.1$
 \end_inset
 
-; 
+ and 
 \begin_inset Formula $\rho=50$
 \end_inset
 
- for SART, ART, and BICAV, and 
-\begin_inset Formula $\rho=1$
-\end_inset
+ for 30 projections.
+ We note the following:
+\end_layout
 
- for OS-SQS (which gave better results).
+\begin_layout Itemize
+The Poisson model is consistently better than the Gaussian model for all
+ operators and all datasets.
+\end_layout
+
+\begin_layout Itemize
+SART proximal operator is generally better than other proximal operators,
+ and ART and BICAV are quite competetive.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
 wide true
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -7029,7 +7108,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	filename plots/prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -7072,7 +7151,7 @@ Modified Shepp-Logan
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -7090,7 +7169,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	filename plots/prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -7151,7 +7230,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	filename plots/prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -7197,7 +7276,12 @@ Mouse
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-SNR per iteration for the Gaussian (
+
+\series bold
+Proximal Operators Comparison
+\series default
+.
+ Plots show SNR per iteration for the Gaussian (
 \emph on
 solid
 \emph default
@@ -7205,29 +7289,12 @@ solid
 \emph on
 dashed
 \emph default
- curves)noise models with ITV (
-\emph on
-blue
-\emph default
-), ATV (
-\emph on
-red
-\emph default
-), and SAD (
-\emph on
-green
-\emph default
-) regularizers.
- The 
-\emph on
-black
-\emph default
- curve shows the results for SART.
+ curves) noise models with SAD regularizer.
  See Sec.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Data-Terms-and-Regularizers-Comparison"
+reference "sub:Proximal-Operators-Comparison"
 
 \end_inset
 

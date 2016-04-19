@@ -200,7 +200,9 @@ eval(plt);
       end
 
       % save
-      save(mat_file, 'results', 'algs'); 
+      if ~isfield(arg, 'save') || arg.save
+        save(mat_file, 'results', 'algs'); 
+      end
     else
       rr = load(mat_file);
       results = rr.results;
@@ -262,7 +264,9 @@ eval(plt);
     end
     
     % save figure
-    save_fig(snr_file, snr_fig, 'pdf', '-fonts');
+    if ~isfield(arg, 'save') || arg.save
+      save_fig(snr_file, snr_fig, 'pdf', '-fonts');
+    end
 
     % Residual plot
     if arg.plot_resid
@@ -285,7 +289,9 @@ eval(plt);
       xlim([1 arg.iter]);
       columnlegend(arg.legend_cols, legends, 'Location','NorthEast');    
 
-      save_fig(resid_file, resid_fig, 'pdf');
+      if ~isfield(arg, 'save') || arg.save
+        save_fig(resid_file, resid_fig, 'pdf');
+      end
     end    
   end
 
@@ -482,7 +488,9 @@ eval(plt);
     figh = figure('Name',fig_file, 'Position',[1, 1, 800, 800]);
     imshow(P, arg.range); colorbar;
     
-    save_fig(fig_file, figh, 'pdf');
+    if ~isfield(arg, 'save') || arg.save
+      save_fig(fig_file, figh, 'pdf');
+    end
     
   end
 
