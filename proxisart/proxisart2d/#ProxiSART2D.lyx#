@@ -89,8 +89,7 @@
 \begin_body
 
 \begin_layout Title
-ProxiSART: A Proximal Framework for Robust X-Ray Tomography Reconstruction
- using SART
+A Proximal Framework for Robust Sparse View X-Ray Tomography Reconstruction
 \end_layout
 
 \begin_layout Author
@@ -206,17 +205,16 @@ P.
 
 \begin_layout Abstract
 We present ProxiSART, a flexible proximal framework for robust X-ray tomographic
- reconstruction based on the Simultaneous Algebraic Reconstruction Technique
- (SART).
- We conduct a thorough comparison between different iterative reconstruction
- methods and establish that SART is the best algorithm in terms of reconstructio
-n quality for sparse-view and noisy-measurement situations.
- We then focus on SART and derive its proximal operator.
- We show the flexibility of the framework by deriving solvers for different
- data terms including L1, L2, and weighted L2; and by plugging in different
- powerful regularizers.
- We compare our framework to state-of-the-art methods, and show superior
+ reconstruction.
+ We provide an overview and perform an experimental comparison between the
+ famous iterative reconstruction methods in terms of reconstruction quality
+ in sparse view situations.
+ We then derive the proximal operators for the four best methods.
+ We show the flexibility of our framework by deriving solvers for two noise
+ models: Gaussian and Poisson; and by plugging in three powerful regularizers.
+ We compare our framework to state of the art methods, and show superior
  quality on both synthetic and real datasets.
+ 
 \end_layout
 
 \begin_layout Keywords
@@ -337,14 +335,14 @@ key "censor2001bicav"
 
 \end_inset
 
-, Conjugate Gradient 
+, Conjugate Gradient (CG) 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "bjorck1996numerical"
 
 \end_inset
 
-, and OS-SQS (Ordered-Subset Separable Quadratic Surrogates) 
+, and OS-SQS (Ordered Subset-Separable Quadratic Surrogates) 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "depierro1994modified,hudson1994accelerated,erdogan1999ordered,kim2013accelerating,nien2015fast"
@@ -359,9 +357,8 @@ key "andersen1984simultaneous,andersen1989algebraic"
 
 \end_inset
 
- provides the best performance in the sparse view and noisy measurements
- situations.
- This motivates us to focus on SART for the rest of our development.
+ provides the best performance in the sparse view measurements situations,
+ followed closely by ART, OS-SQS, and BICAV.
 \end_layout
 
 \begin_layout Standard
@@ -373,18 +370,23 @@ key "boyd2011distributed,parikh2013proximal"
 
 \end_inset
 
- together with SART.
- We derive proximal operators for SART, BICAV, and OS-SQS, and show how
- to use these proximal operators to minimize different data fitting terms,
- including least squares (LS) that assumes a Gaussian noise model, weighted
- least squares (WLS) that assumes an approximation to a Poisson noise model
- 
+ together with these methods.
+ We derive proximal operators for SART, ART, BICAV, and OS-SQS, and show
+ how to use these proximal operators to minimize different data fitting
+ terms, including least squares (LS) that assumes a Gaussian noise model,
+ and weighted least squares (WLS) that assumes an approximation to a Poisson
+ noise model 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "clinthorne1993preconditioning"
 
 \end_inset
 
+.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
 , and least absolute deviation (LAD) 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -392,21 +394,42 @@ key "sidky2012convex"
 
 \end_inset
 
-.
- We compare the proximal operators using a Total Variation (TV) prior 
+
+\end_layout
+
+\end_inset
+
+ We also show how to plugin different powerful regularizers, namely the
+ Isotropic Total Variation (ITV) 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "rudin1992nonlinear"
 
 \end_inset
 
- and establish that the SART proximal operator provides the best performance.
+, Anisotropic Total Variation (ATV) 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sidky2012convex"
+
+\end_inset
+
+, and Sum of Absolute Differences (SAD) 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gregson2012stochastic"
+
+\end_inset
+
+.
+ We perform thorough comparisons between the different proximal operators,
+ data terms, and regularizers.
  
 \end_layout
 
 \begin_layout Standard
 Finally we compare our framework to state of the art methods, namely the
- Augmented Lagrangian method from 
+ ADMM method from 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "ramani2012splitting"
@@ -429,16 +452,17 @@ In summary, we provide the following contributions:
 
 \begin_layout Enumerate
 We perform a thorough experimental comparison of famous iterative reconstruction
- methods.
+ methods on synthetic and real datasets.
 \end_layout
 
 \begin_layout Enumerate
-We derive proximal operators for SART, BICAV, and OS-SQS, and compare them.
+We derive proximal operators for SART, ART, BICAV, and OS-SQS; and compare
+ them.
 \end_layout
 
 \begin_layout Enumerate
-We derive solvers for different data terms, namely LS, WLS, and LAD, using
- the derived proximal operator.
+We derive solvers for different data terms assuming different noise models,
+ namely Gaussian and Poisson models, using the derived proximal operators.
 \end_layout
 
 \begin_layout Enumerate
@@ -447,14 +471,14 @@ We compare our framework to state of the art methods and show that it produces
 \end_layout
 
 \begin_layout Enumerate
-We make our code, which is based on the ASTRA toolbox 
+We make our code---which is based on the ASTRA toolbox 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "van2015astra"
 
 \end_inset
 
-, publicly available.
+---and data publicly available.
 \end_layout
 
 \begin_layout Section
@@ -548,7 +572,7 @@ key "gregor2015comparison"
 \end_inset
 
 .
- The have also been shown 
+ They have also been shown 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "kim2015combining"
@@ -647,10 +671,10 @@ key "ramani2012splitting"
 
 \end_inset
 
- used ADMM with Preconditioned CG 
+ used ADMM with Preconditioned CG (PCG) 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "nocedal2006numerical"
+key "fessler1999conjugate"
 
 \end_inset
 
@@ -2796,6 +2820,319 @@ reference "tab:Prox-Operators"
 .
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float algorithm
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+protect
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:ART-like-Prox-Operator"
+
+\end_inset
+
+SART, ART, and BICAV Proximal Operator
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithmic}[1]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $A\in\mathbb{R}{}^{m\times n}$
+\end_inset
+
+, 
+\begin_inset Formula $\alpha,\lambda\in\mathbb{R}$
+\end_inset
+
+, 
+\begin_inset Formula $p\in\mathbb{R}{}^{m}$
+\end_inset
+
+, 
+\begin_inset Formula $u\in\mathbb{R}^{n}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+ Initialize: 
+\begin_inset Formula 
+\begin{align*}
+x^{(0)} & =u\\
+y^{(0)} & =\mathbf{0}_{m}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ForAll
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $t=1\ldots T$
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ForAll
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+subsets 
+\begin_inset Formula $S\in\mathcal{S}$
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+x_{j}^{(t+1)} & =x^{(t)}+\alpha\Delta x^{(t)}\\
+y_{j}^{(t+1)} & =y_{i}^{(t)}+
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $x^{(t+1)}=\mbox{clip}(x^{(t+1)})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+Return
+\end_layout
+
+\end_inset
+
+ volume reconstruction 
+\begin_inset Formula $x\in\mathbb{R}{}^{n}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithmic}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 OS-SQS
 \end_layout
@@ -2985,7 +3322,7 @@ x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{\tilde{c}_{j}}{\scriptstyle \left(2\
 \begin_inset Float table
 wide true
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -3889,7 +4226,7 @@ w_{i}\propto I_{t}^{i}.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Mapping-Functions-Comparison"
+reference "sub:Poisson-Mapping-Functions-Comparison"
 
 \end_inset
 
@@ -4569,17 +4906,21 @@ name "sub:Regularizers"
 
 \begin_layout Standard
 The regularizers impose constraints on the reconstruction volume.
- We will consider four regularizers:
+ We consider the following regularizers:
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
 \begin_inset Formula $\ell_{2}$
 \end_inset
 
  norm (L2)
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 It is the simplest regularizer that penalizes volumes that have higher 
 \begin_inset Formula $\ell_{2}$
 \end_inset
@@ -4621,6 +4962,11 @@ reference "eq:prox-operator"
 \end_inset
 
 , and there is no need for the ADMM algorithm.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -5380,13 +5726,23 @@ key "ramani2012splitting"
 With more projections, e.g.
  90, we notice that the SNR for a few methods go up and then down.
  This doesn't mean, however, that they are not converging.
- The objective function is the projection error, and we confirmed it is
- in fact improving even though the SNR is decreasing.
+ The objective function is the reprojection error not the SNR.
  This can be explained by the fact of the presence of noise, and that at
  some point the algorithm starts fitting the noise in the measurements 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "herman2009fundamentals"
+
+\end_inset
+
+.
+ Usually these kinds of algorithms are run interactively where the user
+ inspects the reconstruction quality every few iterations and stops the
+ procedure when it starts to deteriorate, which motivates Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SNR-per-num-proj-iterative"
 
 \end_inset
 
@@ -6091,7 +6447,7 @@ name "fig:SNR-per-num-proj-iterative"
 Poisson Model Mapping Functions Comparison
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:Mapping-Functions-Comparison"
+name "sub:Poisson-Mapping-Functions-Comparison"
 
 \end_inset
 
@@ -6111,23 +6467,15 @@ reference "eq:Poisson-data-term"
 
 \end_inset
 
- using the 
-\begin_inset Formula $\ell_{2}$
-\end_inset
-
- norm regularizer i.e.
- just run the proximal operators from Table 
+ using the ITV regularizer from Eq.
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "tab:Prox-Operators"
+reference "eq:h-ITV"
 
 \end_inset
 
- with input 
-\begin_inset Formula $u=\mathbf{0}_{n}$
-\end_inset
-
-.
+ using the ADMM algorithm.
  We compare applying different mapping functions on the weights, since we
  noticed it improves the performance for some proximal operators.
  In particular, we try three functions: identity 
@@ -6150,29 +6498,34 @@ reference "fig:SNR-per-iter-data-term-l2-prior"
 
 \end_inset
 
- shows results for the three datasets for 30 projections with 
-\begin_inset Formula $\sigma=1$
-\end_inset
-
- i.e.
- 
-\begin_inset Formula $\lambda=0.5$
+ shows results for the three datasets for 15 and 30 projections with 
+\begin_inset Formula $\sigma=0.1$
 \end_inset
 
  in Eq.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "eq:prox-operator"
+reference "eq:h-ITV"
 
 \end_inset
 
 .
- We note the following:
+ We set 
+\begin_inset Formula $\rho=100$
+\end_inset
+
+ and 
+\begin_inset Formula $\mu=\nicefrac{1}{\rho\Vert K\Vert^{2}}$
+\end_inset
+
+ except for OS-SQS which was tuned manually as this default value didn't
+ provide good performance.
+ 
 \end_layout
 
-\begin_layout Itemize
-Using mapping 
+\begin_layout Standard
+We note the following that using mapping 
 \begin_inset Formula $r_{1}$
 \end_inset
 
@@ -6184,12 +6537,17 @@ Using mapping
 \begin_inset Formula $r_{3}$
 \end_inset
 
-, especially for BICAV, ART, and SART.
+.
+ This is especially true for OS-SQS, BICAV, and ART.
  We believe this is due to the normalizing matrix 
 \begin_inset Formula $C$
 \end_inset
 
-, where in this case it includes squares of entries in the matrix 
+, where in this case it includes sum of 
+\emph on
+squares
+\emph default
+ of entries in the matrix 
 \begin_inset Formula $A$
 \end_inset
 
@@ -6213,19 +6571,26 @@ reference "eq:prox-operator"
 \end_inset
 
  of the same order.
-\end_layout
-
-\begin_layout Itemize
-Using the Poisson noise model (specially with 
-\begin_inset Formula $r_{2}$
+ This is not the case in SART where the 
+\begin_inset Formula $C$
 \end_inset
 
- and 
-\begin_inset Formula $r_{3}$
+ matrix contains sums of entries of 
+\begin_inset Formula $A$
 \end_inset
 
-) is generally better than the standard algorithm, and helps improve the
- performance.
+.
+ We also note that ART and SART provide very similar performance, closely
+ followed by BICAV and then OS-SQS.
+ This is also confirmed in the comparison in Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Proximal-Operators-Comparison"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -6276,17 +6641,6 @@ status open
 
 \end_layout
 
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/wls-wt-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
 \end_inset
 
 
@@ -6310,7 +6664,7 @@ Modified Shepp-Logan
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6348,17 +6702,6 @@ status open
 
 \end_layout
 
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/wls-wt-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
 \end_inset
 
 
@@ -6382,7 +6725,7 @@ NCAT
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -6412,17 +6755,6 @@ status open
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename plots/wls-wt-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/wls-wt-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -6469,42 +6801,30 @@ Poisson Model Mapping Functions Comparison
 
  (
 \emph on
-asterisk
+diamonds
 \emph default
-s), 
+), 
 \begin_inset Formula $r_{2}$
+\end_inset
+
+ (
+\emph on
+asterisks
+\emph default
+), and 
+\begin_inset Formula $r_{3}$
 \end_inset
 
  (
 \emph on
 square
 \emph default
-s), and 
-\begin_inset Formula $r_{3}$
-\end_inset
-
- (
-\emph on
-triangle
-\emph default
 s).
- The standard algorithms from Table 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "tab:Iterative-Methods"
-
-\end_inset
-
- are denoted by 
-\emph on
-diamonds
-\emph default
-.
  See Sec.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Mapping-Functions-Comparison"
+reference "sub:Poisson-Mapping-Functions-Comparison"
 
 \end_inset
 
@@ -6569,11 +6889,21 @@ reference "tab:Prox-Operators"
 \begin_inset Formula $\alpha=1.99$
 \end_inset
 
- with for 15 and 30 projections and 
+ with for 15 and 30 projections 
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+and 
 \begin_inset Formula $\alpha=1$
 \end_inset
 
- for 90 projections (see Sec.
+ for 90 projections
+\end_layout
+
+\end_inset
+
+ (see Sec.
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -6598,7 +6928,12 @@ reference "sub:Iterative-Algorithms-Comparison"
 \begin_inset Formula $\rho=50$
 \end_inset
 
- for 30 projections; 
+ for 30 projections
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+; 
 \begin_inset Formula $\sigma=0.5$
 \end_inset
 
@@ -6606,7 +6941,12 @@ reference "sub:Iterative-Algorithms-Comparison"
 \begin_inset Formula $\rho=200$
 \end_inset
 
- for 90 projections; and set 
+ for 90 projections
+\end_layout
+
+\end_inset
+
+; and set 
 \begin_inset Formula $\mu=\nicefrac{1}{\rho\Vert K\Vert^{2}}$
 \end_inset
 
@@ -6732,17 +7072,6 @@ status open
 
 \end_layout
 
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
 \end_inset
 
 
@@ -6804,17 +7133,6 @@ status open
 
 \end_layout
 
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
 \end_inset
 
 
@@ -6852,7 +7170,7 @@ width "33text%"
 special "none"
 height "1in"
 height_special "totalheight"
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -6868,17 +7186,6 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -7000,7 +7307,16 @@ reference "tab:Prox-Operators"
 
 \end_inset
 
- using the best regularizer Sec.
+ using our proximal framework in Alg.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:LADMM-algorithm"
+
+\end_inset
+
+.
+ We use the best regularizer from Sec.
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -7010,37 +7326,98 @@ reference "sub:Data-Terms-and-Regularizers-Comparison"
 
 , i.e.
  SAD regularizer, and both the Poisson and Gaussian noise models.
- We use 
-\begin_inset Formula $r_{3}(\cdot)$
+ For the Poisson model, we use 
+\begin_inset Formula $r_{1}$
 \end_inset
 
- mapping for the Poisson model.
+ mapping for SART, and 
+\begin_inset Formula $r_{3}$
+\end_inset
+
+ for ART, BICAV, and OS-SQS since 
+\begin_inset Formula $r_{1}$
+\end_inset
+
+ does produce good results (see Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Poisson-Mapping-Functions-Comparison"
+
+\end_inset
+
+).
  We set 
-\begin_inset Formula $\sigma=0.1$
+\begin_inset Formula $\sigma=0.05$
 \end_inset
 
  and 
 \begin_inset Formula $\rho=50$
 \end_inset
 
+ for 15 projections; and 
+\begin_inset Formula $\sigma=0.1$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho=100$
+\end_inset
+
  for 30 projections.
+ We set 
+\begin_inset Formula $\mu=\nicefrac{1}{\rho\Vert K\Vert^{2}}$
+\end_inset
+
+ except for OS-SQS which had to be tuned manually.
  We note the following:
 \end_layout
 
 \begin_layout Itemize
 The Poisson model is consistently better than the Gaussian model for all
- operators.
+ operators and all datasets.
 \end_layout
 
 \begin_layout Itemize
-SART proximal operator is generally better than other proximal operators
+SART proximal operator is generally better than other proximal operators,
+ and ART and BICAV are quite competetive.
+ 
+\end_layout
+
+\begin_layout Itemize
+OS-SQS provides the worst performance.
+ We think this has to do with structure of the update formula in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Prox-Operators"
+
+\end_inset
+
+, where the 
+\emph on
+gradient
+\emph default
+ update 
+\begin_inset Formula $A_{S}^{T}(p_{S}-A_{S}x^{(t)})$
+\end_inset
+
+ is added to the difference between the current estimate and the input to
+ the proximal operator 
+\begin_inset Formula $u-x^{(t)}$
+\end_inset
+
+, where the scaling between the two terms has to be adjusted properly.
+ That is the reason 
+\begin_inset Formula $\mu$
+\end_inset
+
+ had to be carefully tuned to get better results.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
 wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -7064,7 +7441,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	filename plots/prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -7125,7 +7502,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	filename plots/prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -7168,7 +7545,7 @@ NCAT
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -7186,7 +7563,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	filename plots/prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -7269,6 +7646,17 @@ name "fig:SNR-per-iter-prox-operator-comparison"
 
 
 \end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Comparison to State of the Art
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Comparison-to-State-of-Art"
 
 \end_inset
 
