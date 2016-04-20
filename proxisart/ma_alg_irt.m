@@ -50,6 +50,10 @@ switch alg
     if ~isempty(alg_params.nu), params.AL.nu1 = alg_params.nu; end
     if ~isempty(alg_params.lambda), params.lambda = alg_params.lambda; end
     if ~isempty(alg_params.mu), params.AL.mu = alg_params.mu; end
+    if isfield(alg_params, 'use_kappa') && ~alg_params.use_kappa
+      params.kappa = 1;
+      params.rw = ones(size(params.rw)); 
+    end
 
     params.figno = 0;
     kWAL1 = (mxW + params.AL.mu)/(mnW + params.AL.mu);

@@ -1396,6 +1396,198 @@ for nproj=nprojs
   end
 end
 
+%% Comparison of State of the Art
+
+clear variables;
+
+iter = 30;
+alg_ids = [1 4 5]; [1 4];
+nprojs = 15; [15 30 90];
+data_ids = 1:3; 1;
+for nproj=nprojs
+
+  switch nproj
+    case 15
+      sigma = .05; .1; .05; 
+      rho_sart = 25; 10; 50;
+      mu = []; 
+      alpha_sart = 1.99; 
+      sigma_with_data = 0;
+      wls_rt_sart = 1;
+      
+      mu_ramani = 1e-4; 1e-3; 
+      lambda_ramani = .001; 
+      nu_ramani =  20e4; 5e6; 
+      wls_ramani = 1;
+      use_kappa_ramani = 1;
+      operator_ramani = 'W'; 'AFD'; 'W';
+      prior_ramani = 'l1';
+      init_fbp_ramani = 0;
+      
+      beta_kim = .05; .1;
+      nsubsets_kim = 5;     
+      relax_kim = [1 1e-3];
+      
+      lambda_mfista = 0.1;
+    case 30
+      sigma = .1; .05; .1;
+      rho_sart = 50; 50; 
+      mu = []; 
+      alpha_sart = 1; 
+      sigma_with_data = 0;
+      wls_rt_sart = 1;
+      
+      mu_ramani = 1e-3; 1e-4; 1e-3; 
+      lambda_ramani = .001; .001; 
+      nu_ramani =  20e4; 5e6; 
+      wls_ramani = 1;
+      use_kappa_ramani = 1;
+      operator_ramani = 'W'; 'AFD'; 'W';
+      prior_ramani = 'l1';
+      init_fbp_ramani = 0;
+      
+      beta_kim = .1; .05; .1;
+      nsubsets_kim = 10; 5; [11 10 10];
+    case 90
+      sigma = .5; .01;  .5; 
+      rho_sart = 200;
+      rho_art = 200; 
+      rho_os = 1; 
+      mu = []; 
+      mu_os = .1; .05;
+      alpha_sart = 1; .1;
+      alpha_art = 1; .1; 
+      sigma_with_data = 0;
+      wls_rt_sart = 1;
+      wls_rt = 3;
+      wls_rt_os = 3;
+
+  end
+  init_fbp = 0;
+  projection_order = 'sequential';
+
+  data = 'wls';
+  wls_rt = 1;
+  prior = 'sad';
+
+  try
+  algs = {
+    % ASTRA types
+    % 
+    struct('name','SART', 'type','astra', ...
+      'clr','k', 'lstyle',':', 'marker','none', ...
+      'alg','SART', ...
+      'alg_params', struct('iter',1, ...
+        'option',struct('UseMinConstraint',1, 'MinConstraintValue',0, ...
+        'UseMaxConstraint',0, 'MaxConstraintValue',1, ...
+        'Alpha',1, 'Lambda',1e3, 'ComputeIterationMetrics',1, ...
+        'ClearReconstruction',1, 'UseJacobiPreconditioner',0, ...
+        'UseBSSART',0, 'ProjectionOrder',projection_order)))
+    
+
+    % TRex types
+    %
+    struct('name','TRex', 'type','psart', ...
+      'clr','k', 'lstyle','-', 'marker','d', ...
+      'alg','admm', ...
+      'alg_params', struct('iter',1, 'sigma',sigma, 'rho',rho_sart, 'mu',mu, ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
+        'theta',1, 'init_fbp',init_fbp, 'data',data, 'prior',prior, ...
+        'sigma_with_data', sigma_with_data, 'prox','astra', ...
+        'prox_name','SART-PROX', 'wls_rt',wls_rt, ...
+        'prox_params', struct('iter',2, ...
+          'option',struct('UseMinConstraint',1, 'MinConstraintValue',0, ...
+            'UseMaxConstraint',0, 'MaxConstraintValue',1, ...
+            'Alpha',alpha_sart, 'Lambda',1e3, 'ComputeIterationMetrics',1, ...
+            'ClearReconstruction',1, ...
+            'UseBSSART',0, 'ProjectionOrder',projection_order))))
+            
+    % IRT Types
+    %
+    struct('name','Ramani-ADMM-PCG', 'type','irt', ...
+      'clr','b', 'lstyle','-', 'marker','p', ...
+      'alg','admm', ...
+      'alg_params', struct('iter',1, 'mu',mu_ramani, 'nCG',2, ...
+        'lambda',lambda_ramani, ... .001&.01
+        'nu',nu_ramani, 'operator',operator_ramani, ...
+        'prior_type',prior_ramani, 'precon',1, ... %nu=200
+        'init_fbp',init_fbp_ramani, 'minx',0, 'wls',wls_ramani, ...
+        'use_kappa',use_kappa_ramani))
+        
+%   struct('name','Kim-OS-SQS-Mom2', 'type','irt', ...
+%     'clr',[0.5 0.5 0.5], 'lstyle','-', 'marker','<', ...
+%     'alg','sqs-os-mom', ...
+%     'alg_params', struct('iter',1, 'beta',10, 'pot_arg',{{'gf1', 10, [.0558, 1.6395]}}, ...
+%       'mom',2, 'relax',[1 0], 'nsubsets',10, 'reg',1, 'wls',0, ...
+%       'init_fbp',0, 'pixmax',[0, Inf], 'bit_reverse',1))
+      
+    struct('name','Kim-OS-Mom', 'type','irt', ...
+      'clr','r', 'lstyle','-', 'marker','<', ...
+      'alg','sqs-os-mom', ...
+      'alg_params', struct('iter',1, 'beta',beta_kim, ...
+        'pot_arg',{{'gf1', 10, [.0558, 1.6395]}}, ...
+        'mom',2, 'relax',relax_kim, 'nsubsets',nsubsets_kim, 'reg',1, 'wls',1, ...
+        'init_fbp',0, 'pixmax',[0, Inf], 'bit_reverse',1))                  
+
+    struct('name','MFISTA', 'type','irt', ...
+      'clr','g', 'lstyle','-', 'marker','o', ...
+      'alg','mfista', ...
+      'alg_params', struct('iter',10, 'nCG',2, 'lambda',lambda_mfista, ...
+        'prior_type','l1', 'operator','W', 'init_fbp',0, 'precon',1, ...
+        'wls',1))
+    
+  };
+  
+  catch ME
+    error(ME.message);
+  end
+
+  for i=data_ids
+    if i==1
+      phantoms = {'mouse'}; {'ncat', 'mod-sl'}; {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
+      noises = {struct('noise_type', 'gauss', 'noise_levels',[0.0])}; 
+      proj_types = {'mouse'}; %{'fan', 'parallel', 'mouse'};
+    elseif i==2
+      phantoms = {'ncat'}; {'ncat', 'mod-sl'}; {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
+      noises = {struct('noise_type', 'poisson', 'noise_levels',[1e5])};
+      proj_types = {'fan'}; %{'fan', 'parallel', 'mouse'};
+    else
+      phantoms = {'mod-sl'}; {'ncat', 'mod-sl'}; {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
+      noises = {struct('noise_type', 'poisson', 'noise_levels',[1e5])};
+      proj_types = {'fan'}; %{'fan', 'parallel', 'mouse'};
+    end
+
+    num_projs = nproj; 90; 30; [15, 90]; [15, 30, 60, 90, 180]; 
+
+  %   iter = 15; 30;
+    prefix = 'sota-comp-';
+    plt = 'per_iter';
+
+    for phantom = phantoms
+      for num_proj = num_projs
+        for noise = noises
+          noise_type = noise{1}.noise_type;
+          for noise_level = noise{1}.noise_levels
+            for proj_type = proj_types
+
+              % put args
+              arg = struct('phan',phantom, 'phan_size',512, 'path','./plots', ...
+                'noise_type',noise_type, 'noise_level',noise_level, ...
+                'num_proj',num_proj, 'iter',iter, 'recompute',1, ...
+                'proj_type',proj_type, 'prefix',prefix, 'plot_resid',0, ...
+                'legend_cols',2, 'per_time',0, 'prox_fbp',0, ...
+                'exclude_legend',[], 'fig_size',[800,400], 'title','num_proj', ...
+                'save',0, 'force_num_proj',1);
+              % call
+              ma_run_and_plot(plt, arg, algs(alg_ids));
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
+
 %% Per Iteration
 phantoms = {'mouse'}; {'ncat', 'mod-sl'}; {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
 num_projs = 90; [15, 90]; [15, 30, 60, 90, 180]; 
@@ -1501,7 +1693,10 @@ arg = struct('phan','mouse', 'phan_size',512, 'path','./plots', ...
 % call
 ma_fig_periter(arg, algs(1));
 
-%% Extracting the data
+%% Mouse Dataset 
+%
+%%  -- Extracting the data
+% 
 
 % PARTAG_SRCOBJDIST =395.730011  
 % PARTAG_SRCDETDIST= 529.59  
@@ -1576,7 +1771,7 @@ airraw = airraw(row, :);
 %   S (u,v) = log ( S_air(u,v) - S_offset(u,v) ) - log (S_prj_in(u,v) - S_offset(u,v) )
 save phantoms/mouse-raw.mat sino airraw offset
 
-%% Computing the GT volume
+%%  -- Computing the GT volume
 
 phan_size = 512;
 det_size = 4/3; 0.16176;
@@ -1637,7 +1832,7 @@ astra_mex_projector('delete', proj_id);
 
 phan_file = 'phantoms/mouse-sart-512.mat';
 save(phan_file, 'P', 'sino', 'wi');
-%%  
+%
 figure(3), imshow(P, []), colorbar
 figure(2), hist(P(:), (0:.01:.3))
 

@@ -62,6 +62,9 @@ eval(plt);
       % projections
       projs = (0:194)*pi/180 + pi/2;
       projs_ids = 1:floor(195/num_proj):195;
+      if isfield(arg, 'force_num_proj') && arg.force_num_proj
+        projs_ids = projs_ids(1:num_proj);
+      end
       proj_geom = astra_create_proj_geom('fanflat', det_size, num_det, ...
         projs(projs_ids), sid, sdd - sid); %2*pi
 

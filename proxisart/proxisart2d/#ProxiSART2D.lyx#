@@ -204,8 +204,8 @@ P.
 \end_layout
 
 \begin_layout Abstract
-We present ProxiSART, a flexible proximal framework for robust X-ray tomographic
- reconstruction.
+We present TRex, a flexible and robust Tomographic Reconstruction framework
+ using proximal algorithms.
  We provide an overview and perform an experimental comparison between the
  famous iterative reconstruction methods in terms of reconstruction quality
  in sparse view situations.
@@ -362,15 +362,15 @@ key "andersen1984simultaneous,andersen1989algebraic"
 \end_layout
 
 \begin_layout Standard
-We then describe our framework, which is based on using proximal algorithms
- 
+We then describe our framework, TRex, which is based on using proximal algorithm
+s 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "boyd2011distributed,parikh2013proximal"
 
 \end_inset
 
- together with these methods.
+ together with these iterative methods.
  We derive proximal operators for SART, ART, BICAV, and OS-SQS, and show
  how to use these proximal operators to minimize different data fitting
  terms, including least squares (LS) that assumes a Gaussian noise model,
@@ -462,7 +462,8 @@ We derive proximal operators for SART, ART, BICAV, and OS-SQS; and compare
 
 \begin_layout Enumerate
 We derive solvers for different data terms assuming different noise models,
- namely Gaussian and Poisson models, using the derived proximal operators.
+ namely Gaussian and Poisson models, using the derived proximal operators,
+ and show how to use our framework with different powerful regularizers.
 \end_layout
 
 \begin_layout Enumerate
@@ -2817,6 +2818,14 @@ reference "tab:Prox-Operators"
 
 \end_inset
 
+ and Alg.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:ART-like-Prox-Operator"
+
+\end_inset
+
 .
 \end_layout
 
@@ -2825,7 +2834,7 @@ reference "tab:Prox-Operators"
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -3028,11 +3037,18 @@ State
 
 \end_inset
 
+ Update according to Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Prox-Operators"
 
+\end_inset
+
+:
 \begin_inset Formula 
 \begin{align*}
-x_{j}^{(t+1)} & =x^{(t)}+\alpha\Delta x^{(t)}\\
-y_{j}^{(t+1)} & =y_{i}^{(t)}+
+x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\Delta x_{j}^{(t)}\mbox{ for }j=1\ldots n\\
+y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\Delta y_{i}^{(t)}\mbox{ for }i\in S
 \end{align*}
 
 \end_inset
@@ -3105,8 +3121,8 @@ Return
 
 \end_inset
 
- volume reconstruction 
-\begin_inset Formula $x\in\mathbb{R}{}^{n}$
+ 
+\begin_inset Formula $x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}$
 \end_inset
 
 
@@ -3248,6 +3264,339 @@ x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{\tilde{c}_{j}}{\scriptstyle \left(2\
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+The steps are summarized in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Prox-Operators"
+
+\end_inset
+
+ and Alg.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:OS-SQS-Prox-Operator"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+protect
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:OS-SQS-Prox-Operator"
+
+\end_inset
+
+OS-SQS Proximal Operator
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithmic}[1]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $A\in\mathbb{R}{}^{m\times n}$
+\end_inset
+
+, 
+\begin_inset Formula $\alpha,\lambda\in\mathbb{R}$
+\end_inset
+
+, 
+\begin_inset Formula $p\in\mathbb{R}{}^{m}$
+\end_inset
+
+, 
+\begin_inset Formula $u\in\mathbb{R}^{n}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+ Initialize: 
+\begin_inset Formula 
+\begin{align*}
+x^{(0)} & =\mathbf{0}_{n}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ForAll
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $t=1\ldots T$
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ForAll
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+subsets 
+\begin_inset Formula $S\in\mathcal{S}$
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $x_{j}^{(t+1)}=x_{j}^{(t)}+\alpha\Delta x_{j}^{(t)}\mbox{ for }j=1\ldots n$
+\end_inset
+
+ according to Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Prox-Operators"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $x^{(t+1)}=\mbox{clip}(x^{(t+1)})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+Return
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithmic}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
 \begin_inset Note Note
 status collapsed
 
@@ -3322,7 +3671,7 @@ x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{\tilde{c}_{j}}{\scriptstyle \left(2\
 \begin_inset Float table
 wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -3339,9 +3688,10 @@ center
 
 
 \begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="2">
+<lyxtabular version="3" rows="5" columns="3">
 <features rotate="0" booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
+<column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
@@ -3358,6 +3708,15 @@ Method
 
 \begin_layout Plain Layout
 Update Step
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Converges
 \end_layout
 
 \end_inset
@@ -3395,6 +3754,15 @@ $
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Yes
+\end_layout
+
+\end_inset
+</cell>
 </row>
 <row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -3428,6 +3796,15 @@ $
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No
+\end_layout
+
+\end_inset
+</cell>
 </row>
 <row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
@@ -3457,6 +3834,15 @@ $
 \end_inset
 
 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Yes
 \end_layout
 
 \end_inset
@@ -3506,6 +3892,15 @@ $
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No
+\end_layout
+
+\end_inset
+</cell>
 </row>
 </lyxtabular>
 
@@ -3547,7 +3942,7 @@ reference "sec:Proximal-Operators"
 \end_layout
 
 \begin_layout Section
-Proximal Framework
+TRex Proximal Framework
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:Proximal-Framework"
@@ -3629,6 +4024,22 @@ reference "alg:LADMM-algorithm"
 .
  This framework is very flexible, and we will show how to solve for different
  data terms and different regularizers.
+ It is convergent for any 
+\begin_inset Formula $\rho>0$
+\end_inset
+
+ and 
+\begin_inset Formula $\mu>\nicefrac{1}{\rho\Vert K\Vert^{2}}$
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "parikh2013proximal,nien2015fast"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -3735,7 +4146,7 @@ State
 \end_inset
 
  Initialize 
-\begin_inset Formula $u^{(0)}=\mathbf{0}_{d}$
+\begin_inset Formula $y^{(0)}=\mathbf{0}_{d}$
 \end_inset
 
 
@@ -3797,7 +4208,7 @@ State
 \end_inset
 
  
-\begin_inset Formula $x^{(t+1)}=\mbox{prox}_{\mu f}\left(x^{(t)}-\rho\mu K^{T}(Kx^{(t)}-z^{(t)}+u^{(t)})\right)$
+\begin_inset Formula $x^{(t+1)}=\mbox{prox}_{\mu f}\left(x^{(t)}-\rho\mu K^{T}(Kx^{(t)}-z^{(t)}+y^{(t)})\right)$
 \end_inset
 
 
@@ -3817,7 +4228,7 @@ State
 \end_inset
 
  
-\begin_inset Formula $z^{(t+1)}=\mbox{prox}_{\rho^{-1}g}\left(Kx^{(t+1)}+u^{(t)}\right)$
+\begin_inset Formula $z^{(t+1)}=\mbox{prox}_{\rho^{-1}g}\left(Kx^{(t+1)}+y^{(t)}\right)$
 \end_inset
 
 
@@ -3837,7 +4248,7 @@ State
 \end_inset
 
  
-\begin_inset Formula $u^{(t+1)}=u^{(t)}+Kx^{(t+1)}-z^{(t+1)}$
+\begin_inset Formula $y^{(t+1)}=y^{(t)}+Kx^{(t+1)}-z^{(t+1)}$
 \end_inset
 
 
@@ -7657,6 +8068,412 @@ Comparison to State of the Art
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Comparison-to-State-of-Art"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We compare our framework to two state of the art methods: the ADMM-PCG method
+ of Ramani et al.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ramani2012splitting"
+
+\end_inset
+
+ and the OS-MOM method from Kim et al.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kim2015combining"
+
+\end_inset
+
+ that combines ordered subsets with momentum.
+ We don't compare to the method of Nien et al.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "nien2015fast"
+
+\end_inset
+
+ because the authors indicate that the performance is closely matched by
+ the OS-MOM method and is quite similar.
+\end_layout
+
+\begin_layout Standard
+The ADMM-PCG minimizes a combination of a WLS data term and regularization
+ term.
+ It uses 2 iterations of PCG to solve the proximal operator of the data
+ term, as opposed to our framework that uses SART, ART, ...
+ etc.
+ We run the Matlab code available online from the author as part of the
+ IRT toolbox 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+available from 
+\begin_inset CommandInset href
+LatexCommand href
+name "web.eecs.umich.edu/~fessler/code/"
+target "http://web.eecs.umich.edu/~fessler/code/"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ The default procedure for choosing the parameters didn't work well with
+ our datasets, so we had to manually tweak the parameters: 
+\begin_inset Formula $\nu=2\times10^{5}$
+\end_inset
+
+, 
+\begin_inset Formula $\mu=10^{-4}$
+\end_inset
+
+, and 
+\begin_inset Formula $\lambda=10^{-3}$
+\end_inset
+
+ for 15 projections; and 
+\begin_inset Formula $\nu=2\times10^{5}$
+\end_inset
+
+, 
+\begin_inset Formula $\mu=10^{-4}$
+\end_inset
+
+, and 
+\begin_inset Formula $\lambda=10^{-3}$
+\end_inset
+
+ for 15 projections, see 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ramani2012splitting"
+
+\end_inset
+
+.
+ We use the wavelet decomposition prior with the 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+ norm.
+\end_layout
+
+\begin_layout Standard
+The OS-MOM also minimizes a WLS data term and regularization term.
+ We implemented the Momentum 2 method (Table IV in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kim2015combining"
+
+\end_inset
+
+) within the IRT toolbox.
+ We use the settings from the paper for the regularizer i.e.
+ the Fair potential with 
+\begin_inset Formula $\delta=10$
+\end_inset
+
+, 
+\begin_inset Formula $a=0.0558$
+\end_inset
+
+, and 
+\begin_inset Formula $b=1.6395$
+\end_inset
+
+.
+ We tweaked 
+\begin_inset Formula $\beta$
+\end_inset
+
+ and 
+\begin_inset Formula $M$
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kim2015combining"
+
+\end_inset
+
+ to get good performance.
+ We set 
+\begin_inset Formula $\beta=0.05$
+\end_inset
+
+ and 
+\begin_inset Formula $M=5$
+\end_inset
+
+ subsets for 15 projections and 
+\begin_inset Formula $\beta=0.1$
+\end_inset
+
+ and 
+\begin_inset Formula $M=10$
+\end_inset
+
+ subsets for 30 projections.
+\end_layout
+
+\begin_layout Standard
+Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SNR-per-iter-state-of-art-comp"
+
+\end_inset
+
+ shows a comparison with these two algorithm.
+ The TRex uses the SART proximal operator with Poisson noise model and 
+\begin_inset Formula $r_{1}$
+\end_inset
+
+ mapping.
+ We note the following:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Modified Shepp-Logan
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NCAT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mouse
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\series bold
+Sate of the Art Comparison
+\series default
+.
+ Plots show SNR per iteration.
+ The TRex framework uses SART with Poisson model.
+ See Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Comparison-to-State-of-Art"
+
+\end_inset
+
+.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SNR-per-iter-state-of-art-comp"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
