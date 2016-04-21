@@ -182,6 +182,7 @@ eval(plt);
     % figure file
     snr_file = [fig_file '-snr'];
     resid_file = [fig_file '-resid'];
+    rec_file = [fig_file '-rec'];
     
     fprintf('Fig %s\n', fig_file);
 
@@ -270,7 +271,7 @@ eval(plt);
     if ~isfield(arg, 'save') || arg.save
       save_fig(snr_file, snr_fig, 'pdf', '-fonts');
     end
-
+    
     % Residual plot
     if arg.plot_resid
       resid_fig = figure('Name',resid_file, 'Position',[1, 1, 800, 800]);    
@@ -496,6 +497,79 @@ eval(plt);
     end
     
   end
+
+ % Plot Reconstruction
+  function recon
+   
+    % figure file
+    pat = sprintf('%s/%s%s-ph_%s-%d_nt_%s-nl_%.3f-np_%d-p_%s', ...
+      arg.path, arg.prefix, plt, arg.phan, arg.phan_size, arg.noise_type, ...
+      arg.noise_level, arg.num_proj, arg.proj_type);
+    fig_file = pat;
+    mat_file = [pat '.mat'];
+    
+    % initialize
+    init;
+    
+    % figure file
+    rec_file = [fig_file '-rec'];
+    
+    fprintf('Fig %s\n', fig_file);
+
+    % loop and compute
+    if arg.recompute
+      results = cell(size(algs));
+      for a = 1:length(algs)
+        alg = algs{a};
+
+        % run
+        [rec, tt, ss, it, rs] = run_alg(alg);
+
+        % put results
+      %   results{a}.rec = rec;
+        results{a}.rec = rec;
+      end
+
+      % save
+      if ~isfield(arg, 'save') || arg.save
+        save(mat_file, 'results', 'algs'); 
+      end
+    else
+      rr = load(mat_file);
+      results = rr.results;
+%       algs = rr.algs;
+    end
+
+    % Reconstruction plot
+    fig_size = [2400, 800];
+    if isfield(arg, 'fig_size'), fig_size = arg.fig_size; end
+    rec_fig = figure('Name',rec_file, 'Position',[1, 1, fig_size]);
+    hold on;
+    
+    legends = cell(size(results));
+    handles = [];
+    for a = 1:length(algs)
+      res = results{a};
+      alg = algs{a};
+
+      % subplot
+      subplot(arg.subplot_r, arg.subplot_c, a);
+      imshow(res.rec, arg.range); colorbar;
+      title(alg.name);
+    end
+%     % title
+%     if isfield(arg,'title') 
+%       switch arg.title
+%         % number of projections
+%         case 'num_proj', title(sprintf('%d Projections', arg.num_proj));
+%       end
+%     end
+    
+    % save figure
+    if ~isfield(arg, 'save') || arg.save
+      save_fig(rec_file, rec_fig, 'pdf', '-fonts');
+    end    
+  end  
 
   % run the algorithm
   function [rec, tt, ss, it, rs] = run_alg(alg)

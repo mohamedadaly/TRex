@@ -2647,7 +2647,15 @@ tion terms e.g.
  smoothing norms or sparsity inducing norms, which otherwise is not generally
  easy.
  We will derive tomography proximal operators for SART, ART, BICAV, and
- OS-SQS, where the objective is to solve the LS
+ OS-SQS, where the objective is to solve 
+\begin_inset Formula 
+\begin{equation}
+\mbox{prox}_{\lambda h}(u)=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}.\label{eq:tomography-prox-operator}
+\end{equation}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -2663,16 +2671,15 @@ x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\st Ax=p.
 
 \end_inset
 
- What we want is a solver for LS projection error i.e.
+ What we want is a solver for Eq.
  
-\begin_inset Formula 
-\begin{equation}
-\mbox{prox}_{\lambda h}(u)=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}+\frac{1}{2\lambda}\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-1-1}
-\end{equation}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:tomography-prox-operator"
 
 \end_inset
 
- This is equivalent to solving 
+, which is equivalent to solving 
 \begin_inset Formula 
 \begin{equation}
 \min_{x}2\lambda\Vert Ax-p\Vert_{2}^{2}+\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-2}
@@ -3197,7 +3204,7 @@ We want to express the proximal operator problem in Eq.
  
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "eq:SART-prox-1-1"
+reference "eq:tomography-prox-operator"
 
 \end_inset
 
@@ -3210,11 +3217,11 @@ x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}.
 
 \end_inset
 
- Rewrite in the form 
+ Rewrite as 
 \begin_inset Formula 
-\begin{equation}
-\argmin_{x}2\lambda\Vert Ax-p\Vert_{2}^{2}+\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-2-1}
-\end{equation}
+\[
+\argmin_{x}2\lambda\Vert Ax-p\Vert_{2}^{2}+\Vert x-u\Vert_{2}^{2},
+\]
 
 \end_inset
 
@@ -5732,7 +5739,7 @@ name "sec:Experiments"
 \end_layout
 
 \begin_layout Subsection
-Datasets
+Datasets and Implementation Details
 \end_layout
 
 \begin_layout Standard
@@ -6049,8 +6056,19 @@ We clip the reconstruction estimate
 \end_inset
 
  to get rid of negative voxel values.
- All experiments in this section are on one core of an Intel Xeon E5-280
- 2.7 GHz with 64 GB RAM.
+ 
+\end_layout
+
+\begin_layout Standard
+We implemented all methods using ASTRA with a mix of C++ and Matlab code.
+ The iterative algorithms not present in ASTRA, namely BICAV, BSSART, and
+ OS-SQS, were implemented in C++.
+ The proximal operators were also implemented in C++.
+ The Linearized ADMM was implemented in Matlab.
+ We also modified existing algorithms in ASTRA to suit our needs e.g.
+ compute SNR, report run times, etc.
+ All experiments were run on one core of an Intel Xeon E5-280 2.7 GHz with
+ 64 GB RAM.
  
 \end_layout
 
@@ -6078,9 +6096,6 @@ reference "sec:Iterative-Algorithms"
  We set the number of subsets in OS-SQS to the number of projections to
  have a fair comparison with SART, since we noticed that increasing the
  number of subsets increases the convergence rate.
- All experiments in this section are run using ASTRA, where we implemented
- missing algorithms and modified existing ones to suit our needs e.g.
- compute SNR, report run times, etc.
  We compare different values of 
 \begin_inset Formula $\alpha$
 \end_inset
@@ -7867,7 +7882,7 @@ gradient
 \begin_inset Float figure
 wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -8291,7 +8306,7 @@ key "kim2015combining"
 \begin_inset Formula $b=1.6395$
 \end_inset
 
-.
+, and bit reversal for subset ordering.
  We tweaked 
 \begin_inset Formula $\beta$
 \end_inset
@@ -8367,6 +8382,11 @@ reference "fig:SNR-per-iter-state-of-art-comp"
 
  for 30 projections, and set 
 \begin_inset Formula $\mu=\nicefrac{1}{\rho\Vert K\Vert^{2}}$
+\end_inset
+
+.
+ We initialize all methods with a uniform volume 
+\begin_inset Formula $x^{(0)}=\mathbf{0}_{n}$
 \end_inset
 
 .
@@ -8653,6 +8673,236 @@ name "fig:SNR-per-iter-state-of-art-comp"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sota-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Modified Shepp-Logan
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sota-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sota-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+NCAT
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "33text%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sota-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plots/sota-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	lyxscale 20
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Mouse
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\series bold
+TRex Comparison to Sate of the Art
+\series default
+.
+ Plots show SNR per iteration.
+ The TRex framework uses SART with Poisson model and SAD regularizer.
+ The dotted curve shows the baseline plain SART (from Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Iterative-Algorithms-Comparison"
+
+\end_inset
+
+).
+ See Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Comparison-to-State-of-Art"
+
+\end_inset
+
+.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SNR-per-iter-state-of-art-comp-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Conclusions
 \begin_inset CommandInset label
@@ -8669,7 +8919,66 @@ We presented TRex, a flexible proximal framework for robust tomography reconstru
 ction in sparse view applications.
  TRex relies on using iterative methods, e.g.
  SART, for directly solving the tomography proximal operator.
+ We first compare the famous tomography iterative solvers, and then derive
+ proximal operators for the best four methods.
+ We then show how to use TRex to solve using different noise models (Gaussian
+ and Poisson) and using different powerful regularizers (ITV, ATV, and SAD).
+ We show that TRex outperforms state of the art methods, namely ADMM-PCG
  
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ramani2012splitting"
+
+\end_inset
+
+ and OS-Mom 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kim2015combining"
+
+\end_inset
+
+, and is easy to tune.
+ We conclude that SART---even though is not guaranteed to converge---offers
+ the best tomography solver for sparse view applications, followed closely
+ by ART and BICAV.
+ 
+\end_layout
+
+\begin_layout Standard
+We plan to extend this work in several ways: (a) study how to incorporate
+ momentum acceleration into SART as in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kim2015combining"
+
+\end_inset
+
+; (b) study how to use preconditioners with SART such as the Fourier-based
+ cone filter preconditioners 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "fessler1999conjugate"
+
+\end_inset
+
+; (c) study other applications such as low-dosage X-ray tomography, which
+ changes the nature of the measurement noise 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "xu2014quantifying"
+
+\end_inset
+
+; and (d) implement and apply TRex to 3D cone beam reconstruction and compare
+ to other famous packages such as RTK 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "mory2012ecg"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section

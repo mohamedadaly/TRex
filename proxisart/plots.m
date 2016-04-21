@@ -1401,9 +1401,18 @@ end
 clear variables;
 
 iter = 30;
-alg_ids = [1 : 5]; [1 4];
-nprojs = [15 30]; [15 30 90];
-data_ids = 1:3; 1;
+nprojs = 30; [15 30]; [15 30 90];
+data_ids = 1:3; 1:3; 1;
+
+plt = 'recon'; 'per_iter';
+
+switch plt
+  case 'per_iter'
+    alg_ids = 1:5;
+  case 'recon'
+    alg_ids = 2:5;
+end
+
 for nproj=nprojs
 
   switch nproj
@@ -1451,6 +1460,8 @@ for nproj=nprojs
       
       beta_kim = .1; .05; .1;
       nsubsets_kim = 10; 5; [11 10 10];
+      relax_kim = [1 1e-3];
+      
     case 90
       sigma = .5; .01;  .5; 
       rho_sart = 200;
@@ -1560,21 +1571,23 @@ for nproj=nprojs
       phantoms = {'mouse'}; {'ncat', 'mod-sl'}; {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
       noises = {struct('noise_type', 'gauss', 'noise_levels',[0.0])}; 
       proj_types = {'mouse'}; %{'fan', 'parallel', 'mouse'};
+      range = [0 0.15];
     elseif i==2
       phantoms = {'ncat'}; {'ncat', 'mod-sl'}; {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
       noises = {struct('noise_type', 'poisson', 'noise_levels',[1e5])};
       proj_types = {'fan'}; %{'fan', 'parallel', 'mouse'};
+      range = [0 0.4];
     else
       phantoms = {'mod-sl'}; {'ncat', 'mod-sl'}; {'ncat', 'mod-sl'}; {'mod-sl', 'ncat'}; {'ncat', 'mod-sl'}; {'mouse'}; {'ncat', 'mod-sl'};
       noises = {struct('noise_type', 'poisson', 'noise_levels',[1e5])};
       proj_types = {'fan'}; %{'fan', 'parallel', 'mouse'};
+      range = [0 1];
     end
 
     num_projs = nproj; 90; 30; [15, 90]; [15, 30, 60, 90, 180]; 
 
   %   iter = 15; 30;
     prefix = 'sota-comp-';
-    plt = 'per_iter';
 
     for phantom = phantoms
       for num_proj = num_projs
@@ -1583,14 +1596,27 @@ for nproj=nprojs
           for noise_level = noise{1}.noise_levels
             for proj_type = proj_types
 
-              % put args
-              arg = struct('phan',phantom, 'phan_size',512, 'path','./plots', ...
-                'noise_type',noise_type, 'noise_level',noise_level, ...
-                'num_proj',num_proj, 'iter',iter, 'recompute',1, ...
-                'proj_type',proj_type, 'prefix',prefix, 'plot_resid',0, ...
-                'legend_cols',2, 'per_time',0, 'prox_fbp',0, ...
-                'exclude_legend',[1], 'fig_size',[800,400], 'title','num_proj', ...
-                'save',1, 'force_num_proj',1);
+              switch plt
+              case 'per_iter'
+                % put args
+                arg = struct('phan',phantom, 'phan_size',512, 'path','./plots', ...
+                  'noise_type',noise_type, 'noise_level',noise_level, ...
+                  'num_proj',num_proj, 'iter',iter, 'recompute',1, ...
+                  'proj_type',proj_type, 'prefix',prefix, 'plot_resid',0, ...
+                  'legend_cols',2, 'per_time',0, 'prox_fbp',0, ...
+                  'exclude_legend',[1], 'fig_size',[800,400], 'title','num_proj', ...
+                  'save',1, 'force_num_proj',1);
+              case 'recon'
+                % put args
+                arg = struct('phan',phantom, 'phan_size',512, 'path','./plots', ...
+                  'noise_type',noise_type, 'noise_level',noise_level, ...
+                  'num_proj',num_proj, 'iter',iter, 'recompute',1, ...
+                  'proj_type',proj_type, 'prefix',prefix, 'plot_resid',0, ...
+                  'legend_cols',2, 'per_time',0, 'prox_fbp',0, ...
+                  'exclude_legend',[1], 'fig_size',[1600,1600], 'title','num_proj', ...
+                  'save',1, 'force_num_proj',1, ...
+                  'range',range, 'subplot_r',2, 'subplot_c',2);
+              end                
               % call
               ma_run_and_plot(plt, arg, algs(alg_ids));
             end

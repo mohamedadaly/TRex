@@ -106,7 +106,7 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
 alg = 'admm'; %.0001&[]&2e3
 alg_params = struct('iter',10, 'mu',.0001, 'nCG',2, 'lambda',.05, ... .001&.02
   'nu',2e3, 'operator','W', 'prior_type','l1', ...
-  'init_fbp',1, 'precon',1, 'minx',-Inf); %nu=200
+  'init_fbp',0, 'precon',1, 'minx',0, 'wls',1); %nu=200
 % alg_params = struct('iter',10, 'mu',0.0001, 'nCG',2, 'lambda',.1, ... .001&.01
 %   'nu', 600, 'operator','AFD', 'prior_type','l1', 'precon',1, ... %nu=200
 %   'init_fbp',1, 'minx',-Inf);
@@ -119,8 +119,13 @@ alg_params = struct('iter',10, 'mu',.0001, 'nCG',2, 'lambda',.05, ... .001&.02
 
 %%
 alg = 'mfista';
-alg_params = struct('iter',10, 'nCG',2, 'lambda',0.1, ...
-  'prior_type','l1', 'operator','AFD', 'init_fbp',1, 'precon',0);  
+alg_params = struct('iter',5, 'nCG',2, 'lambda',0.0001, ...
+  'prior_type','l1', 'operator','W', 'init_fbp',1, 'precon',1, ...
+  'minx',0, 'wls',1, 'mEAWA',1e4);  
+
+[rec, times, snrs, iters] = ma_alg_irt(alg, in_params, alg_params);
+[times snrs iters]
+
 %%
 alg = 'pcg';
 precon = spdiag(1 ./ sum(in_params.A .^ 2, 1));
@@ -291,7 +296,7 @@ cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;
 cfg.option.MaxConstraintValue = 1;
 cfg.option.Alpha = 1;
-cfg.option.Lambda = 1e0;
+cfg.option.Lambda = 1e-3;
 cfg.option.ComputeIterationMetrics = 1;
 cfg.option.GTReconstructionId = P_id;
 cfg.option.IterationMetricsId = metrics_id;
