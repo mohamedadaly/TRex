@@ -77,8 +77,19 @@ switch alg
     params.AWy = params.A' * params.Wy;
     params.dispitrnum = 0;
     
-    params.lambda = .1; %.02
+    params.minx = alg_params.minx;
+    params.lambda = alg_params.lambda; .1; %.02
     params.MFISTA.nCG = alg_params.nCG; % 5;
+    
+    if isfield(alg_params, 'use_kappa') && ~alg_params.use_kappa
+      params.kappa = 1;
+      params.rw = ones(size(params.rw)); 
+    end    
+    
+    if isfield(alg_params, 'mEAWA') && ~isempty(alg_params.mEAWA)
+      params.mEAWA = alg_params.mEAWA;
+    end;
+
 
     [rec CMFIS TFIS l2DFIS snrs] = runMFISTA(in_params.sino, ...
       params.AWy, params.xini, params);
@@ -163,6 +174,11 @@ iters = iters(:);
     params.clim = [0, 1];
     params.ig.mask = true(size(in_params.gt_vol));
     params.xini = in_params.fbp;
+    
+    % If not WLS, then set weights to 1.
+    if isfield(alg_params,'wls') && ~alg_params.wls
+      in_params.wi = ones(size(in_params.wi));
+    end
 
     mxW = max(in_params.wi(:));
     mnW = min(in_params.wi(:));

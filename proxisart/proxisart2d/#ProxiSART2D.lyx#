@@ -20,7 +20,10 @@
 %\renewcommand*\arraystretch{1.5}
 %\setlength{\extrarowheight}{2pt}
 
+
 \usepackage{babel}
+
+\newcommand{\etal}{\emph{et al.\ }}
 \end_preamble
 \use_default_options false
 \maintain_unincluded_children false
@@ -89,7 +92,19 @@
 \begin_body
 
 \begin_layout Title
-A Proximal Framework for Robust Sparse View X-Ray Tomography Reconstruction
+A 
+\series bold
+T
+\series default
+omography 
+\series bold
+Re
+\series default
+construction Pro
+\series bold
+x
+\series default
+imal Framework for Robust Sparse View X-Ray Applications
 \end_layout
 
 \begin_layout Author
@@ -299,8 +314,27 @@ key "pan2009commercial"
 
 \begin_layout Standard
 Thus, in this paper, we study iterative reconstruction techniques.
- We conduct a thorough comparison of the famous iterative algorithms including
- SART (Simultaneous Algebraic Reconstruction Technique) 
+ We present TRex, a flexible proximal framework for robust X-Ray tomography
+ reconstruction in sparse view applications.
+ TRex uses iterative algorithms, especially the SART (Simultaneous ART)
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "andersen1984simultaneous,andersen1989algebraic"
+
+\end_inset
+
+, to solve the tomography proximal operator.
+ We show that they are better suited for this task and produce better performanc
+e than state of the art, combined with different noise models in the data
+ terms and with different powerful regularizers.
+ Up to our knowledge, this is the first time these methods have been used
+ to directly solve the tomography proximal operator.
+\end_layout
+
+\begin_layout Standard
+We start by conducting a thorough comparison of the famous iterative algorithms
+ including SART 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "andersen1984simultaneous,andersen1989algebraic"
@@ -399,7 +433,7 @@ key "sidky2012convex"
 
 \end_inset
 
- We also show how to plugin different powerful regularizers, namely the
+ We also show how to plug in different powerful regularizers, namely the
  Isotropic Total Variation (ITV) 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -423,12 +457,11 @@ key "gregson2012stochastic"
 
 .
  We perform thorough comparisons between the different proximal operators,
- data terms, and regularizers.
- 
+ data terms, and regularizers using real and synthetic data.
 \end_layout
 
 \begin_layout Standard
-Finally we compare our framework to state of the art methods, namely the
+Finally, we compare our framework to state of the art methods, namely the
  ADMM method from 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -436,7 +469,7 @@ key "ramani2012splitting"
 
 \end_inset
 
- and the OS-SQS momentum method from 
+ and the OS-SQS method (with and without momentum method) 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "kim2015combining"
@@ -448,6 +481,11 @@ key "kim2015combining"
 
 \begin_layout Standard
 In summary, we provide the following contributions:
+\end_layout
+
+\begin_layout Enumerate
+We present TRex, a flexible proximal reconstruction framework that relies
+ on iterative methods for directly solving the tomography proximal operator.
 \end_layout
 
 \begin_layout Enumerate
@@ -2541,7 +2579,7 @@ x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}.
 \end_layout
 
 \begin_layout Section
-Proximal Operators
+Tomography Proximal Operators
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:Proximal-Operators"
@@ -2608,7 +2646,8 @@ where
 tion terms e.g.
  smoothing norms or sparsity inducing norms, which otherwise is not generally
  easy.
- We will derive proximal operators for SART, ART, BICAV, and OS-SQS.
+ We will derive tomography proximal operators for SART, ART, BICAV, and
+ OS-SQS, where the objective is to solve the LS
 \end_layout
 
 \begin_layout Subsection
@@ -4633,7 +4672,7 @@ w_{i}\propto I_{t}^{i}.
 \end_inset
 
 , e.g.
- the square root, before feeding into the ooptimization problem, see Sec.
+ the square root, before feeding into the optimization problem, see Sec.
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -4865,7 +4904,7 @@ where
 \end_inset
 
  is the dual variable.
- Now this can be minimized ADMM by iterating minimizations w.r.t.
+ Now this can be minimized ADMM by iterating minimization w.r.t.
  
 \begin_inset Formula $x$
 \end_inset
@@ -7202,7 +7241,7 @@ Mouse
 \begin_layout Plain Layout
 
 \series bold
-Poisson Model Mapping Functions Comparison
+TRex Poisson Model Mapping Functions Comparison
 \series default
 .
  Curves show SNR per iteration for the Poisson noise models with mapping
@@ -7411,7 +7450,7 @@ The Poisson noise model
 
  for the three datasets, specially with more projections.
  This is consistent with the noise model used to generate the noisy simulated
- sinograms, and with the physical nosie model in the real dataset.
+ sinograms, and with the physical noise model in the real dataset.
 \end_layout
 
 \begin_layout Itemize
@@ -7790,7 +7829,7 @@ The Poisson model is consistently better than the Gaussian model for all
 
 \begin_layout Itemize
 SART proximal operator is generally better than other proximal operators,
- and ART and BICAV are quite competetive.
+ and ART and BICAV are quite competitive.
  
 \end_layout
 
@@ -7828,7 +7867,7 @@ gradient
 \begin_inset Float figure
 wide true
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -8022,7 +8061,7 @@ Mouse
 \begin_layout Plain Layout
 
 \series bold
-Proximal Operators Comparison
+TRex Proximal Operators Comparison
 \series default
 .
  Plots show SNR per iteration for the Gaussian (
@@ -8076,7 +8115,19 @@ name "sub:Comparison-to-State-of-Art"
 
 \begin_layout Standard
 We compare our framework to two state of the art methods: the ADMM-PCG method
- of Ramani et al.
+ of Ramani 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+etal
+\end_layout
+
+\end_inset
+
  
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -8084,7 +8135,19 @@ key "ramani2012splitting"
 
 \end_inset
 
- and the OS-MOM method from Kim et al.
+ and the OS-MOM method from Kim 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+etal
+\end_layout
+
+\end_inset
+
  
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -8107,7 +8170,28 @@ key "nien2015fast"
 
 \begin_layout Standard
 The ADMM-PCG minimizes a combination of a WLS data term and regularization
- term.
+ term: 
+\begin_inset Formula 
+\[
+\min_{x}\frac{1}{2}\Vert p-Ax\Vert_{W}^{2}+\lambda\sum_{r=1}^{n}\kappa_{r}\Vert Rx_{r}\Vert_{1}
+\]
+
+\end_inset
+
+ where 
+\begin_inset Formula $\kappa_{r}\in\mathbb{R}$
+\end_inset
+
+ are spatial weights that govern the spatial resolution in the reconstruction
+ and 
+\begin_inset Formula $Rx_{r}\in\mathbb{R}^{d}$
+\end_inset
+
+ is the vector of wavelet decomposition at voxel 
+\begin_inset Formula $x_{r}$
+\end_inset
+
+.
  It uses 2 iterations of PCG to solve the proximal operator of the data
  term, as opposed to our framework that uses SART, ART, ...
  etc.
@@ -8132,31 +8216,7 @@ target "http://web.eecs.umich.edu/~fessler/code/"
 
 .
  The default procedure for choosing the parameters didn't work well with
- our datasets, so we had to manually tweak the parameters: 
-\begin_inset Formula $\nu=2\times10^{5}$
-\end_inset
-
-, 
-\begin_inset Formula $\mu=10^{-4}$
-\end_inset
-
-, and 
-\begin_inset Formula $\lambda=10^{-3}$
-\end_inset
-
- for 15 projections; and 
-\begin_inset Formula $\nu=2\times10^{5}$
-\end_inset
-
-, 
-\begin_inset Formula $\mu=10^{-4}$
-\end_inset
-
-, and 
-\begin_inset Formula $\lambda=10^{-3}$
-\end_inset
-
- for 15 projections, see 
+ our datasets, so we had to manually tweak the parameters, 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "ramani2012splitting"
@@ -8164,15 +8224,52 @@ key "ramani2012splitting"
 \end_inset
 
 .
- We use the wavelet decomposition prior with the 
+ We set 
+\begin_inset Formula $\nu=2\times10^{5}$
+\end_inset
+
+, 
+\begin_inset Formula $\lambda=10^{-3}$
+\end_inset
+
+, and 
+\begin_inset Formula $\mu=10^{-4}$
+\end_inset
+
+ for 15 projections 
+\begin_inset Formula $\mu=10^{-3}$
+\end_inset
+
+ for 30 projections.
+ We use the Wavelet decomposition basis with the 
 \begin_inset Formula $\ell_{1}$
 \end_inset
 
- norm.
+ norm regularizer.
 \end_layout
 
 \begin_layout Standard
-The OS-MOM also minimizes a WLS data term and regularization term.
+The OS-Mom also minimizes a WLS data term and regularization term: 
+\begin_inset Formula 
+\[
+\min_{x}\frac{1}{2}\Vert p-Ax\Vert_{W}^{2}+\beta\sum_{r=1}^{n}\psi(\nabla x_{r})
+\]
+
+\end_inset
+
+ where 
+\begin_inset Formula $\psi(\cdot)$
+\end_inset
+
+ is the Fair potential function and 
+\begin_inset Formula $\nabla x_{r}\in\mathbb{R}^{2}$
+\end_inset
+
+ is the gradient at voxel 
+\begin_inset Formula $x_{r}$
+\end_inset
+
+.
  We implemented the Momentum 2 method (Table IV in 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -8228,6 +8325,13 @@ key "kim2015combining"
 \end_inset
 
  subsets for 30 projections.
+ We use relaxation with parameter 
+\begin_inset Formula $10^{-3}$
+\end_inset
+
+ to help the convergence.
+ We also compare to plain OS method without momentum with the same WLS data
+ term and regularizer as OS-Mom.
 \end_layout
 
 \begin_layout Standard
@@ -8244,21 +8348,81 @@ reference "fig:SNR-per-iter-state-of-art-comp"
 \begin_inset Formula $r_{1}$
 \end_inset
 
- mapping.
+ mapping and SAD regularizer.
+ We set 
+\begin_inset Formula $\sigma=0.05$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho=25$
+\end_inset
+
+ for 15 projections and 
+\begin_inset Formula $\sigma=0.1$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho=50$
+\end_inset
+
+ for 30 projections, and set 
+\begin_inset Formula $\mu=\nicefrac{1}{\rho\Vert K\Vert^{2}}$
+\end_inset
+
+.
  We note the following:
+\end_layout
+
+\begin_layout Itemize
+The ADMM-PCG method's performance is quite bad with these datasets.
+ They require a lot of tweaking to get them to work correctly since the
+ automated estimation methods described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ramani2012splitting"
+
+\end_inset
+
+ didn't work.
+ Moreover, the method seems very sensitive to the values of the parameters,
+ and thus is harder to tweak.
+\end_layout
+
+\begin_layout Itemize
+The OS-Mom method indeed accelerates the convergence of the OS method at
+ early iterations 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kim2015combining"
+
+\end_inset
+
+.
+ However, its performance is not consistent across datasets, where some
+ times it is good and most of the time the SNR starts decreasing after a
+ while, even with relaxation.
+\end_layout
+
+\begin_layout Itemize
+TRex with SART and SAD consistently performs better and ends up with higher
+ SNR than ADMM-PCG or OS-Mom.
+ Moreover, it is easier to tweak and not very sensitive to the choice of
+ parameters.
+ Note that for NCAT and Mouse, using TRex, we get SNR with 15 projections
+ that equals the SNR we get with 30 projections using plain SART.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
 wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -8276,7 +8440,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	filename plots/sota-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -8287,7 +8451,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	filename plots/sota-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -8319,7 +8483,7 @@ Modified Shepp-Logan
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Box Frameless
@@ -8337,7 +8501,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
+	filename plots/sota-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -8348,7 +8512,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
+	filename plots/sota-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -8398,7 +8562,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
+	filename plots/sota-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -8409,7 +8573,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
+	filename plots/sota-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
 	lyxscale 20
 	width 100text%
 
@@ -8446,11 +8610,20 @@ Mouse
 \begin_layout Plain Layout
 
 \series bold
-Sate of the Art Comparison
+TRex Comparison to Sate of the Art
 \series default
 .
  Plots show SNR per iteration.
- The TRex framework uses SART with Poisson model.
+ The TRex framework uses SART with Poisson model and SAD regularizer.
+ The dotted curve shows the baseline plain SART (from Sec.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Iterative-Algorithms-Comparison"
+
+\end_inset
+
+).
  See Sec.
  
 \begin_inset CommandInset ref
@@ -8489,6 +8662,14 @@ name "sec:Discussion-and-Conclusion"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+We presented TRex, a flexible proximal framework for robust tomography reconstru
+ction in sparse view applications.
+ TRex relies on using iterative methods, e.g.
+ SART, for directly solving the tomography proximal operator.
+ 
 \end_layout
 
 \begin_layout Section

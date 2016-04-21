@@ -34,6 +34,8 @@ xini = xnew;
 zr = params.zoomr;
 zc = params.zoomc;
 
+minx = params.minx;
+
 fstrC = params.formatstringC;
 fstrT = params.formatstringT;
 fstrO = params.formatstringO;
@@ -127,6 +129,9 @@ while((itr <= maxitr)) % && (diffx/normx >= dxtol) && (diffcost <= dcosttol))
         yk = xnew;
     end
     itr = itr + 1; %% Book Keeping
+    
+    % clip
+    xnew = max(minx, xnew);
 
     time_elapse = toc(mfista);
 
