@@ -532,7 +532,7 @@ eval(plt);
       
       % set iterations according to if they have inner iterations or not
       switch(alg.alg)
-      case 'admm'
+      case {'admm', 'mfista'}
         alg.alg_params.iter = arg.iter / alg.alg_params.nCG;
       otherwise
         alg.alg_params.iter = arg.iter ;

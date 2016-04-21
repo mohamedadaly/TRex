@@ -84,7 +84,7 @@ Rx = params.R * xnew;
 z = zeros(size(Rx));
 
 %% Inner while loop for minimizing cost corresponding to a given sigma
-while((itr <= maxitr) % && (diffx/normx >= dxtol) && (diffcost <= dcosttol))
+while((itr <= maxitr)) % && (diffx/normx >= dxtol) && (diffcost <= dcosttol))
     mfista = tic;
     
     %% Book Keeping

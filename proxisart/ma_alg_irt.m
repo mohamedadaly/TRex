@@ -73,7 +73,7 @@ switch alg
   case 'mfista'
     params.figno = 0;
     params.doMFISTA = 1;
-    params.maxitr = 20; % Max # of outer iterations
+    params.maxitr = alg_params.iter; % Max # of outer iterations
     params.AWy = params.A' * params.Wy;
     params.dispitrnum = 0;
     

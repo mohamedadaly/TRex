@@ -1400,10 +1400,10 @@ end
 
 clear variables;
 
-iter = 30;
-alg_ids = [1 4 5]; [1 4];
+iter = 4;
+alg_ids = [1 3 5]; [1 4];
 nprojs = 15; [15 30 90];
-data_ids = 1:3; 1;
+data_ids = 1; 1:3; 1;
 for nproj=nprojs
 
   switch nproj
@@ -1428,7 +1428,7 @@ for nproj=nprojs
       nsubsets_kim = 5;     
       relax_kim = [1 1e-3];
       
-      lambda_mfista = 0.1;
+      lambda_mfista = 0.001;
     case 30
       sigma = .1; .05; .1;
       rho_sart = 50; 50; 
@@ -1531,7 +1531,7 @@ for nproj=nprojs
     struct('name','MFISTA', 'type','irt', ...
       'clr','g', 'lstyle','-', 'marker','o', ...
       'alg','mfista', ...
-      'alg_params', struct('iter',10, 'nCG',2, 'lambda',lambda_mfista, ...
+      'alg_params', struct('iter',1, 'nCG',2, 'lambda',lambda_mfista, ...
         'prior_type','l1', 'operator','W', 'init_fbp',0, 'precon',1, ...
         'wls',1))
     
