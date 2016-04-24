@@ -248,7 +248,7 @@ void COrderedSubsetSQSProxOperatorAlgorithm::run(int _iNrIterations)
             SinogramMaskPolicy(m_pSinogramMask),														// sinogram mask
             ReconstructionMaskPolicy(m_pReconstructionMask),											// reconstruction mask
 			SIRTBPPolicy(m_pReconstruction, m_pDiffSinogram, 
-				m_pTotalPixelWeight, m_pTotalRayLength, m_pPreconditioner, 
+				m_pTotalPixelWeight, m_pTotalRayLength,
 				m_fAlpha * m_fLambda * 2, m_pW),  // OS-SQS Prox backprojection
             m_bUseSinogramMask, m_bUseReconstructionMask, true // options on/off
         ); 

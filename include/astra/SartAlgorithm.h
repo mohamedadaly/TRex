@@ -110,8 +110,8 @@ protected:
 	/// current view.
 	bool m_bUseBSSART;
 
-	// Preconditioner for the volume.
-	CFloat32VolumeData2D* m_pPreconditioner;
+	//// Preconditioner for the volume.
+	//CFloat32VolumeData2D* m_pPreconditioner;
 
 	int m_iIterationCount;
 

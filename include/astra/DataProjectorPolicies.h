@@ -351,8 +351,8 @@ class SIRTBPPolicy {
 	bool m_bUseMinConstraint, m_bUseMaxConstraint;
 	float32 m_fMinConstraintVal, m_fMaxConstraintVal;
 
-	// Preconditioner.
-	CFloat32VolumeData2D* m_pPreconditioner;
+	//// Preconditioner.
+	//CFloat32VolumeData2D* m_pPreconditioner;
 
 	// Weights for WLS.
 	CFloat32ProjectionData2D* m_pW;
@@ -362,8 +362,7 @@ public:
 	FORCEINLINE SIRTBPPolicy();
 	FORCEINLINE SIRTBPPolicy(CFloat32VolumeData2D* _pReconstruction, CFloat32ProjectionData2D* _pSinogram, 
 		CFloat32VolumeData2D* _pTotalPixelWeight, CFloat32ProjectionData2D* _pTotalRayLength, 
-		CFloat32VolumeData2D* _pPreconditioner,	float32 _fAlhpa = 1.0f,
-		CFloat32ProjectionData2D* _pW = NULL,
+		float32 _fAlhpa = 1.0f, CFloat32ProjectionData2D* _pW = NULL,
 		bool _bUseMinConstraint = false, float32 _fMinConstraintVal = 0.0f, 
 		bool _bUseMaxConstraint = false, float32 _fMaxConstraintVal = 0.0f); 
 	FORCEINLINE ~SIRTBPPolicy();
