@@ -2539,11 +2539,11 @@ status collapsed
 
  
 \begin_inset Formula 
-\begin{eqnarray*}
-z^{(t+1)} & = & \prox_{\mu g^{*}}\left(z^{(t)}+\mu K\bar{x}^{(t)}\right)\\
-x^{(t+1)} & = & \prox_{\lambda f}\left(x^{(t)}-\lambda K^{T}z^{(t+1)}\right)\\
-\bar{x}^{(t+1)} & = & x^{(t+1)}+\theta(x^{(t+1)}-x^{(t)})
-\end{eqnarray*}
+\begin{align*}
+z^{(t+1)} & =\prox_{\mu g^{*}}\left(z^{(t)}+\mu K\bar{x}^{(t)}\right)\\
+x^{(t+1)} & =\prox_{\lambda f}\left(x^{(t)}-\lambda K^{T}z^{(t+1)}\right)\\
+\bar{x}^{(t+1)} & =x^{(t+1)}+\theta(x^{(t+1)}-x^{(t)})
+\end{align*}
 
 \end_inset
 
