@@ -1,3 +1,5 @@
+addpath src/
+addpath src/irt
 %% Actual Shepp Logan phantom
 SL = [  2   .69   .92    0     0     0   
         -.98 .6624 .8740   0  -.0184   0
@@ -44,6 +46,7 @@ save(sprintf('phantoms/ncat-%d.mat', scale), 'P')
 %
 
 projection_order = 'sequential';
+try
 algs = {
   % ASTRA types
   %
@@ -245,6 +248,9 @@ algs = {
       'ClearReconstruction',1, 'UseJacobiPreconditioner',0, ...
       'UseBSSART',0, 'ProjectionOrder',projection_order)))
   };
+catch ME
+  error(ME.message);
+end
 
 %%    -- Per Iteration
 for i=1
@@ -1400,11 +1406,12 @@ end
 
 clear variables;
 
-iter = 30;
-nprojs = 30; [15 30]; [15 30 90];
-data_ids = 1:3; 1:3; 1;
+iter = 2; 30;
+nprojs = 15; 30; [15 30]; [15 30 90];
+data_ids = 1; 1:3; 1:3; 1;
 
-plt = 'recon'; 'per_iter';
+plt = 'per_iter'; 'recon'; 'per_iter';
+save_this = 0;
 
 switch plt
   case 'per_iter'
@@ -1605,7 +1612,7 @@ for nproj=nprojs
                   'proj_type',proj_type, 'prefix',prefix, 'plot_resid',0, ...
                   'legend_cols',2, 'per_time',0, 'prox_fbp',0, ...
                   'exclude_legend',[1], 'fig_size',[800,400], 'title','num_proj', ...
-                  'save',1, 'force_num_proj',1);
+                  'save',save_this, 'force_num_proj',1);
               case 'recon'
                 % put args
                 arg = struct('phan',phantom, 'phan_size',512, 'path','./plots', ...
@@ -1614,7 +1621,7 @@ for nproj=nprojs
                   'proj_type',proj_type, 'prefix',prefix, 'plot_resid',0, ...
                   'legend_cols',2, 'per_time',0, 'prox_fbp',0, ...
                   'exclude_legend',[1], 'fig_size',[3200,800], 'title','num_proj', ...
-                  'save',1, 'force_num_proj',1, ...
+                  'save',save_this, 'force_num_proj',1, ...
                   'range',range, 'subplot_r',1, 'subplot_c',4);
               end                
               % call
