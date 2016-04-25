@@ -70,12 +70,12 @@
 \suppress_date false
 \justification true
 \use_refstyle 0
-\branch TMI
+\branch Short
 \selected 1
 \filename_suffix 1
 \color #c8c0b9
 \end_branch
-\branch Techreport
+\branch Long
 \selected 0
 \filename_suffix 1
 \color #c8c2ac
@@ -241,10 +241,6 @@ P.
 \end_layout
 
 \begin_layout Abstract
-\begin_inset Branch TMI
-status open
-
-\begin_layout Standard
 We present TRex, a flexible and robust Tomographic Reconstruction framework
  using proximal algorithms.
  We provide an overview and perform an experimental comparison between the
@@ -256,31 +252,6 @@ We present TRex, a flexible and robust Tomographic Reconstruction framework
  We compare our framework to state of the art methods, and show superior
  quality on both synthetic and real datasets.
  
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Techreport
-status collapsed
-
-\begin_layout Standard
-We present TRex, a flexible and robust Tomographic Reconstruction framework
- using proximal algorithms.
- We provide an overview and perform an experimental comparison between the
- famous iterative reconstruction methods in terms of reconstruction quality
- in sparse view situations.
- We then derive the proximal operators for the four best methods.
- We show the flexibility of our framework by deriving solvers for two noise
- models: Gaussian and Poisson; and by plugging in three powerful regularizers.
- We compare our framework to state of the art methods, and show superior
- quality on both synthetic and real datasets.
- 
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Keywords
@@ -290,43 +261,7 @@ Image reconstruction, X-ray imaging and computed tomography, Simultaneous
 \end_layout
 
 \begin_layout Standard
-\begin_inset Branch TMI
-status open
-
-\begin_layout Standard
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-newcommand{
-\backslash
-TMI}[1]{#1}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-newcommand{
-\backslash
-TR}[1]{}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Branch Techreport
+\begin_inset Branch Short
 status collapsed
 
 \begin_layout Standard
@@ -339,7 +274,7 @@ status open
 \backslash
 newcommand{
 \backslash
-TMI}[1]{}
+Short}[1]{#1}
 \end_layout
 
 \begin_layout Plain Layout
@@ -348,7 +283,43 @@ TMI}[1]{}
 \backslash
 newcommand{
 \backslash
-TR}[1]{#1}
+Long}[1]{}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Branch Long
+status collapsed
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+newcommand{
+\backslash
+Long}[1]{}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+newcommand{
+\backslash
+Short}[1]{#1}
 \end_layout
 
 \end_inset
@@ -436,7 +407,7 @@ key "pan2009commercial"
 \end_layout
 
 \begin_layout Standard
-Thus, in this paper, we study iterative reconstruction techniques.
+Thus, in this work, we study iterative reconstruction techniques.
  We present TRex, a flexible proximal framework for robust X-Ray tomography
  reconstruction in sparse view applications.
  TRex uses iterative algorithms, especially the SART (Simultaneous ART)
@@ -528,10 +499,10 @@ key "boyd2011distributed,parikh2013proximal"
 \end_inset
 
  together with these iterative methods.
- We derive proximal operators for SART, ART, BICAV, and OS-SQS, and show
- how to use these proximal operators to minimize different data fitting
- terms, including least squares (LS) that assumes a Gaussian noise model,
- and weighted least squares (WLS) that assumes an approximation to a Poisson
+ We derive proximal operators for SART, ART, BICAV, and OS-SQS.
+ We show how to use these proximal operators to minimize two data fitting
+ terms: (a) least squares (LS) that assumes a Gaussian noise model; and
+ (b) weighted least squares (WLS) that assumes an approximation to a Poisson
  noise model 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -556,8 +527,8 @@ key "sidky2012convex"
 
 \end_inset
 
- We also show how to plug in different powerful regularizers, namely the
- Isotropic Total Variation (ITV) 
+ We also show how to plug in different powerful regularizers; namely Isotropic
+ Total Variation (ITV) 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "rudin1992nonlinear"
@@ -585,14 +556,40 @@ key "gregson2012stochastic"
 
 \begin_layout Standard
 Finally, we compare our framework to state of the art methods, namely the
- ADMM method from 
+ ADMM method from Ramani 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+etal
+\end_layout
+
+\end_inset
+
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "ramani2012splitting"
 
 \end_inset
 
- and the OS-SQS method (with and without momentum method) 
+ and the OS-SQS method (with and without momentum method) from Kim 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+etal
+\end_layout
+
+\end_inset
+
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "kim2015combining"
@@ -8294,7 +8291,19 @@ key "kim2015combining"
 \end_inset
 
  that combines ordered subsets with momentum.
- We don't compare to the method of Nien et al.
+ We don't compare to the method of Nien 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+etal
+\end_layout
+
+\end_inset
+
  
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -8399,7 +8408,7 @@ The OS-Mom also minimizes a WLS data term and regularization term:
 \begin_inset Formula $\psi(\cdot)$
 \end_inset
 
- is the Fair potential function and 
+ is an edge preserving potential function and 
 \begin_inset Formula $\nabla x_{r}\in\mathbb{R}^{2}$
 \end_inset
 
@@ -8417,7 +8426,15 @@ key "kim2015combining"
 
 ) within the IRT toolbox.
  We use the settings from the paper for the regularizer i.e.
- the Fair potential with 
+ the Fair potential 
+\begin_inset Formula 
+\[
+\psi(t)=\frac{\delta^{2}}{b^{3}}\left(\frac{ab^{2}}{2}\left|\frac{t}{\delta}\right|^{2}+b(b-a)\left|\frac{t}{\delta}\right|+(a-b)\log(1+b\left|\frac{t}{\delta}\right|)\right)
+\]
+
+\end_inset
+
+with 
 \begin_inset Formula $\delta=10$
 \end_inset
 
