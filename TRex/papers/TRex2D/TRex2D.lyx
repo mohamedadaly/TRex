@@ -313,7 +313,7 @@ on is collected from the volume to be reconstructed; and one has to use
  non-linear regularizers (priors) to achieve a reasonable result.
  This is typically done using iterative solvers 
 \begin_inset Branch Long
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -371,7 +371,7 @@ key "kak2001principles,gordon1970algebraic,gordon1971reconstruction"
 However, non-iterative, transform-based algorithms, such as the filtered
  back projection (FBP) 
 \begin_inset Branch Long
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -424,7 +424,7 @@ Thus, in this work, we study iterative reconstruction techniques.
  TRex uses iterative algorithms, especially the SART (Simultaneous ART)
  
 \begin_inset Branch Long
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -508,7 +508,7 @@ key "bjorck1996numerical"
 
 , and OS-SQS (Ordered Subset-Separable Quadratic Surrogates) 
 \begin_inset Branch Long
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -870,7 +870,7 @@ key "gordon1970algebraic,lent1977convergent,shepp1982maximum,censor1983finite,an
 .
  They use variations of the projection method of Kaczmarz 
 \begin_inset Branch Long
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -2395,7 +2395,7 @@ key "gordon1970algebraic,gordon1971reconstruction"
  is the first algebraic method, and is based on Kaczmarz alternating projection
  algorithm 
 \begin_inset Branch Long
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -2847,7 +2847,7 @@ for
  This has been shown to provide faster convergence than ART and better reconstru
 ction results than SIRT 
 \begin_inset Branch Long
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -3274,7 +3274,7 @@ key "erdogan1999ordered,kim2015combining"
  is closely related to SART.
  It is usually derived from a majorization-minimization perspective 
 \begin_inset Branch Long
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -3603,9 +3603,34 @@ name "sec:Proximal-Operators"
 \begin_layout Standard
 Proximal algorithms are a class of optimization algorithms that are quite
  flexible and powerful 
+\begin_inset Branch Long
+status collapsed
+
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "combettes2011proximal,boyd2011distributed,parikh2013proximal"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Branch Short
+status open
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "boyd2011distributed,parikh2013proximal"
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -3620,9 +3645,34 @@ proximal operator
 \emph default
 .
  The proximal operator 
+\begin_inset Branch Short
+status open
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "parikh2013proximal"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Branch Long
+status collapsed
+
+\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "bauschke2011convex,combettes2011proximal,parikh2013proximal"
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -4046,7 +4096,7 @@ Introduce new variables
 .
  
 \begin_inset Branch Long
-status open
+status collapsed
 
 \begin_layout Standard
 The problem becomes 
@@ -4752,7 +4802,7 @@ u
 
 
 \begin_inset Branch Long
-status open
+status collapsed
 
 \begin_layout Standard
  where 
@@ -5931,7 +5981,7 @@ approximated
  Poisson noise model leads to a WLS data term, where the weights are proportiona
 l to the detector measurements 
 \begin_inset Branch Long
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -7118,7 +7168,7 @@ h_{\text{ITV}}(x)=g_{\text{ITV}}(Kx)
 
 
 \begin_inset Branch Long
-status open
+status collapsed
 
 \begin_layout Standard
  
@@ -7351,7 +7401,7 @@ g_{\text{SAD}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}.
 
  is similar to the ATV case
 \begin_inset Branch Short
-status collapsed
+status open
 
 \begin_layout Standard
 .
@@ -7817,14 +7867,7 @@ key "aly2016tomography"
 
 \end_inset
 
- for experiments on the Modified Shepp-Logan phantom 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "toft1996radon"
-
-\end_inset
-
-.
+ for experiments on the Modified Shepp-Logan phantom.
 \end_layout
 
 \end_inset
