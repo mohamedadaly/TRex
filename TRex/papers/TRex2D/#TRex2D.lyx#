@@ -312,34 +312,9 @@ key "herman2009fundamentals"
 on is collected from the volume to be reconstructed; and one has to use
  non-linear regularizers (priors) to achieve a reasonable result.
  This is typically done using iterative solvers 
-\begin_inset Branch Long
-status open
-
-\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "thibault2007three,zhang2014model"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset CommandInset citation
-LatexCommand cite
-key "zhang2014model"
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -370,34 +345,9 @@ key "kak2001principles,gordon1970algebraic,gordon1971reconstruction"
 
 However, non-iterative, transform-based algorithms, such as the filtered
  back projection (FBP) 
-\begin_inset Branch Long
-status open
-
-\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "ramachandran1971three,shepp1974fourier,feldkamp1984practical"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset CommandInset citation
-LatexCommand cite
-key "shepp1974fourier"
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -423,34 +373,9 @@ Thus, in this work, we study iterative reconstruction techniques.
  reconstruction in sparse view applications.
  TRex uses iterative algorithms, especially the SART (Simultaneous ART)
  
-\begin_inset Branch Long
-status open
-
-\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "andersen1984simultaneous,andersen1989algebraic"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset CommandInset citation
-LatexCommand cite
-key "andersen1984simultaneous"
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -467,14 +392,14 @@ We start by conducting a thorough comparison of the famous iterative algorithms
  including SART 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "andersen1984simultaneous"
+key "andersen1984simultaneous,andersen1989algebraic"
 
 \end_inset
 
 , ART (Algebraic Reconstruction Technique) 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "andersen1984simultaneous"
+key "andersen1984simultaneous,andersen1989algebraic"
 
 \end_inset
 
@@ -507,40 +432,22 @@ key "bjorck1996numerical"
 \end_inset
 
 , and OS-SQS (Ordered Subset-Separable Quadratic Surrogates) 
-\begin_inset Branch Long
-status open
-
-\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "depierro1994modified,hudson1994accelerated,erdogan1999ordered,kim2013accelerating,nien2015fast"
 
 \end_inset
 
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
+.
+ We establish that SART 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "depierro1994modified,erdogan1999ordered,kim2013accelerating"
+key "andersen1984simultaneous,andersen1989algebraic"
 
 \end_inset
 
-
-\end_layout
-
-\end_inset
-
-.
- We establish that SART provides the best performance in the sparse view
- measurements situations, followed closely by ART, OS-SQS, and BICAV.
+ provides the best performance in the sparse view measurements situations,
+ followed closely by ART, OS-SQS, and BICAV.
 \end_layout
 
 \begin_layout Standard
@@ -842,7 +749,7 @@ status open
 \begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
-key "gordon1970algebraic,andersen1984simultaneous"
+key "gordon1970algebraic,andersen1984simultaneous,andersen1989algebraic"
 
 \end_inset
 
@@ -869,34 +776,9 @@ key "gordon1970algebraic,lent1977convergent,shepp1982maximum,censor1983finite,an
 
 .
  They use variations of the projection method of Kaczmarz 
-\begin_inset Branch Long
-status open
-
-\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "kaczmarz1937angenaherte"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset CommandInset citation
-LatexCommand cite
-key "kak2001principles"
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -907,7 +789,7 @@ key "kak2001principles"
  OS-SQS and related methods 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "depierro1994modified,erdogan1999ordered,kim2013accelerating"
+key "depierro1994modified,hudson1994accelerated,erdogan1999ordered,kim2013accelerating,nien2015fast"
 
 \end_inset
 
@@ -1940,7 +1822,7 @@ Yes
 SART 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "andersen1984simultaneous"
+key "andersen1984simultaneous,andersen1989algebraic"
 
 \end_inset
 
@@ -2394,34 +2276,9 @@ key "gordon1970algebraic,gordon1971reconstruction"
 
  is the first algebraic method, and is based on Kaczmarz alternating projection
  algorithm 
-\begin_inset Branch Long
-status open
-
-\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "kaczmarz1937angenaherte"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset CommandInset citation
-LatexCommand cite
-key "kak2001principles"
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -2506,10 +2363,6 @@ th column of
 \end_inset
 
  rows.
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
  The term 
 \begin_inset Formula $\sum_{k}a_{ik}x_{k}^{(t)}$
 \end_inset
@@ -2525,12 +2378,7 @@ th ray (equation or row), the difference in the numerator is the projection
 \end_inset
 
 th row.
- 
-\end_layout
-
-\end_inset
-
-It has been shown that ART converges to a least-norm solution to the consistent
+ It has been shown that ART converges to a least-norm solution to the consistent
  system of equations 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2786,7 +2634,7 @@ SART
 \begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
-key "andersen1984simultaneous"
+key "andersen1984simultaneous,andersen1989algebraic"
 
 \end_inset
 
@@ -2846,34 +2694,9 @@ for
 .
  This has been shown to provide faster convergence than ART and better reconstru
 ction results than SIRT 
-\begin_inset Branch Long
-status open
-
-\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "mueller2000rapid,mueller1999fast"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset CommandInset citation
-LatexCommand cite
-key "mueller2000rapid"
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -3267,40 +3090,15 @@ OS-SQS
 \begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
-key "erdogan1999ordered,kim2015combining"
+key "erdogan1999ordered,kim2013accelerating,kim2015combining,nien2015fast"
 
 \end_inset
 
  is closely related to SART.
  It is usually derived from a majorization-minimization perspective 
-\begin_inset Branch Long
-status open
-
-\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "depierro1994modified,erdogan1999ordered,kim2013accelerating,kim2015combining"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset CommandInset citation
-LatexCommand cite
-key "depierro1994modified,kim2013accelerating"
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -4027,11 +3825,21 @@ reference "eq:tomography-prox-operator"
 \end_inset
 
 .
- This is equivalent to solving 
+ 
+\begin_inset Branch Long
+status open
+
+\begin_layout Standard
+This is equivalent to solving 
 \begin_inset Formula 
 \begin{equation}
 \min_{x}2\lambda\Vert Ax-p\Vert_{2}^{2}+\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-2}
 \end{equation}
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -4044,12 +3852,7 @@ Introduce new variables
 \end_inset
 
 .
- 
-\begin_inset Branch Long
-status open
-
-\begin_layout Standard
-The problem becomes 
+ The problem becomes 
 \begin_inset Formula 
 \begin{eqnarray}
 \min_{y,z} & \Vert y\Vert_{2}^{2}+\Vert z\Vert_{2}^{2}\nonumber \\
@@ -4066,22 +3869,7 @@ reference "eq:SART-prox-3"
 
 \end_inset
 
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-After some manipulations
-\end_layout
-
-\end_inset
-
- we arrive at 
+ we arrive at  
 \begin_inset Formula 
 \begin{eqnarray*}
 \mbox{\ensuremath{\min}}_{y,z} & \left\Vert \left[\begin{array}{c}
@@ -4126,7 +3914,7 @@ where
 
 \begin_layout Standard
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 Although we introduced new variables 
@@ -4752,7 +4540,7 @@ u
 
 
 \begin_inset Branch Long
-status open
+status collapsed
 
 \begin_layout Standard
  where 
@@ -4775,16 +4563,32 @@ u
 
 \end_inset
 
+The weighting matrix 
+\begin_inset Formula $\tilde{C}\in\mathbb{R}^{n\times n}$
+\end_inset
+
+ now becomes 
+\begin_inset Branch Short
+status open
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\tilde{C} & = & \mbox{diag}\left(2\lambda A^{T}A\mathbf{1}+\mathbf{1}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
  
 \begin_inset Branch Long
 status collapsed
 
 \begin_layout Standard
-The weighting matrix 
-\begin_inset Formula $\tilde{C}\in\mathbb{R}^{n\times n}$
-\end_inset
-
- now becomes
 \begin_inset Formula 
 \begin{eqnarray*}
 \tilde{C} & = & \mbox{diag}(\tilde{A}^{T}\tilde{A}\mathbf{1})\\
@@ -4794,16 +4598,16 @@ The weighting matrix
 
 \end_inset
 
- and its diagonal entries are 
-\begin_inset Formula 
-\[
-\tilde{c}_{j}=2\lambda c_{j}+1.
-\]
+
+\end_layout
 
 \end_inset
 
-
-\end_layout
+ and its diagonal entries are 
+\begin_inset Formula 
+\[
+\tilde{c}_{j}=2\lambda c_{j}+1
+\]
 
 \end_inset
 
@@ -5930,34 +5734,9 @@ approximated
 \emph default
  Poisson noise model leads to a WLS data term, where the weights are proportiona
 l to the detector measurements 
-\begin_inset Branch Long
-status open
-
-\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "clinthorne1993preconditioning,depierro1994modified,elbakri2002statistical,thibault2007three"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset CommandInset citation
-LatexCommand cite
-key "clinthorne1993preconditioning,depierro1994modified"
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -7049,7 +6828,7 @@ key "rudin1992nonlinear,sidky2012convex,chambolle2011first"
  
 \begin_inset Formula 
 \begin{equation}
-h_{\text{ITV}}(x)=g_{\text{ITV}}(Kx)=\sigma\Vert x\Vert_{\text{TV}}=\sigma\sum_{i}\Vert\nabla x_{i}\Vert_{2}\label{eq:h-ITV}
+h_{\text{ITV}}(x)=\sigma\Vert x\Vert_{\text{TV}}=\sigma\sum_{i}\Vert\nabla x_{i}\Vert_{2}\label{eq:h-ITV}
 \end{equation}
 
 \end_inset
@@ -7107,7 +6886,7 @@ h_{\text{ITV}}(x)=g_{\text{ITV}}(Kx)
 
 \end_inset
 
- by defining the matrix 
+by defining the matrix 
 \begin_inset Formula $K=D\in\mathbb{R}^{2n\times n}$
 \end_inset
 
@@ -7116,11 +6895,6 @@ h_{\text{ITV}}(x)=g_{\text{ITV}}(Kx)
 \begin_inset Formula $\nabla x\in\mathbb{R}^{2n}$
 \end_inset
 
-
-\begin_inset Branch Long
-status open
-
-\begin_layout Standard
  
 \begin_inset Formula 
 \[
@@ -7129,11 +6903,6 @@ status open
 \nabla x_{n}
 \end{bmatrix}=Dx
 \]
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -7200,7 +6969,7 @@ Anisotropic Total Variation (ATV)
 It is a simplification of ITV 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "sidky2008image"
+key "sidky2008image,chambolle2010introduction"
 
 \end_inset
 
@@ -7340,31 +7109,21 @@ h_{\text{SAD}}(x)=g_{\text{SAD}}(Kx)
  
 \begin_inset Formula 
 \[
-g_{\text{SAD}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}.
+g_{\text{SAD}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}
 \]
 
 \end_inset
 
+ where 
+\begin_inset Formula $u_{i}\in\mathbb{R}^{8}$
+\end_inset
+
+.
  The proximal operator 
 \begin_inset Formula $\prox_{\lambda g_{\text{ATV}}}(u)$
 \end_inset
 
- is similar to the ATV case
-\begin_inset Branch Short
-status collapsed
-
-\begin_layout Standard
-.
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-: 
+ is similar to the ATV case: 
 \begin_inset Formula 
 \begin{equation}
 \prox_{\lambda g_{\text{ITV}}}(u_{i})=\sign(u_{i})\odot\max(0,\vert u_{i}\vert-\sigma).\label{eq:SAD-prox}
@@ -7372,12 +7131,7 @@ status collapsed
 
 \end_inset
 
-
-\end_layout
-
-\end_inset
-
- The SAD prior has been shown 
+The SAD prior has been shown 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "gregson2012stochastic"
