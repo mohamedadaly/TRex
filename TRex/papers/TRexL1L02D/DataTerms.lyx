@@ -2080,7 +2080,7 @@ reference "alg:SART-Proximal-Operator-WLS"
 placement h
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Caption Standard
@@ -3139,7 +3139,7 @@ we can find the
 \begin_inset Formula $i$
 \end_inset
 
-th component 
+the component 
 \begin_inset Formula $y_{i}^{(t+1)}$
 \end_inset
 

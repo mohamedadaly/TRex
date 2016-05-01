@@ -4,9 +4,20 @@
 \begin_header
 \textclass article
 \begin_preamble
-\usepackage{opex3}
-\usepackage{color}
+\usepackage{nips_2016}
+\usepackage{hyperref}
+%\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+
+%\usepackage{opex3}
+%\usepackage{color}
 %\usepackage[colorlinks=true,urlcolor=blue,linkcolor=black,citecolor=black,breaklinks=true,bookmarks=false]{hyperref}
+%\usepackage{cite}
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -31,7 +42,6 @@
 
 \renewcommand{\maketitle}{}
 \end_preamble
-\options 10pt,letterpaper
 \use_default_options false
 \maintain_unincluded_children false
 \language english
@@ -42,7 +52,7 @@
 \font_sans default
 \font_typewriter default
 \font_math auto
-\font_default_family default
+\font_default_family rmdefault
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
@@ -118,79 +128,53 @@
 \begin_body
 
 \begin_layout Title
-A Tomography Reconstruction Proximal Framework for Robust Sparse View X-Ray
- Applications
+\begin_inset Branch Long
+status collapsed
+
+\begin_layout Standard
+A Robust X-Ray Tomography Reconstruction Proximal Framework
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Branch Short
+status open
+
+\begin_layout Title
+TRex: A Tomography Reconstruction Proximal Framework for Robust Sparse View
+ X-Ray Applications
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Author
-Mohamed Aly
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-M.
- Aly is with the Visual Computing Center, KAUST, KSA
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
-% and
+
+\backslash
+author{Mohamed Aly, Guangming Zang, Wolfgang Heidrich, and Peter Wonka}
 \end_layout
-
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
 
 \begin_layout Plain Layout
 
-% the Computer Eng.
- Dept, Cairo University, Egypt%
+
+\backslash
+address{Visual Computing Center, KAUST, KSA}
 \end_layout
 
 \end_inset
 
 
-\end_layout
-
-\end_inset
-
-, Guangming Zang
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-G.
- Zang is with the Visual Computing Center, KAUST, KSA
-\end_layout
-
-\end_inset
-
-, Wolfgang Heidrich
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-W.
- Heidrich is with the Visual Computing Center, KAUST, KSA
-\end_layout
-
-\end_inset
-
-, and Peter Wonka
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-P.
- Wonka is with the Visual Computing Center, KAUST, KSA
-\end_layout
-
-\end_inset
-
- 
 \end_layout
 
 \begin_layout Abstract
@@ -205,24 +189,6 @@ We present TRex, a flexible and robust Tomographic Reconstruction framework
  We compare our framework to state of the art methods, and show superior
  quality on both synthetic and real datasets.
  
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-ocis{(100.6950) Tomographic Image Processing, (110.6955) Tomographic Imaging,
- (110.6960) Tomography, (110.7440) X-ray Imaging, (150.1134) Algorithms, (170.6969)
- Tomography}
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -242,7 +208,7 @@ Image reconstruction, X-ray imaging and computed tomography, Simultaneous
 
 \begin_layout Standard
 \begin_inset Branch Short
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset ERT
@@ -1718,7 +1684,7 @@ key "aly2016tomography"
 \begin_inset Float table
 wide true
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -1745,6 +1711,8 @@ arraystretch{1.5}
 \end_inset
 
 
+\size scriptsize
+
 \begin_inset Tabular
 <lyxtabular version="3" rows="8" columns="5">
 <features rotate="0" booktabs="true" tabularvalignment="middle">
@@ -1754,7 +1722,7 @@ arraystretch{1.5}
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -1816,7 +1784,7 @@ Converges
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 ART 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1834,7 +1802,7 @@ key "gordon1970algebraic"
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{p_{i}-\sum_{k}a_{ik}x_{k}^{(t)}}{\sum_{k}a_{ik}^{2}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha A_{i}^{T}R^{-1}\left(p_{i}-A_{i}x^{(t)}\right)
 \end{aligned}
@@ -1851,7 +1819,7 @@ $
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 one ray
 \end_layout
 
@@ -1862,7 +1830,7 @@ one ray
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
  & \st Ax=p
 \end{aligned}
@@ -1879,7 +1847,7 @@ $
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 Yes
 \end_layout
 
@@ -1887,12 +1855,12 @@ Yes
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 SIRT 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1910,7 +1878,7 @@ key "gilbert1972iterative"
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i=1}^{m}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha C^{-1}A^{T}R^{-1}\left(p-Ax^{(t)}\right)
 \end{aligned}
@@ -1927,7 +1895,7 @@ $
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 all rays
 \end_layout
 
@@ -1938,7 +1906,7 @@ all rays
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{R^{-1}}^{2}$
 \end_inset
 
@@ -1952,7 +1920,7 @@ all rays
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 Yes
 \end_layout
 
@@ -1965,7 +1933,7 @@ Yes
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 SART 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1983,7 +1951,7 @@ key "andersen1984simultaneous"
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i\in S}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
 \end{aligned}
@@ -2000,7 +1968,7 @@ $
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 one view
 \end_layout
 
@@ -2011,7 +1979,7 @@ one view
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $\begin{aligned}x^{\star}\approx & \argmin_{x}\Vert x\Vert_{2}^{2}\\
  & \st Ax=p
 \end{aligned}
@@ -2028,7 +1996,7 @@ $
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 No
 \end_layout
 
@@ -2041,7 +2009,7 @@ No
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 BSSART 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2059,7 +2027,7 @@ key "censor2002block"
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha C^{-1}A_{S}^{T}R^{-1}\left(p_{S}-A_{S}x^{(t)}\right)
 \end{aligned}
@@ -2076,7 +2044,7 @@ $
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 one view
 \end_layout
 
@@ -2087,7 +2055,7 @@ one view
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
  & \st Ax=p
 \end{aligned}
@@ -2104,7 +2072,7 @@ $
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 Yes
 \end_layout
 
@@ -2117,7 +2085,7 @@ Yes
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 BICAV 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2135,7 +2103,7 @@ key "censor2001bicav"
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i\in S}\{a_{ij}\ne0\}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}^{2}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p_{S}-A_{S}x^{(t)}\right)
 \end{aligned}
@@ -2152,7 +2120,7 @@ $
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 one view
 \end_layout
 
@@ -2163,7 +2131,7 @@ one view
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
  & \st Ax=p
 \end{aligned}
@@ -2180,7 +2148,7 @@ $
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 Yes
 \end_layout
 
@@ -2193,7 +2161,7 @@ Yes
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 OS-SQS 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2211,7 +2179,7 @@ key "erdogan1999ordered"
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\frac{\alpha s}{\left(\sum_{k=1}^{m}a_{kj}\sum_{i=1}^{n}a_{ki}\right)}\sum_{i\in S}\left(p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}\right)a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha sC^{-1}A_{S}^{T}\left(p_{S}-A_{S}x^{(t)}\right)
 \end{aligned}
@@ -2228,7 +2196,7 @@ $
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 one view
 \end_layout
 
@@ -2239,7 +2207,7 @@ one view
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $x^{\star}\approx\Vert Ax-p\Vert_{2}^{2}$
 \end_inset
 
@@ -2253,7 +2221,7 @@ one view
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 No
 \end_layout
 
@@ -2266,7 +2234,7 @@ No
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 CGLS 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2284,7 +2252,7 @@ key "bjorck1996numerical,fessler1999conjugate"
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $x^{(t+1)}=x^{(t)}+\alpha_{t}\Phi\left(A^{T}(p-Ax^{(t)})\right)$
 \end_inset
 
@@ -2298,7 +2266,7 @@ key "bjorck1996numerical,fessler1999conjugate"
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 all rays
 \end_layout
 
@@ -2309,7 +2277,7 @@ all rays
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 \begin_inset Formula $x^{\star}=\Vert Ax-p\Vert_{2}^{2}$
 \end_inset
 
@@ -2323,7 +2291,7 @@ all rays
 
 \begin_layout Plain Layout
 
-\size footnotesize
+\size scriptsize
 Yes
 \end_layout
 
@@ -2410,11 +2378,13 @@ key "aly2016tomography"
 
 \end_layout
 
-\begin_layout Subsubsection
-ART
-\end_layout
-
 \begin_layout Standard
+
+\series bold
+1.
+ ART
+\series default
+: 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "gordon1970algebraic,gordon1971reconstruction"
@@ -2643,13 +2613,13 @@ th row
  
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Standard
 
 \series bold
-SIRT
-\end_layout
-
-\begin_layout Standard
+2.
+ SIRT
+\series default
+: 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "gilbert1972iterative"
@@ -2806,13 +2776,13 @@ key "gregor2015comparison"
 .
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Standard
 
 \series bold
-SART
-\end_layout
-
-\begin_layout Standard
+3.
+ SART
+\series default
+: 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "andersen1984simultaneous"
@@ -2995,13 +2965,15 @@ reference "eq:least-norm-problem"
 .
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Standard
 
 \series bold
-BSSART
-\end_layout
+4.
+ BSSART
+\series medium
+: 
+\series default
 
-\begin_layout Standard
 \begin_inset CommandInset citation
 LatexCommand cite
 key "censor2002block"
@@ -3134,13 +3106,13 @@ x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\st Ax=p
 .
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Standard
 
 \series bold
-BICAV
-\end_layout
-
-\begin_layout Standard
+5.
+ BICAV
+\series default
+: 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "censor2001bicav,censor2002block"
@@ -3287,13 +3259,13 @@ status collapsed
 .
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Standard
 
 \series bold
-OS-SQS
-\end_layout
-
-\begin_layout Standard
+6.
+ OS-SQS
+\series default
+: 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "erdogan1999ordered,kim2015combining"
@@ -3498,13 +3470,13 @@ reference "eq:least-square-problem"
  above approximately.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Standard
 
 \series bold
-CGLS
-\end_layout
-
-\begin_layout Standard
+7.
+ CGLS
+\series default
+: 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "bjorck1996numerical,fessler1999conjugate"
@@ -3769,7 +3741,7 @@ key "aly2016tomography"
 \begin_inset Float table
 wide true
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -3779,11 +3751,13 @@ status collapsed
 
 
 \backslash
-center
+centering
 \end_layout
 
 \end_inset
 
+
+\size footnotesize
 
 \begin_inset Tabular
 <lyxtabular version="3" rows="5" columns="3">
@@ -3796,6 +3770,8 @@ center
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 Method
 \end_layout
 
@@ -3805,6 +3781,8 @@ Method
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 Update Step
 \end_layout
 
@@ -3814,6 +3792,8 @@ Update Step
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 Converges
 \end_layout
 
@@ -3825,6 +3805,8 @@ Converges
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 ART 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -3841,6 +3823,8 @@ key "gordon1970algebraic"
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 \begin_inset Formula $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\mbox{ for }i\in S\\
 x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\sqrt{2\lambda}a_{ij}\mbox{ for }j=1\ldots n
 \end{aligned}
@@ -3856,6 +3840,8 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 Yes
 \end_layout
 
@@ -3867,6 +3853,8 @@ Yes
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 SART 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -3883,6 +3871,8 @@ key "andersen1984simultaneous"
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 \begin_inset Formula $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\mbox{ for }i\in S\\
 x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\sqrt{2\lambda}a_{ij}}{\sqrt{2\lambda}\sum_{i\in S}a_{ij}}\mbox{ for }j=1\ldots n
 \end{aligned}
@@ -3898,6 +3888,8 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 No
 \end_layout
 
@@ -3909,6 +3901,8 @@ No
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 BICAV 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -3925,6 +3919,8 @@ key "censor2001bicav"
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 \begin_inset Formula $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{j}-\sqrt{2\lambda}\sum_{k}a_{jk}x_{k}^{(t)}-y_{j}^{(t)}}{2\lambda\sum_{k}a_{jk}^{2}+1}\mbox{ for }i\in S\\
 x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\sqrt{2\lambda}a_{ij}}{\sum_{i\in S}\{a_{ij}\ne0\}}\mbox{ for }j=1\ldots n
 \end{aligned}
@@ -3940,6 +3936,8 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 Yes
 \end_layout
 
@@ -3951,6 +3949,8 @@ Yes
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 OS-SQS 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -3967,6 +3967,8 @@ key "erdogan1999ordered"
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{2\lambda c_{j}+1}\left(2\lambda\sum_{i\in S}(p_{j}-\sum_{k}a_{ik}x_{k}^{(t)})a_{ij}+u_{j}-x_{j}^{(t)}\right)\mbox{ for }j=1\ldots n\end{aligned}
 $
 \end_inset
@@ -3994,6 +3996,8 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\size footnotesize
 No
 \end_layout
 
@@ -4061,7 +4065,7 @@ SART, ART, and BICAV
 \end_layout
 
 \begin_layout Standard
-ART, SART, and BICAV (approximately) solve the least-norm problem 
+They (approximately) solve the least-norm problem 
 \begin_inset Branch Short
 status open
 
@@ -5932,12 +5936,9 @@ We will consider the following data fidelity terms, which correspond to
  specific noise models:
 \end_layout
 
-\begin_layout Subsubsection
-Gaussian Noise
-\end_layout
-
 \begin_layout Standard
-Assume the measurements 
+1.
+ Gaussian Noise: Assume the measurements 
 \begin_inset Formula $p_{i}\forall i=1,\ldots m$
 \end_inset
 
@@ -5998,12 +5999,9 @@ reference "tab:Prox-Operators"
 .
 \end_layout
 
-\begin_layout Subsubsection
-Poisson Noise
-\end_layout
-
 \begin_layout Standard
-It can be shown that assuming an 
+2.
+ Poisson Noise: It can be shown that assuming an 
 \emph on
 approximated
 \emph default
@@ -7112,12 +7110,10 @@ reference "eq:prox-operator"
 
 \end_layout
 
-\begin_layout Subsubsection
-Isotropic Total Variation (ITV)
-\end_layout
-
 \begin_layout Standard
-It is the sum of the gradient magnitude at each voxel 
+1.
+ Isotropic Total Variation (ITV): It is the sum of the gradient magnitude
+ at each voxel 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "rudin1992nonlinear,sidky2012convex,chambolle2011first"
@@ -7271,12 +7267,9 @@ th component of
 .
 \end_layout
 
-\begin_layout Subsubsection
-Anisotropic Total Variation (ATV)
-\end_layout
-
 \begin_layout Standard
-It is a simplification of ITV 
+2.
+ Anisotropic Total Variation (ATV): It is a simplification of ITV 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "sidky2008image"
@@ -7361,13 +7354,10 @@ key "sidky2012convex"
 , where the max and product are component-wise operations.
 \end_layout
 
-\begin_layout Subsubsection
-Sum of Absolute Differences (SAD)
-\end_layout
-
 \begin_layout Standard
-It is an extension to the ATV by adding more forward differences around
- each voxel 
+3.
+ Sum of Absolute Differences (SAD): It is an extension to the ATV by adding
+ more forward differences around each voxel 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "gregson2012stochastic"
@@ -7479,311 +7469,6 @@ name "sec:Experiments"
 
 \begin_layout Subsection
 Datasets and Implementation Details
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-center
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Float 
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/phantom-ph_mod-sl-512.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Modified Shepp-Logan
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float 
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/phantom-ph_ncat-512.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/phantom-ph_mouse-512.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/phantom-ph_ncat-512.pdf
-	lyxscale 20
-	width 50col%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/phantom-ph_mouse-512.pdf
-	lyxscale 20
-	width 50col%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-The datasets used.
- 
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-(c)
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-(b)
-\end_layout
-
-\end_inset
-
- shows the 
-\emph on
-ground truth
-\emph default
- converged result from the projections.
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Phantoms"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -8030,901 +7715,6 @@ Iterative Algorithms Comparison
 \begin_inset CommandInset label
 LatexCommand label
 name "sub:Iterative-Algorithms-Comparison"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide true
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-center
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Modified Shepp-Logan
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\size small
-\begin_inset Graphics
-	filename plots/per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
-	lyxscale 20
-	width 25text%
-
-\end_inset
-
-
-\size small
-
-\begin_inset Graphics
-	filename plots/per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_90-p_fan-snr.pdf
-	lyxscale 20
-	width 25text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
-	lyxscale 20
-	width 25text%
-
-\end_inset
-
-
-\begin_inset Graphics
-	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse-snr.pdf
-	lyxscale 20
-	width 25text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-
-\series bold
-Iterative Algorithms Comparison
-\series default
-.
- Plots show SNR per iteration.
- Solid lines have 
-\begin_inset Formula $\alpha=1$
-\end_inset
-
-, dashed lines have 
-\begin_inset Formula $\alpha=1.99$
-\end_inset
-
-, and dotted lines have 
-\begin_inset Formula $\alpha=0.1$
-\end_inset
-
-.
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:SNR-per-iteration-iterative"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-center
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Float 
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_90-p_fan_t1-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Modified Shepp-Logan
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse_t1-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse_t1-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_90-p_mouse_t1-snr.pdf
-	lyxscale 20
-	width 70col%
-	height 50col%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-
-\series bold
-Running Time Comparison
-\series default
-.
- Curves show SNR per running time for 90 projections 
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-for the NCAT phantom
-\end_layout
-
-\end_inset
-
-.
- Compare with Fig.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:SNR-per-iteration-iterative"
-
-\end_inset
-
- (bottom row).
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:SNR-per-time-iterative"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-center
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Float 
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/max-snr-per_num_proj-ph_mod-sl-512_nt_poisson-nl_100000.000-it_30-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Modified Shepp-Logan
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/max-snr-per_num_proj-ph_ncat-512_nt_poisson-nl_100000.000-it_30-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/max-snr-per_num_proj-ph_mouse-512_nt_gauss-nl_0.000-it_30-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/max-snr-per_num_proj-ph_ncat-512_nt_poisson-nl_100000.000-it_30-p_fan-snr.pdf
-	lyxscale 20
-	width 70col%
-	height 50col%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-
-\series bold
-Effect of the number of projections
-\series default
-.
- Plots show the maximum SNR achieved over 30 iterations per number of projection
-s used.
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:SNR-per-num-proj-iterative"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
@@ -9773,341 +8563,6 @@ ATV is better (or similar) on the synthetic datasets, while ITV is better
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-center
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Modified Shepp-Logan
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/sart-prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
-	lyxscale 20
-	width 80col%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-
-\series bold
-Data Terms and Regularizers Comparison
-\series default
-.
- Plots show SNR per iteration 
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-for NCAT
-\end_layout
-
-\end_inset
-
- for the Gaussian (
-\emph on
-solid
-\emph default
- curves) and Poisson (
-\emph on
-dashed
-\emph default
- curves)noise models with ITV (
-\emph on
-blue
-\emph default
-), ATV (
-\emph on
-red
-\emph default
-), and SAD (
-\emph on
-green
-\emph default
-) regularizers.
- The 
-\emph on
-black
-\emph default
- curve shows the results for SART.
- See Sec.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Data-Terms-and-Regularizers-Comparison"
-
-\end_inset
-
-.
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:SNR-per-iter-data-term-and-reg-sart-prox"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Subsection
 Proximal Operators Comparison
 \begin_inset CommandInset label
@@ -10291,315 +8746,6 @@ gradient
 \end_inset
 
  had to be carefully tuned to get better results.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-center
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Modified Shepp-Logan
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/prox-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
-	lyxscale 20
-	width 80col%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-
-\series bold
-TRex Proximal Operators Comparison
-\series default
-.
- Plots show SNR per iteration 
-\begin_inset Branch Short
-status open
-
-\begin_layout Standard
-for NCAT
-\end_layout
-
-\end_inset
-
- for the Gaussian (
-\emph on
-solid
-\emph default
- curves) and Poisson (
-\emph on
-dashed
-\emph default
- curves) noise models with SAD regularizer.
- See Sec.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Proximal-Operators-Comparison"
-
-\end_inset
-
-.
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:SNR-per-iter-prox-operator-comparison"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsection
@@ -11012,463 +9158,6 @@ TRex with SART and SAD consistently performs better and ends up with higher
  that equals the SNR we get with 30 projections using plain SART.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-center
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/sota-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/sota-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Modified Shepp-Logan
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/sota-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_15-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/sota-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 0
-use_makebox 0
-width "33text%"
-special "none"
-height "1in"
-height_special "totalheight"
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plots/sota-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_15-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/sota-comp-per_iter-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-snr.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-
-\series bold
-TRex Comparison to Sate of the Art
-\series default
-.
- Plots show SNR per iteration.
- The TRex framework uses SART with Poisson model and SAD regularizer.
- The dotted curve shows the baseline plain SART (from Sec.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Iterative-Algorithms-Comparison"
-
-\end_inset
-
-).
- See Sec.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Comparison-to-State-of-Art"
-
-\end_inset
-
-.
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:SNR-per-iter-state-of-art-comp"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide true
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-center
-\end_layout
-
-\end_inset
-
-
-\begin_inset Branch Long
-status collapsed
-
-\begin_layout Standard
-\begin_inset Float 
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/sota-comp-recon-ph_mod-sl-512_nt_poisson-nl_100000.000-np_30-p_fan-rec.pdf
-	lyxscale 20
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Modified Shepp-Logan
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/sota-comp-recon-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-rec.pdf
-	lyxscale 20
-	width 80text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-NCAT
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename plots/sota-comp-recon-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-rec.pdf
-	lyxscale 20
-	width 80text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Mouse
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-
-\series bold
-TRex Comparison to Sate of the Art
-\series default
-.
- Reconstruction results for 30 projections after 30 iterations.
- TRex uses SART with Poisson model and SAD regularizer.
- See Sec.
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Comparison-to-State-of-Art"
-
-\end_inset
-
-.
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:reconstruction-state-of-art-comp"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Section
 Conclusions
 \begin_inset CommandInset label
@@ -11547,7 +9236,7 @@ key "mory2012ecg"
 .
 \end_layout
 
-\begin_layout Section
+\begin_layout Section*
 Acknowledgments
 \end_layout
 
@@ -11556,8 +9245,6 @@ This work was supported by KAUST baseline and research center funding.
 \end_layout
 
 \begin_layout Standard
-
-\size tiny
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "papers"

@@ -7,6 +7,9 @@
 %\usepackage{opex3}
 %\usepackage{color}
 %\usepackage[colorlinks=true,urlcolor=blue,linkcolor=black,citecolor=black,breaklinks=true,bookmarks=false]{hyperref}
+%\renewcommand{\maketitle}{}
+
+\usepackage{cite}
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -29,7 +32,7 @@
 
 \newcommand{\etal}{\emph{et al.\ }}
 \end_preamble
-\options 10pt,letterpaper
+\options journal
 \use_default_options false
 \maintain_unincluded_children false
 \language english
@@ -40,7 +43,7 @@
 \font_sans default
 \font_typewriter default
 \font_math auto
-\font_default_family default
+\font_default_family rmdefault
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
@@ -85,12 +88,12 @@
 \justification true
 \use_refstyle 0
 \branch Short
-\selected 1
+\selected 0
 \filename_suffix 1
 \color #c8c0b9
 \end_branch
 \branch Long
-\selected 0
+\selected 1
 \filename_suffix 1
 \color #c8c2ac
 \end_branch
@@ -116,79 +119,87 @@
 \begin_body
 
 \begin_layout Title
-A Tomography Reconstruction Proximal Framework for Robust Sparse View X-Ray
- Applications
+\begin_inset Branch Long
+status open
+
+\begin_layout Standard
+A Robust X-Ray Tomography Reconstruction Proximal Framework
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Author
 Mohamed Aly
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-M.
- Aly is with the Visual Computing Center, KAUST, KSA
 \begin_inset ERT
 status collapsed
 
 \begin_layout Plain Layout
 
-% and
-\end_layout
 
-\end_inset
-
- 
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-% the Computer Eng.
- Dept, Cairo University, Egypt%
-\end_layout
-
-\end_inset
-
-
+\backslash
+thanks{M Aly is with the Visual Computing Center, KAUST, KSA and is on leave
+ from Computer Engineering, Cairo University, Egypt}
 \end_layout
 
 \end_inset
 
 , Guangming Zang
-\begin_inset Foot
+\begin_inset ERT
 status collapsed
 
 \begin_layout Plain Layout
-G.
- Zang is with the Visual Computing Center, KAUST, KSA
+
+
+\backslash
+thanks{G Zang is with the Visual Computing Center, KAUST, KSA}
 \end_layout
 
 \end_inset
 
 , Wolfgang Heidrich
-\begin_inset Foot
+\begin_inset ERT
 status collapsed
 
 \begin_layout Plain Layout
-W.
- Heidrich is with the Visual Computing Center, KAUST, KSA
+
+
+\backslash
+thanks{W Heidrich is with the Visual Computing Center, KAUST, KSA}
 \end_layout
 
 \end_inset
 
 , and Peter Wonka
-\begin_inset Foot
+\begin_inset ERT
 status collapsed
 
 \begin_layout Plain Layout
-P.
- Wonka is with the Visual Computing Center, KAUST, KSA
+
+
+\backslash
+thanks{P Wonka is with the Visual Computing Center, KAUST, KSA}
 \end_layout
 
 \end_inset
 
- 
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Branch Short
+status collapsed
+
+\begin_layout Title
+TRex: A Tomography Reconstruction Proximal Framework for Robust Sparse View
+ X-Ray Applications
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Abstract
@@ -206,6 +217,33 @@ We present TRex, a flexible and robust Tomographic Reconstruction framework
 \end_layout
 
 \begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+ocis{(110.3010, 170.3010) Image Reconstruction Techniques; (100.6950) Tomographic
+ Image Processing; (110.6955) Tomographic Imaging; (110.6960, 170.6969) Tomography;
+ (110.7440) X-ray Imaging; (150.1134) Algorithms.}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Keywords
 Image reconstruction, X-ray imaging and computed tomography, Simultaneous
  Algebraic Reconstruction Technique, SART, Proximal Algorithms, Cone beam
  X-ray tomography 
@@ -213,7 +251,7 @@ Image reconstruction, X-ray imaging and computed tomography, Simultaneous
 
 \begin_layout Standard
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset ERT
@@ -313,7 +351,7 @@ on is collected from the volume to be reconstructed; and one has to use
  non-linear regularizers (priors) to achieve a reasonable result.
  This is typically done using iterative solvers 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -329,7 +367,7 @@ key "thibault2007three,zhang2014model"
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -351,7 +389,7 @@ Iterative algorithms for X-ray tomography reconstruction have been around
  for years.
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 In fact, one of the first implemented tomography reconstruction algorithm
@@ -371,7 +409,7 @@ key "kak2001principles,gordon1970algebraic,gordon1971reconstruction"
 However, non-iterative, transform-based algorithms, such as the filtered
  back projection (FBP) 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -387,7 +425,7 @@ key "ramachandran1971three,shepp1974fourier,feldkamp1984practical"
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -424,7 +462,7 @@ Thus, in this work, we study iterative reconstruction techniques.
  TRex uses iterative algorithms, especially the SART (Simultaneous ART)
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -440,7 +478,7 @@ key "andersen1984simultaneous,andersen1989algebraic"
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -508,7 +546,7 @@ key "bjorck1996numerical"
 
 , and OS-SQS (Ordered Subset-Separable Quadratic Surrogates) 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -524,7 +562,7 @@ key "depierro1994modified,hudson1994accelerated,erdogan1999ordered,kim2013accele
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -704,7 +742,7 @@ key "van2015astra"
 
 \begin_layout Standard
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 This paper is organized as follows.
@@ -792,7 +830,7 @@ key "kak2001principles,herman2009fundamentals"
 .
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 Transform methods rely on the Radon transform and its inverse introduced
@@ -837,7 +875,7 @@ key "herman2009fundamentals"
  ART, and its many variants, are among the best known iterative reconstruction
  algorithms 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -853,7 +891,7 @@ key "gordon1970algebraic,andersen1984simultaneous"
 
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -870,7 +908,7 @@ key "gordon1970algebraic,lent1977convergent,shepp1982maximum,censor1983finite,an
 .
  They use variations of the projection method of Kaczmarz 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -886,7 +924,7 @@ key "kaczmarz1937angenaherte"
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -934,7 +972,7 @@ Iterative methods provide more flexibility in incorporating prior information
  into the reconstruction process.
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 For example, instead of assuming a Gaussian noise model and minimizing a
@@ -973,7 +1011,7 @@ key "sidky2008image,mory2012ecg"
 Proximal algorithms have been widely used in many problems in machine learning
  and signal processing 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -989,7 +1027,7 @@ key "boyd2011distributed,parikh2013proximal"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -1014,7 +1052,7 @@ key "mory2012ecg,sidky2008image"
 .
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 For example, 
@@ -1120,7 +1158,7 @@ There are currently a number of open source software packages for tomography
  reconstruction.
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 SNARK09 
@@ -1163,7 +1201,7 @@ key "van2015astra"
 
  
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 ---one of the most popular---
@@ -1591,7 +1629,7 @@ The update step
 
  that is then back projected with some normalization procedure.
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  It can take the form 
@@ -1664,7 +1702,7 @@ reference "tab:Iterative-Methods"
 
  provides a summary of their important properties
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 , see 
@@ -1716,6 +1754,8 @@ arraystretch{1.5}
 \end_inset
 
 
+\size default
+
 \begin_inset Tabular
 <lyxtabular version="3" rows="8" columns="5">
 <features rotate="0" booktabs="true" tabularvalignment="middle">
@@ -1725,12 +1765,10 @@ arraystretch{1.5}
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 Method
 \end_layout
 
@@ -1740,8 +1778,6 @@ Method
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 Update Step
 \end_layout
 
@@ -1751,8 +1787,6 @@ Update Step
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 Subset
 \end_layout
 
@@ -1762,8 +1796,6 @@ Subset
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 Solved Problem
 \end_layout
 
@@ -1773,8 +1805,6 @@ Solved Problem
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 Converges
 \end_layout
 
@@ -1786,8 +1816,6 @@ Converges
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 ART 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1804,8 +1832,6 @@ key "gordon1970algebraic"
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{p_{i}-\sum_{k}a_{ik}x_{k}^{(t)}}{\sum_{k}a_{ik}^{2}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha A_{i}^{T}R^{-1}\left(p_{i}-A_{i}x^{(t)}\right)
 \end{aligned}
@@ -1821,8 +1847,6 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 one ray
 \end_layout
 
@@ -1832,8 +1856,6 @@ one ray
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
  & \st Ax=p
 \end{aligned}
@@ -1849,8 +1871,6 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 Yes
 \end_layout
 
@@ -1858,12 +1878,10 @@ Yes
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 SIRT 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1880,8 +1898,6 @@ key "gilbert1972iterative"
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i=1}^{m}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha C^{-1}A^{T}R^{-1}\left(p-Ax^{(t)}\right)
 \end{aligned}
@@ -1897,8 +1913,6 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 all rays
 \end_layout
 
@@ -1908,8 +1922,6 @@ all rays
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{R^{-1}}^{2}$
 \end_inset
 
@@ -1922,8 +1934,6 @@ all rays
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 Yes
 \end_layout
 
@@ -1935,8 +1945,6 @@ Yes
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 SART 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1953,8 +1961,6 @@ key "andersen1984simultaneous"
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i\in S}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
 \end{aligned}
@@ -1970,8 +1976,6 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 one view
 \end_layout
 
@@ -1981,8 +1985,6 @@ one view
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $\begin{aligned}x^{\star}\approx & \argmin_{x}\Vert x\Vert_{2}^{2}\\
  & \st Ax=p
 \end{aligned}
@@ -1998,8 +2000,6 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 No
 \end_layout
 
@@ -2011,8 +2011,6 @@ No
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 BSSART 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2029,8 +2027,6 @@ key "censor2002block"
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha C^{-1}A_{S}^{T}R^{-1}\left(p_{S}-A_{S}x^{(t)}\right)
 \end{aligned}
@@ -2046,8 +2042,6 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 one view
 \end_layout
 
@@ -2057,8 +2051,6 @@ one view
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
  & \st Ax=p
 \end{aligned}
@@ -2074,8 +2066,6 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 Yes
 \end_layout
 
@@ -2087,8 +2077,6 @@ Yes
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 BICAV 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2105,8 +2093,6 @@ key "censor2001bicav"
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i\in S}\{a_{ij}\ne0\}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}^{2}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p_{S}-A_{S}x^{(t)}\right)
 \end{aligned}
@@ -2122,8 +2108,6 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 one view
 \end_layout
 
@@ -2133,8 +2117,6 @@ one view
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
  & \st Ax=p
 \end{aligned}
@@ -2150,8 +2132,6 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 Yes
 \end_layout
 
@@ -2163,8 +2143,6 @@ Yes
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 OS-SQS 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2181,8 +2159,6 @@ key "erdogan1999ordered"
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\frac{\alpha s}{\left(\sum_{k=1}^{m}a_{kj}\sum_{i=1}^{n}a_{ki}\right)}\sum_{i\in S}\left(p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}\right)a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha sC^{-1}A_{S}^{T}\left(p_{S}-A_{S}x^{(t)}\right)
 \end{aligned}
@@ -2198,8 +2174,6 @@ $
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 one view
 \end_layout
 
@@ -2209,8 +2183,6 @@ one view
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $x^{\star}\approx\Vert Ax-p\Vert_{2}^{2}$
 \end_inset
 
@@ -2223,8 +2195,6 @@ one view
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 No
 \end_layout
 
@@ -2236,8 +2206,6 @@ No
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 CGLS 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2254,8 +2222,6 @@ key "bjorck1996numerical,fessler1999conjugate"
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $x^{(t+1)}=x^{(t)}+\alpha_{t}\Phi\left(A^{T}(p-Ax^{(t)})\right)$
 \end_inset
 
@@ -2268,8 +2234,6 @@ key "bjorck1996numerical,fessler1999conjugate"
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 all rays
 \end_layout
 
@@ -2279,8 +2243,6 @@ all rays
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 \begin_inset Formula $x^{\star}=\Vert Ax-p\Vert_{2}^{2}$
 \end_inset
 
@@ -2293,8 +2255,6 @@ all rays
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\size footnotesize
 Yes
 \end_layout
 
@@ -2353,7 +2313,7 @@ reference "sec:Iterative-Algorithms"
 
  
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 and 
@@ -2382,6 +2342,8 @@ key "aly2016tomography"
 \end_layout
 
 \begin_layout Subsubsection
+
+\series bold
 ART
 \end_layout
 
@@ -2395,7 +2357,7 @@ key "gordon1970algebraic,gordon1971reconstruction"
  is the first algebraic method, and is based on Kaczmarz alternating projection
  algorithm 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -2411,7 +2373,7 @@ key "kaczmarz1937angenaherte"
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -2432,7 +2394,7 @@ key "kak2001principles"
 
  in turn, and updates the current estimate according to 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 Table 
@@ -2449,7 +2411,7 @@ reference "tab:Iterative-Methods"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Formula 
@@ -2507,7 +2469,7 @@ th column of
 
  rows.
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  The term 
@@ -2549,7 +2511,7 @@ x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\st Ax=p.\label{eq:least-norm-problem}
 
  In matrix notation, this can be also expressed as 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 in Table 
@@ -2566,7 +2528,7 @@ reference "tab:Iterative-Methods"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -2639,7 +2601,7 @@ i.e.
 .
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 The update equation becomes 
@@ -2657,7 +2619,7 @@ x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i=1}^{
 
  In matrix form this becomes 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 as in Table 
@@ -2674,7 +2636,7 @@ reference "tab:Iterative-Methods"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -2794,7 +2756,7 @@ key "andersen1984simultaneous"
  processing all the rows in a particular projection view.
  The update equation becomes 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 as in Table 
@@ -2811,7 +2773,7 @@ reference "tab:Iterative-Methods"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -2847,7 +2809,7 @@ for
  This has been shown to provide faster convergence than ART and better reconstru
 ction results than SIRT 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -2863,7 +2825,7 @@ key "mueller2000rapid,mueller1999fast"
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -2880,7 +2842,7 @@ key "mueller2000rapid"
 .
  In matrix form it becomes 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 as in Table 
@@ -2897,7 +2859,7 @@ reference "tab:Iterative-Methods"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -2992,7 +2954,7 @@ all
  to SIRT.
  The update equation becomes 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 as in Table 
@@ -3009,7 +2971,7 @@ reference "tab:Iterative-Methods"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -3033,7 +2995,7 @@ x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i\in S
  of the iteration.
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 The matrix formulation becomes 
@@ -3064,7 +3026,7 @@ key "censor2002block"
 
  to converge to the minimum norm solution 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 in Eq.
@@ -3082,7 +3044,7 @@ reference "eq:least-norm-problem"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -3121,7 +3083,7 @@ key "censor2001bicav,censor2002block"
  is another closely-related algorithm to SART.
  It updates the volume after each projection view according to 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 Table 
@@ -3138,7 +3100,7 @@ reference "tab:Iterative-Methods"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -3183,7 +3145,7 @@ for
 .
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 The matrix formulation is 
@@ -3217,7 +3179,7 @@ key "censor2002block"
 
  that BICAV converges to the minimum-norm solution 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 in Eq.
@@ -3235,7 +3197,7 @@ reference "eq:least-norm-problem"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -3274,7 +3236,7 @@ key "erdogan1999ordered,kim2015combining"
  is closely related to SART.
  It is usually derived from a majorization-minimization perspective 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -3290,7 +3252,7 @@ key "depierro1994modified,erdogan1999ordered,kim2013accelerating,kim2015combinin
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -3313,7 +3275,7 @@ key "kim2013accelerating"
 
  the update equation becomes 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 as in Table 
@@ -3330,7 +3292,7 @@ reference "tab:Iterative-Methods"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Formula 
@@ -3372,7 +3334,7 @@ for
  can contain more than one projection view.
  In matrix form it becomes 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 as in Table 
@@ -3389,7 +3351,7 @@ reference "tab:Iterative-Methods"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -3488,7 +3450,7 @@ key "bjorck1996numerical,fessler1999conjugate"
  rays.
  The update equation in matrix notation is 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 in Table 
@@ -3505,7 +3467,7 @@ reference "tab:Iterative-Methods"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -3537,7 +3499,7 @@ key "bjorck1996numerical"
 ).
  CGLS is proven to be convergent to the solution of the LS problem 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 in Eq.
@@ -3555,7 +3517,7 @@ reference "eq:least-square-problem"
 
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Formula 
@@ -3604,7 +3566,7 @@ name "sec:Proximal-Operators"
 Proximal algorithms are a class of optimization algorithms that are quite
  flexible and powerful 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -3620,7 +3582,7 @@ key "combettes2011proximal,boyd2011distributed,parikh2013proximal"
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -3646,7 +3608,7 @@ proximal operator
 .
  The proximal operator 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -3662,7 +3624,7 @@ key "parikh2013proximal"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -3718,7 +3680,7 @@ tion terms e.g.
 
  
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 See 
@@ -3740,7 +3702,7 @@ key "aly2016tomography"
 \begin_inset Float table
 wide true
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -3750,7 +3712,7 @@ status collapsed
 
 
 \backslash
-center
+centering
 \end_layout
 
 \end_inset
@@ -3999,7 +3961,7 @@ reference "sec:Proximal-Operators"
 
  
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 and 
@@ -4032,9 +3994,9 @@ SART, ART, and BICAV
 \end_layout
 
 \begin_layout Standard
-ART, SART, and BICAV (approximately) solve the least-norm problem 
+They (approximately) solve the least-norm problem 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 in Eq.
@@ -4052,7 +4014,7 @@ reference "eq:least-norm-problem"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -4096,7 +4058,7 @@ Introduce new variables
 .
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 The problem becomes 
@@ -4123,7 +4085,7 @@ reference "eq:SART-prox-3"
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 After some manipulations
@@ -4176,7 +4138,7 @@ where
 
 \begin_layout Standard
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 Although we introduced new variables 
@@ -4283,7 +4245,7 @@ x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_
 
 \begin_layout Standard
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 Writing the SART update equations in terms of 
@@ -4334,7 +4296,7 @@ reference "tab:Prox-Operators"
 .
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 Alg.
@@ -4677,7 +4639,7 @@ OS-SQS
 \begin_layout Standard
 We want to express the proximal operator problem 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 in Eq.
@@ -4695,7 +4657,7 @@ reference "eq:tomography-prox-operator"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -4715,7 +4677,7 @@ status collapsed
  i.e.
  
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 Eq.
@@ -4733,7 +4695,7 @@ reference "eq:least-square-problem"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -4751,7 +4713,7 @@ x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{2}^{2}.
 
  Rewrite as 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 in Eq.
@@ -4769,7 +4731,7 @@ reference "eq:SART-prox-2"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -4802,7 +4764,7 @@ u
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  where 
@@ -4827,7 +4789,7 @@ u
 
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 The weighting matrix 
@@ -4871,7 +4833,7 @@ Write the matrix update equation in terms of
 
  as 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset Formula 
@@ -4888,7 +4850,7 @@ x^{(t+1)} & =x^{(t)}+\alpha s\tilde{C}^{-1}{\scriptstyle \left(2\lambda A_{S}^{T
 
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Formula 
@@ -4909,7 +4871,7 @@ u-x^{(t)}
 
  In component form it becomes 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 as in Table 
@@ -4926,7 +4888,7 @@ reference "tab:Prox-Operators"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Formula 
@@ -5398,7 +5360,7 @@ key "boyd2011distributed,parikh2013proximal"
 
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 (also known as Inexact Split Uzawa 
@@ -5426,7 +5388,7 @@ key "eckstein1994some,fazel2013hankel,chen2015inertial,yuan2015l0tv"
 
 \begin_layout Standard
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 It rewrites Eq.
@@ -5530,13 +5492,18 @@ S=\frac{1}{\mu}I-\rho K^{T}K
 
  step 
 \begin_inset Formula 
-\begin{eqnarray*}
-x^{(t+1)} & = & \argmin_{x}f(x)+\frac{\rho}{2}\Vert Kx-z^{(t)}+y^{(t)}\Vert^{2}+\frac{1}{2}\Vert x-x^{(t)}\Vert_{S}^{2}\\
- & = & \argmin_{x}f(x)+\frac{\rho}{2}\Vert Kx\Vert^{2}-\rho\langle Kx,z^{(t)}-y^{(t)}\rangle+\frac{1}{2}(x-x^{(t)})^{T}S(x-x^{(t)})\\
- & = & \argmin_{x}f(x)+\frac{\rho}{2}\Vert Kx\Vert^{2}-\rho\langle x,K^{T}(z^{(t)}-y^{(t)})\rangle+\frac{1}{2}\Vert x\Vert_{S}^{2}-\langle x,Sx^{(t)}\rangle\\
- & = & \argmin_{x}f(x)+\frac{1}{2\mu}\Vert x-\mu\rho K^{T}(z^{(t)}-y^{(t)})-\mu Sx^{(t)}\Vert^{2}\\
- & = & \argmin_{x}f(x)+\frac{1}{2\mu}\Vert x-x^{(t)}-\mu\rho K^{T}\left(z^{(t)}-y^{(t)}-Kx^{(t)}\right)\Vert^{2}
-\end{eqnarray*}
+\begin{align*}
+x^{(t+1)} & = &  & \argmin_{x}f(x)+\frac{\rho}{2}\Vert Kx-z^{(t)}+y^{(t)}\Vert^{2}+\\
+ &  &  & \frac{1}{2}\Vert x-x^{(t)}\Vert_{S}^{2}\\
+ & = &  & \argmin_{x}f(x)+\frac{\rho}{2}\Vert Kx\Vert^{2}-\rho\langle Kx,z^{(t)}-y^{(t)}\rangle+\\
+ &  &  & \frac{1}{2}(x-x^{(t)})^{T}S(x-x^{(t)})\\
+ & = &  & \argmin_{x}f(x)+\frac{\rho}{2}\Vert Kx\Vert^{2}-\rho\langle x,K^{T}(z^{(t)}-y^{(t)})\rangle+\\
+ &  &  & \frac{1}{2}\Vert x\Vert_{S}^{2}-\langle x,Sx^{(t)}\rangle\\
+ & = &  & \argmin_{x}f(x)+\\
+ &  &  & \frac{1}{2\mu}\Vert x-\mu\rho K^{T}(z^{(t)}-y^{(t)})-\mu Sx^{(t)}\Vert^{2}\\
+ & = &  & \argmin_{x}f(x)+\\
+ &  &  & \frac{1}{2\mu}\Vert x-x^{(t)}-\mu\rho K^{T}\left(z^{(t)}-y^{(t)}-Kx^{(t)}\right)\Vert^{2}
+\end{align*}
 
 \end_inset
 
@@ -5597,7 +5564,7 @@ reference "alg:LADMM-algorithm"
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 , see 
@@ -5927,7 +5894,7 @@ where the noise
  follows a Gaussian distribution.
  Maximizing the projection data log-likelihood
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -5981,7 +5948,7 @@ approximated
  Poisson noise model leads to a WLS data term, where the weights are proportiona
 l to the detector measurements 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -5997,7 +5964,7 @@ key "clinthorne1993preconditioning,depierro1994modified,elbakri2002statistical,t
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -6014,7 +5981,7 @@ key "clinthorne1993preconditioning,depierro1994modified"
 .
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 Indeed, the actual measurements produced by the X-ray CT scanner represent
@@ -6213,7 +6180,7 @@ reference "eq:Poisson-log-likelihood-full"
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 In particular, the approximated Poisson log-likelihood can be written as
@@ -6260,7 +6227,7 @@ In particular, the approximated Poisson log-likelihood can be written as
 , e.g.
  the square root, before feeding into the optimization problem
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 , see Sec.
@@ -6278,7 +6245,7 @@ reference "sub:Poisson-Mapping-Functions-Comparison"
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 , see 
@@ -6312,7 +6279,7 @@ f_{\text{P}}(x)=\Vert Ax-p\Vert_{W}^{2}=\sum_{i=1}^{m}w_{i}(a_{i}^{T}x-p_{i})^{2
 
  where 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Formula $\Vert x\Vert_{W}=x^{T}Wx$
@@ -6368,7 +6335,7 @@ as follows.
 
  We get 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Formula 
@@ -6388,7 +6355,7 @@ status collapsed
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
  
@@ -6414,7 +6381,7 @@ reference "tab:Prox-Operators"
 
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -7114,7 +7081,7 @@ h_{\text{ITV}}(x)=g_{\text{ITV}}(Kx)=\sigma\Vert x\Vert_{\text{TV}}=\sigma\sum_{
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  containing the horizontal forward different 
@@ -7141,7 +7108,7 @@ reference "eq:full-problem"
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -7168,7 +7135,7 @@ h_{\text{ITV}}(x)=g_{\text{ITV}}(Kx)
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -7401,7 +7368,7 @@ g_{\text{SAD}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}.
 
  is similar to the ATV case
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 .
@@ -7411,7 +7378,7 @@ status open
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 : 
@@ -7454,7 +7421,7 @@ Datasets and Implementation Details
 
 \begin_layout Standard
 \begin_inset Float figure
-wide false
+wide true
 sideways false
 status collapsed
 
@@ -7466,17 +7433,17 @@ status open
 
 
 \backslash
-center
+centering
 \end_layout
 
 \end_inset
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status open
@@ -7526,7 +7493,7 @@ Modified Shepp-Logan
 \end_inset
 
 
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status open
@@ -7576,7 +7543,7 @@ NCAT
 \end_inset
 
 
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -7635,10 +7602,10 @@ Mouse
 
 \begin_layout Plain Layout
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
-\begin_inset Float figure
+\begin_inset Float 
 wide false
 sideways false
 status open
@@ -7669,7 +7636,7 @@ NCAT
 \end_inset
 
 
-\begin_inset Float figure
+\begin_inset Float 
 wide false
 sideways false
 status open
@@ -7714,7 +7681,7 @@ Mouse
 The datasets used.
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 (c)
@@ -7724,7 +7691,7 @@ status collapsed
 
  
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 (b)
@@ -7760,7 +7727,7 @@ name "fig:Phantoms"
 \begin_layout Standard
 We present experiments on 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 two simulated phantoms
@@ -7770,7 +7737,7 @@ two simulated phantoms
 
  
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 one simulated phantom 
@@ -7789,7 +7756,7 @@ reference "fig:Phantoms"
 .
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 The phantoms are: the modified 2D Shepp-Logan head phantom 
@@ -7831,7 +7798,7 @@ key "segars2002study"
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 The phantom is a 2D slice of the NCAT phantom 
@@ -7949,7 +7916,7 @@ ground truth
 
 \begin_layout Standard
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 We clip the reconstruction estimate 
@@ -7978,7 +7945,7 @@ We clip the reconstruction estimate
 We implemented all methods using ASTRA with a mix of C++ and Matlab code.
  
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 The iterative algorithms not present in ASTRA, namely BICAV, BSSART, and
@@ -8028,10 +7995,10 @@ center
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -8052,7 +8019,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -8112,7 +8079,7 @@ Modified Shepp-Logan
 \end_inset
 
 
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -8133,7 +8100,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -8195,7 +8162,7 @@ NCAT
 \end_inset
 
 
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -8216,7 +8183,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -8285,10 +8252,10 @@ Mouse
 
 \begin_layout Plain Layout
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
-\begin_inset Float figure
+\begin_inset Float 
 wide false
 sideways false
 status open
@@ -8329,7 +8296,7 @@ NCAT
 \end_inset
 
 
-\begin_inset Float figure
+\begin_inset Float 
 wide false
 sideways false
 status open
@@ -8420,7 +8387,7 @@ name "fig:SNR-per-iteration-iterative"
 
 \begin_layout Standard
 \begin_inset Float figure
-wide false
+wide true
 sideways false
 status collapsed
 
@@ -8439,10 +8406,10 @@ center
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status open
@@ -8492,7 +8459,7 @@ Modified Shepp-Logan
 \end_inset
 
 
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -8542,7 +8509,7 @@ NCAT
 \end_inset
 
 
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -8601,7 +8568,7 @@ Mouse
 
 \begin_layout Plain Layout
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -8631,7 +8598,7 @@ Running Time Comparison
 .
  Curves show SNR per running time for 90 projections 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 for the NCAT phantom
@@ -8671,9 +8638,9 @@ name "fig:SNR-per-time-iterative"
 
 \begin_layout Standard
 \begin_inset Float figure
-wide false
+wide true
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -8690,10 +8657,10 @@ center
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status open
@@ -8743,7 +8710,7 @@ Modified Shepp-Logan
 \end_inset
 
 
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -8793,7 +8760,7 @@ NCAT
 \end_inset
 
 
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -8852,7 +8819,7 @@ Mouse
 
 \begin_layout Plain Layout
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -8952,7 +8919,7 @@ reference "fig:SNR-per-iteration-iterative"
 
  shows the SNR per iteration for 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 15, 30, 90
@@ -8962,7 +8929,7 @@ status collapsed
 
  
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 30 and 90 
@@ -8972,7 +8939,7 @@ status open
 
  projections for 30 iterations
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 , see 
@@ -9110,7 +9077,7 @@ Using plain iterative methods does not give acceptable results with fewer
 
 \begin_layout Standard
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Subsection
 Poisson Model Mapping Functions Comparison
@@ -9565,7 +9532,7 @@ reference "tab:Prox-Operators"
 
  with for
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  15 and
@@ -9575,7 +9542,7 @@ status collapsed
 
  30 projections
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 , see 
@@ -9615,7 +9582,7 @@ reference "sub:Iterative-Algorithms-Comparison"
 ).
  We use 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Formula $\sigma=0.05$
@@ -9746,7 +9713,7 @@ ATV is better (or similar) on the synthetic datasets, while ITV is better
 
 \begin_layout Standard
 \begin_inset Float figure
-wide false
+wide true
 sideways false
 status collapsed
 
@@ -9765,10 +9732,10 @@ center
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -9789,7 +9756,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -9838,7 +9805,7 @@ Modified Shepp-Logan
 \end_inset
 
 
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -9859,7 +9826,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -9908,7 +9875,7 @@ NCAT
 \end_inset
 
 
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -9929,7 +9896,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -9987,7 +9954,7 @@ Mouse
 
 \begin_layout Plain Layout
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -10016,7 +9983,7 @@ Data Terms and Regularizers Comparison
 .
  Plots show SNR per iteration 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 for NCAT
@@ -10139,7 +10106,7 @@ reference "sub:Data-Terms-and-Regularizers-Comparison"
 
  does produce good results (see
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  Sec.
@@ -10157,7 +10124,7 @@ reference "sub:Poisson-Mapping-Functions-Comparison"
 
 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset CommandInset citation
@@ -10174,7 +10141,7 @@ key "aly2016tomography"
 ).
  We set 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Formula $\sigma=0.05$
@@ -10199,7 +10166,7 @@ status collapsed
 
  for 30 projections
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 , see 
@@ -10266,7 +10233,7 @@ gradient
 
 \begin_layout Standard
 \begin_inset Float figure
-wide false
+wide true
 sideways false
 status open
 
@@ -10285,10 +10252,10 @@ center
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -10349,7 +10316,7 @@ Modified Shepp-Logan
 \end_inset
 
 
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -10370,7 +10337,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -10419,7 +10386,7 @@ NCAT
 \end_inset
 
 
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -10440,7 +10407,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -10498,7 +10465,7 @@ Mouse
 
 \begin_layout Plain Layout
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -10527,7 +10494,7 @@ TRex Proximal Operators Comparison
 .
  Plots show SNR per iteration 
 \begin_inset Branch Short
-status open
+status collapsed
 
 \begin_layout Standard
 for NCAT
@@ -10655,7 +10622,7 @@ key "nien2015fast"
 The ADMM-PCG minimizes a combination of a WLS data term and regularization
  term
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -10736,7 +10703,7 @@ key "ramani2012splitting"
 
 , and 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Formula $\mu=10^{-4}$
@@ -10762,7 +10729,7 @@ status collapsed
 \begin_layout Standard
 The OS-Mom also minimizes a WLS data term and regularization term
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -10802,7 +10769,7 @@ key "kim2015combining"
  We use the settings from the paper for the regularizer i.e.
  the Fair potential
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
  
@@ -10849,7 +10816,7 @@ key "kim2015combining"
  to get good performance.
  We set 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Formula $\beta=0.05$
@@ -10899,7 +10866,7 @@ reference "fig:SNR-per-iter-state-of-art-comp"
  mapping and SAD regularizer.
  We set 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Formula $\sigma=0.05$
@@ -10985,9 +10952,9 @@ TRex with SART and SAD consistently performs better and ends up with higher
 
 \begin_layout Standard
 \begin_inset Float figure
-wide false
+wide true
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -11004,10 +10971,10 @@ center
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
 status collapsed
@@ -11094,7 +11061,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -11143,10 +11110,6 @@ NCAT
 \end_inset
 
 
-\begin_inset Newline newline
-\end_inset
-
-
 \begin_inset Float figure
 wide false
 sideways false
@@ -11168,7 +11131,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
 \begin_inset Graphics
@@ -11289,13 +11252,13 @@ center
 
 
 \begin_inset Branch Long
-status collapsed
+status open
 
 \begin_layout Standard
-\begin_inset Float 
+\begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -11341,7 +11304,7 @@ status open
 \begin_inset Graphics
 	filename plots/sota-comp-recon-ph_ncat-512_nt_poisson-nl_100000.000-np_30-p_fan-rec.pdf
 	lyxscale 20
-	width 80text%
+	width 100text%
 
 \end_inset
 
@@ -11376,7 +11339,7 @@ status open
 \begin_inset Graphics
 	filename plots/sota-comp-recon-ph_mouse-512_nt_gauss-nl_0.000-np_30-p_mouse-rec.pdf
 	lyxscale 20
-	width 80text%
+	width 100text%
 
 \end_inset
 
@@ -11518,7 +11481,7 @@ key "mory2012ecg"
 .
 \end_layout
 
-\begin_layout Section
+\begin_layout Section*
 Acknowledgments
 \end_layout
 
@@ -11527,8 +11490,6 @@ This work was supported by KAUST baseline and research center funding.
 \end_layout
 
 \begin_layout Standard
-
-\size tiny
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "papers"

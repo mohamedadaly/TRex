@@ -1,6 +1,7 @@
 %% LyX 2.1.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,10pt, letterpaper]{article}
+\documentclass[english,journal]{IEEEtran}
+\renewcommand{\familydefault}{\rmdefault}
 \usepackage[T1]{fontenc}
 \usepackage[latin9]{inputenc}
 \usepackage{array}
@@ -26,9 +27,12 @@
 \floatname{algorithm}{\protect\algorithmname}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
-\usepackage{opex3}
-\usepackage{color}
+%\usepackage{opex3}
+%\usepackage{color}
 %\usepackage[colorlinks=true,urlcolor=blue,linkcolor=black,citecolor=black,breaklinks=true,bookmarks=false]{hyperref}
+%\renewcommand{\maketitle}{}
+
+\usepackage{cite}
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -59,20 +63,15 @@
 \usepackage{babel}
 \begin{document}
 
-\title{A Tomography Reconstruction Proximal Framework for Robust Sparse
-View X-Ray Applications}
+\title{A Robust X-Ray Tomography Reconstruction Proximal Framework}
 
 
-\author{Mohamed Aly%
-\thanks{M. Aly is with the Visual Computing Center, KAUST, KSA% and % the Computer Eng. Dept, Cairo University, Egypt%%
-}, Guangming Zang%
-\thanks{G. Zang is with the Visual Computing Center, KAUST, KSA%
-}, Wolfgang Heidrich%
-\thanks{W. Heidrich is with the Visual Computing Center, KAUST, KSA%
-}, and Peter Wonka%
-\thanks{P. Wonka is with the Visual Computing Center, KAUST, KSA%
-} }
-%\maketitle
+\author{Mohamed Aly, \IEEEMembership{Member, IEEE}, Guangming Zang, \IEEEMembership{Member, IEEE},
+Wolfgang Heidrich, \IEEEMembership{Member, IEEE}, and Peter Wonka,
+\IEEEMembership{Member, IEEE}%}
+
+\maketitle
+
 \begin{abstract}
 We present TRex, a flexible and robust Tomographic Reconstruction
 framework using proximal algorithms. We provide an overview and perform
@@ -84,14 +83,18 @@ noise models: Gaussian and Poisson; and by plugging in three powerful
 regularizers. We compare our framework to state of the art methods,
 and show superior quality on both synthetic and real datasets. 
 \end{abstract}
+
+
+\begin{IEEEkeywords}
 Image reconstruction, X-ray imaging and computed tomography, Simultaneous
 Algebraic Reconstruction Technique, SART, Proximal Algorithms, Cone
 beam X-ray tomography 
+\end{IEEEkeywords}
 
 
 
-\newcommand{\Long}[1]{}
-\newcommand{\Short}[1]{#1}
+\newcommand{\Short}[1]{}
+\newcommand{\Long}[1]{#1}
 
 
 \section{Introduction\label{sec:Introduction}}
@@ -130,16 +133,16 @@ the first time these methods have been used to directly solve the
 tomography proximal operator.
 
 We start by conducting a thorough comparison of the famous iterative
-algorithms including SART \cite{andersen1984simultaneous,andersen1989algebraic},
-ART (Algebraic Reconstruction Technique) \cite{andersen1984simultaneous,andersen1989algebraic},
-SIRT (Simultaneous Iterative Reconstruction Technique) \cite{gilbert1972iterative},
+algorithms including SART \cite{andersen1984simultaneous}, ART (Algebraic
+Reconstruction Technique) \cite{andersen1984simultaneous}, SIRT (Simultaneous
+Iterative Reconstruction Technique) \cite{gilbert1972iterative},
 BSSART (Block Simplified SART) \cite{censor2002block}, BICAV (Block
 Iterative Component Averaging) \cite{censor2001bicav}, Conjugate
 Gradient (CG) \cite{bjorck1996numerical}, and OS-SQS (Ordered Subset-Separable
 Quadratic Surrogates) \cite{depierro1994modified,hudson1994accelerated,erdogan1999ordered,kim2013accelerating,nien2015fast}.
-We establish that SART \cite{andersen1984simultaneous,andersen1989algebraic}
-provides the best performance in the sparse view measurements situations,
-followed closely by ART, OS-SQS, and BICAV.
+We establish that SART provides the best performance in the sparse
+view measurements situations, followed closely by ART, OS-SQS, and
+BICAV.
 
 We then describe our framework, TRex, which is based on using proximal
 algorithms \cite{boyd2011distributed,parikh2013proximal} together
@@ -159,7 +162,8 @@ Finally, we compare our framework to state of the art methods, namely
 the ADMM method from Ramani \etal \cite{ramani2012splitting} and
 the OS-SQS method (with and without momentum method) from Kim \etal
 \cite{kim2015combining}, and show that our framework gives superior
-reconstruction quality.
+reconstruction quality. Please consult \cite{aly2016tomography} for
+further details, expanded experiments, and more results.
 
 In summary, we provide the following contributions:
 \begin{enumerate}
@@ -209,7 +213,7 @@ They use variations of the projection method of Kaczmarz \cite{kaczmarz1937angen
 and have modest memory requirements, and have been shown to yield
 better reconstruction results than transform methods. They are matrix
 free, and work without having to explicitly store the system matrix.
-OS-SQS and related methods \cite{depierro1994modified,hudson1994accelerated,erdogan1999ordered,kim2013accelerating,nien2015fast}
+OS-SQS and related methods \cite{depierro1994modified,erdogan1999ordered,kim2013accelerating}
 are closely related to ART and have similar properties to SIRT \cite{gregor2015comparison}.
 They have also been shown \cite{kim2015combining} to be accelerated
 using momentum techniques.
@@ -326,76 +330,76 @@ it involves one full sweep over the rows of $A$.
 Below we quickly review the different methods, and Table \ref{tab:Iterative-Methods}
 provides a summary of their important properties. 
 
+{\footnotesize{}}
 \begin{table*}
-\center
-\renewcommand*\arraystretch{1.5}%
+{\footnotesize{}\center
+\renewcommand*\arraystretch{1.5}}{\scriptsize{}}%
 \begin{tabular}{cc>{\centering}m{0.03\textwidth}cc}
 \toprule 
-Method & Update Step & Subset & Solved Problem & Converges\tabularnewline
+{\footnotesize{}Method} & {\footnotesize{}Update Step} & {\footnotesize{}Subset} & {\footnotesize{}Solved Problem} & {\footnotesize{}Converges}\tabularnewline
 \midrule
 \midrule 
-ART \cite{gordon1970algebraic} & $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{p_{i}-\sum_{k}a_{ik}x_{k}^{(t)}}{\sum_{k}a_{ik}^{2}}a_{ij}\\
+{\scriptsize{}ART \cite{gordon1970algebraic}} & {\scriptsize{}$\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{p_{i}-\sum_{k}a_{ik}x_{k}^{(t)}}{\sum_{k}a_{ik}^{2}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha A_{i}^{T}R^{-1}\left(p_{i}-A_{i}x^{(t)}\right)
 \end{aligned}
-$ & one ray & $\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
+$} & {\scriptsize{}one ray} & {\scriptsize{}$\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
  & \st Ax=p
 \end{aligned}
-$ & Yes\tabularnewline
+$} & {\scriptsize{}Yes}\tabularnewline
 \midrule 
-SIRT \cite{gilbert1972iterative} & $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i=1}^{m}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
+{\scriptsize{}SIRT \cite{gilbert1972iterative}} & {\scriptsize{}$\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i=1}^{m}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha C^{-1}A^{T}R^{-1}\left(p-Ax^{(t)}\right)
 \end{aligned}
-$ & all rays & $x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{R^{-1}}^{2}$ & Yes\tabularnewline
+$} & {\scriptsize{}all rays} & {\scriptsize{}$x^{\star}=\argmin_{x}\Vert Ax-p\Vert_{R^{-1}}^{2}$} & {\scriptsize{}Yes}\tabularnewline
 \midrule 
-SART \cite{andersen1984simultaneous,andersen1989algebraic} & $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i\in S}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
+{\scriptsize{}SART \cite{andersen1984simultaneous}} & {\scriptsize{}$\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i\in S}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p-A_{S}x^{(t)}\right)
 \end{aligned}
-$ & one view & $\begin{aligned}x^{\star}\approx & \argmin_{x}\Vert x\Vert_{2}^{2}\\
+$} & {\scriptsize{}one view} & {\scriptsize{}$\begin{aligned}x^{\star}\approx & \argmin_{x}\Vert x\Vert_{2}^{2}\\
  & \st Ax=p
 \end{aligned}
-$ & No\tabularnewline
+$} & {\scriptsize{}No}\tabularnewline
 \midrule 
-BSSART \cite{censor2002block} & $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
+{\scriptsize{}BSSART \cite{censor2002block}} & {\scriptsize{}$\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha C^{-1}A_{S}^{T}R^{-1}\left(p_{S}-A_{S}x^{(t)}\right)
 \end{aligned}
-$ & one view & $\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
+$} & {\scriptsize{}one view} & {\scriptsize{}$\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
  & \st Ax=p
 \end{aligned}
-$ & Yes\tabularnewline
+$} & {\scriptsize{}Yes}\tabularnewline
 \midrule 
-BICAV \cite{censor2001bicav} & $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i\in S}\{a_{ij}\ne0\}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}^{2}}a_{ij}\\
+{\scriptsize{}BICAV \cite{censor2001bicav}} & {\scriptsize{}$\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{1}{\sum_{i\in S}\{a_{ij}\ne0\}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}^{2}}a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha C_{S}^{-1}A_{S}^{T}R^{-1}\left(p_{S}-A_{S}x^{(t)}\right)
 \end{aligned}
-$ & one view & $\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
+$} & {\scriptsize{}one view} & {\scriptsize{}$\begin{aligned}x^{\star}= & \argmin_{x}\Vert x\Vert_{2}^{2}\\
  & \st Ax=p
 \end{aligned}
-$ & Yes\tabularnewline
+$} & {\scriptsize{}Yes}\tabularnewline
 \midrule 
-OS-SQS \cite{erdogan1999ordered} & $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\frac{\alpha s}{\left(\sum_{k=1}^{m}a_{kj}\sum_{i=1}^{n}a_{ki}\right)}\sum_{i\in S}\left(p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}\right)a_{ij}\\
+{\scriptsize{}OS-SQS \cite{erdogan1999ordered}} & {\scriptsize{}$\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\frac{\alpha s}{\left(\sum_{k=1}^{m}a_{kj}\sum_{i=1}^{n}a_{ki}\right)}\sum_{i\in S}\left(p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}\right)a_{ij}\\
 x^{(t+1)} & =x^{(t)}+\alpha sC^{-1}A_{S}^{T}\left(p_{S}-A_{S}x^{(t)}\right)
 \end{aligned}
-$ & one view & $x^{\star}\approx\Vert Ax-p\Vert_{2}^{2}$ & No\tabularnewline
+$} & {\scriptsize{}one view} & {\scriptsize{}$x^{\star}\approx\Vert Ax-p\Vert_{2}^{2}$} & {\scriptsize{}No}\tabularnewline
 \midrule 
-CGLS \cite{bjorck1996numerical,fessler1999conjugate} & $x^{(t+1)}=x^{(t)}+\alpha_{t}\Phi\left(A^{T}(p-Ax^{(t)})\right)$ & all rays & $x^{\star}=\Vert Ax-p\Vert_{2}^{2}$ & Yes\tabularnewline
+{\scriptsize{}CGLS \cite{bjorck1996numerical,fessler1999conjugate}} & {\scriptsize{}$x^{(t+1)}=x^{(t)}+\alpha_{t}\Phi\left(A^{T}(p-Ax^{(t)})\right)$} & {\scriptsize{}all rays} & {\scriptsize{}$x^{\star}=\Vert Ax-p\Vert_{2}^{2}$} & {\scriptsize{}Yes}\tabularnewline
 \bottomrule
-\end{tabular}
+\end{tabular}{\scriptsize \par}
 
-\renewcommand*\arraystretch{1}
+{\footnotesize{}\renewcommand*\arraystretch{1}}{\footnotesize \par}
 
-\protect\caption{Summary of iterative methods and their properties.\label{tab:Iterative-Methods}
+{\footnotesize{}\protect\caption{Summary of iterative methods and their properties.\label{tab:Iterative-Methods}
 The first line in the update step is voxel-based, while the second
 is the matrix formulation. See Sec. \ref{sec:Iterative-Algorithms}
  for details.}
+}
 \end{table*}
+{\footnotesize \par}
 
-
-
-\subsubsection{ART}
-
-\cite{gordon1970algebraic,gordon1971reconstruction} is the first
-algebraic method, and is based on Kaczmarz alternating projection
-algorithm \cite{kaczmarz1937angenaherte}. ART treats each row of
-$A$ in turn, and updates the current estimate according to 
+\textbf{1. ART}: \cite{gordon1970algebraic,gordon1971reconstruction}
+is the first algebraic method, and is based on Kaczmarz alternating
+projection algorithm \cite{kaczmarz1937angenaherte}. ART treats
+each row of $A$ in turn, and updates the current estimate according
+to 
 \[
 x_{j}^{(t+1)}=x_{j}^{(t)}+\alpha\frac{p_{i}-\sum_{k}a_{ik}x_{k}^{(t)}}{\sum_{k}a_{ik}^{2}}a_{ij}\mbox{ for }i=1\ldots m,
 \]
@@ -403,12 +407,12 @@ x_{j}^{(t+1)}=x_{j}^{(t)}+\alpha\frac{p_{i}-\sum_{k}a_{ik}x_{k}^{(t)}}{\sum_{k}a
 is the entry in the $i$th row and $j$th column of $A$ and $\alpha\in\mathbb{R}$
 is the relaxation parameter. This update is performed once for each
 row of $A$, and one iteration includes a full pass over all the $m$
-rows. The term $\sum_{k}a_{ik}x_{k}^{(t)}$ is the forward projection
-of the volume estimate for the $i$th ray (equation or row), the difference
+rows. The term $\sum_{k}a_{ik}x_{k}^{(t)}$ is the forward projection of
+the volume estimate for the $i$th ray (equation or row), the difference
 in the numerator is the projection error, that is then back projected
-by multiplying the transpose of the $i$th row. It has been shown
-that ART converges to a least-norm solution to the consistent system
-of equations \cite{tanabe1971projection} i.e. it solves 
+by multiplying the transpose of the $i$th row. It has been shown that ART converges to a least-norm solution to the
+consistent system of equations \cite{tanabe1971projection} i.e. it
+solves 
 \begin{equation}
 x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\st Ax=p.\label{eq:least-norm-problem}
 \end{equation}
@@ -420,12 +424,9 @@ x^{(t+1)}=x^{(t)}+\alpha A_{i}^{T}R^{-1}\left(p_{i}-A_{i}x^{(t)}\right)
 is a diagonal matrix where $r_{i}=\sum_{j}a_{ij}^{2}=\Vert A_{i}\Vert_{2}^{2}$
 is the squared-norm of the $i$th row $A_{i}$. 
 
-
-\subsubsection{SIRT}
-
-\cite{gilbert1972iterative} performs the updates \emph{simultaneously
-}i.e. updates the volume once instead of updating it per each row
-$A_{i}$. The update equation becomes 
+\textbf{2. SIRT}: \cite{gilbert1972iterative} performs the updates
+\emph{simultaneously }i.e. updates the volume once instead of updating
+it per each row $A_{i}$. The update equation becomes 
 \begin{eqnarray*}
 x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i=1}^{m}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}.
 \end{eqnarray*}
@@ -449,13 +450,10 @@ to be closely related, and in fact quite equivalent in terms of convergence
 properties, to the OS-SQS method. It has also been shown to converge
 best for $\alpha=2-\epsilon$ for a small $0<\epsilon\ll1$.
 
-
-\subsubsection{SART}
-
-\cite{andersen1984simultaneous,andersen1989algebraic} is a tradeoff
-between ART and SIRT, in that it updates the volume after processing
-all the rows in a particular projection view. The update equation
-becomes  
+\textbf{3. SART}: \cite{andersen1984simultaneous} is a tradeoff between
+ART and SIRT, in that it updates the volume after processing all the
+rows in a particular projection view. The update equation becomes
+ 
 \begin{eqnarray*}
 x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{1}{\sum_{i\in S}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}
 \end{eqnarray*}
@@ -478,13 +476,11 @@ converge to a minimum-norm solution like ART. This motivates us to
 assume that SART solves approximately the least norm problem in Eq.
 \ref{eq:least-norm-problem}.
 
-
-\subsubsection{BSSART}
-
-\cite{censor2002block} is a slight simplification of SART, where
-the column sums in the update equation are done over \emph{all} the
-rows of $A$ instead of just over the rows in the current view, which
-is quite similar to SIRT. The update equation becomes  
+\textbf{4. BSSART}: \cite{censor2002block} is a slight simplification
+of SART, where the column sums in the update equation are done over
+\emph{all} the rows of $A$ instead of just over the rows in the current
+view, which is quite similar to SIRT. The update equation becomes
+ 
 \begin{eqnarray*}
 x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{1}{\sum_{i=1}^{m}a_{ij}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}}a_{ij}
 \end{eqnarray*}
@@ -501,12 +497,9 @@ x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\st Ax=p
 \]
  as ART for $0<\alpha<2$.
 
-
-\subsubsection{BICAV}
-
-\cite{censor2001bicav,censor2002block} is another closely-related
-algorithm to SART. It updates the volume after each projection view
-according to  
+\textbf{5. BICAV}: \cite{censor2001bicav,censor2002block} is another
+closely-related algorithm to SART. It updates the volume after each
+projection view according to  
 \begin{eqnarray*}
 x_{j}^{(t+1)} & = & x_{j}^{(t)}+\alpha\frac{1}{c_{j}^{S}}\sum_{i\in S}\frac{p_{i}-\sum_{k=1}^{n}a_{ik}x_{k}^{(t)}}{\sum_{k=1}^{n}a_{ik}^{2}}a_{ij}
 \end{eqnarray*}
@@ -526,11 +519,8 @@ solution
 \]
  for $0<\alpha<2$.
 
-
-\subsubsection{OS-SQS}
-
-\cite{erdogan1999ordered,kim2013accelerating,kim2015combining,nien2015fast}
-is closely related to SART. It is usually derived from a majorization-minimization
+\textbf{6. OS-SQS}: \cite{erdogan1999ordered,kim2015combining} is
+closely related to SART. It is usually derived from a majorization-minimization
 perspective \cite{depierro1994modified,erdogan1999ordered,kim2013accelerating,kim2015combining},
 but with a specific choice of surrogate functions and parameters \cite{kim2013accelerating}
 the update equation becomes 
@@ -559,13 +549,11 @@ is not known to converge. Therefore, like SART, we assume that it
 solves the LS problem in Eq. \ref{eq:least-square-problem} above
 approximately.
 
-
-\subsubsection{CGLS}
-
-\cite{bjorck1996numerical,fessler1999conjugate} is a type of Conjugate
-Gradient that solves the least squares normal equations directly.
-Like SIRT, it updates the constraint once per full sweep over the
-projection rays. The update equation in matrix notation is  
+\textbf{7. CGLS}: \cite{bjorck1996numerical,fessler1999conjugate}
+is a type of Conjugate Gradient that solves the least squares normal
+equations directly. Like SIRT, it updates the constraint once per
+full sweep over the projection rays. The update equation in matrix
+notation is  
 \[
 x^{(t+1)}=x^{(t)}+\alpha_{t}\Phi(A^{T}(p-Ax^{(t)}))
 \]
@@ -615,31 +603,31 @@ BICAV, and OS-SQS, where the objective is to solve
  
 
 \begin{table*}
-\center%
+\centering{\footnotesize{}}%
 \begin{tabular}{ccc}
 \toprule 
-Method & Update Step & Converges\tabularnewline
+{\footnotesize{}Method} & {\footnotesize{}Update Step} & {\footnotesize{}Converges}\tabularnewline
 \midrule
 \midrule 
-ART \cite{gordon1970algebraic} & $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\mbox{ for }i\in S\\
+{\footnotesize{}ART \cite{gordon1970algebraic}} & {\footnotesize{}$\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\mbox{ for }i\in S\\
 x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\sqrt{2\lambda}a_{ij}\mbox{ for }j=1\ldots n
 \end{aligned}
-$ & Yes\tabularnewline
+$} & {\footnotesize{}Yes}\tabularnewline
 \midrule 
-SART \cite{andersen1984simultaneous} & $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\mbox{ for }i\in S\\
+{\footnotesize{}SART \cite{andersen1984simultaneous}} & {\footnotesize{}$\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\mbox{ for }i\in S\\
 x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{\sqrt{2\lambda}\sum_{k}a_{ik}+1}\sqrt{2\lambda}a_{ij}}{\sqrt{2\lambda}\sum_{i\in S}a_{ij}}\mbox{ for }j=1\ldots n
 \end{aligned}
-$ & No\tabularnewline
+$} & {\footnotesize{}No}\tabularnewline
 \midrule 
-BICAV \cite{censor2001bicav} & $\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{j}-\sqrt{2\lambda}\sum_{k}a_{jk}x_{k}^{(t)}-y_{j}^{(t)}}{2\lambda\sum_{k}a_{jk}^{2}+1}\mbox{ for }i\in S\\
+{\footnotesize{}BICAV \cite{censor2001bicav}} & {\footnotesize{}$\begin{aligned}y_{i}^{(t+1)} & =y_{i}^{(t)}+\alpha\frac{\sqrt{2\lambda}p_{j}-\sqrt{2\lambda}\sum_{k}a_{jk}x_{k}^{(t)}-y_{j}^{(t)}}{2\lambda\sum_{k}a_{jk}^{2}+1}\mbox{ for }i\in S\\
 x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{\sum_{i\in S}\frac{\sqrt{2\lambda}p_{i}-\sqrt{2\lambda}\sum_{k}a_{ik}x_{k}^{(t)}-y_{i}^{(t)}}{2\lambda\sum_{k}a_{ik}^{2}+1}\sqrt{2\lambda}a_{ij}}{\sum_{i\in S}\{a_{ij}\ne0\}}\mbox{ for }j=1\ldots n
 \end{aligned}
-$ & Yes\tabularnewline
+$} & {\footnotesize{}Yes}\tabularnewline
 \midrule 
-OS-SQS \cite{erdogan1999ordered} & $\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{2\lambda c_{j}+1}\left(2\lambda\sum_{i\in S}(p_{j}-\sum_{k}a_{ik}x_{k}^{(t)})a_{ij}+u_{j}-x_{j}^{(t)}\right)\mbox{ for }j=1\ldots n\end{aligned}
-$ & No\tabularnewline
+{\footnotesize{}OS-SQS \cite{erdogan1999ordered}} & {\footnotesize{}$\begin{aligned}x_{j}^{(t+1)} & =x_{j}^{(t)}+\alpha\frac{s}{2\lambda c_{j}+1}\left(2\lambda\sum_{i\in S}(p_{j}-\sum_{k}a_{ik}x_{k}^{(t)})a_{ij}+u_{j}-x_{j}^{(t)}\right)\mbox{ for }j=1\ldots n\end{aligned}
+$} & {\footnotesize{}No}\tabularnewline
 \bottomrule
-\end{tabular}
+\end{tabular}{\footnotesize \par}
 
 \protect\caption{Summary of the proximal operators update steps.\label{tab:Prox-Operators}
 See Sec. \ref{sec:Proximal-Operators} for details.}
@@ -649,23 +637,21 @@ See Sec. \ref{sec:Proximal-Operators} for details.}
 
 \subsection{SART, ART, and BICAV}
 
-ART, SART, and BICAV (approximately) solve the least-norm problem
- 
+They (approximately) solve the least-norm problem  
 \[
 x^{\star}=\argmin_{x}\Vert x\Vert_{2}^{2}\st Ax=p.
 \]
- What we want is a solver for Eq. \ref{eq:tomography-prox-operator},
-which is equivalent to solving 
+ What we want is a solver for Eq. \ref{eq:tomography-prox-operator}.
+This is equivalent to solving 
 \begin{equation}
 \min_{x}2\lambda\Vert Ax-p\Vert_{2}^{2}+\Vert x-u\Vert_{2}^{2}.\label{eq:SART-prox-2}
 \end{equation}
-Introduce new variables $y=\sqrt{2\lambda}(p-Ax)$ and $z=x-u$. The
-problem becomes 
+Introduce new variables $y=\sqrt{2\lambda}(p-Ax)$ and $z=x-u$. The problem becomes 
 \begin{eqnarray}
 \min_{y,z} & \Vert y\Vert_{2}^{2}+\Vert z\Vert_{2}^{2}\nonumber \\
 \st & y+\sqrt{2\lambda}Az=\sqrt{2\lambda}(p-Au).\label{eq:SART-prox-3}
 \end{eqnarray}
-Rewriting Eq. \ref{eq:SART-prox-3} we arrive at the system 
+Rewriting Eq. \ref{eq:SART-prox-3} we arrive at 
 \begin{eqnarray*}
 \mbox{\ensuremath{\min}}_{y,z} & \left\Vert \left[\begin{array}{c}
 y\\
@@ -798,8 +784,7 @@ I
 u
 \end{array}\right]\in\mathbb{R}^{m+n}.
 \end{eqnarray*}
-The weighting matrix $\tilde{C}\in\mathbb{R}^{n\times n}$ now becomes
- 
+ The weighting matrix $\tilde{C}\in\mathbb{R}^{n\times n}$ now becomes
 \begin{eqnarray*}
 \tilde{C} & = & \mbox{diag}(\tilde{A}^{T}\tilde{A}\mathbf{1})\\
  & = & \mbox{diag}\left((2\lambda A^{T}A+I)\mathbf{1}\right)\\
@@ -807,7 +792,7 @@ The weighting matrix $\tilde{C}\in\mathbb{R}^{n\times n}$ now becomes
 \end{eqnarray*}
  and its diagonal entries are 
 \[
-\tilde{c}_{j}=2\lambda c_{j}+1
+\tilde{c}_{j}=2\lambda c_{j}+1.
 \]
 
 
@@ -970,10 +955,8 @@ and $z^{(0)}\in\mathbb{R}^{d}$
 We will consider the following data fidelity terms, which correspond
 to specific noise models:
 
-
-\subsubsection{Gaussian Noise}
-
-Assume the measurements $p_{i}\forall i=1,\ldots m$ follow the model
+1. Gaussian Noise: Assume the measurements $p_{i}\forall i=1,\ldots m$
+follow the model
 \begin{equation}
 p_{i}=a_{i}^{T}x+\varepsilon_{i}\label{eq:Gaussian-Noise-Model}
 \end{equation}
@@ -989,12 +972,9 @@ f_{\text{G}}(x)=\Vert Ax-p\Vert_{2}^{2}=\sum_{i=1}^{m}(A_{i}^{T}x-p_{i})^{2}.\la
 We can solve proximal operator $\prox_{\lambda f_{\text{G}}}(\cdot)$
 directly using any of the algorithms from Table \ref{tab:Prox-Operators}.
 
-
-\subsubsection{Poisson Noise}
-
-It can be shown that assuming an \emph{approximated} Poisson noise
-model leads to a WLS data term, where the weights are proportional
-to the detector measurements \cite{clinthorne1993preconditioning,depierro1994modified,elbakri2002statistical,thibault2007three}.
+2. Poisson Noise: It can be shown that assuming an \emph{approximated}
+Poisson noise model leads to a WLS data term, where the weights are
+proportional to the detector measurements \cite{clinthorne1993preconditioning,depierro1994modified,elbakri2002statistical,thibault2007three}.
 Indeed, the actual measurements produced by the X-ray CT scanner represent
 X-ray photon energy reaching the detector as compared to the energy
 leaving the X-ray gun. These are related to each other and to the
@@ -1077,7 +1057,7 @@ as
 \tilde{p} & = & W^{\frac{1}{2}}p\\
 \tilde{A} & = & W^{\frac{1}{2}}A
 \end{eqnarray*}
- where $W^{\frac{1}{2}}=\diag\left(\sqrt{w_{i}}\right).$ We now get
+ where $W^{\frac{1}{2}}=\diag\left(\sqrt{w_{i}}\right).$ We get 
 \begin{eqnarray*}
 \Vert\tilde{A}x-\tilde{p}\Vert_{2}^{2} & = & (\tilde{A}x-\tilde{p})^{T}(\tilde{A}x-\tilde{p})\\
  & = & \left(W^{\frac{1}{2}}(Ax-p)\right)^{T}\left(W^{\frac{1}{2}}(Ax-p)\right)\\
@@ -1101,23 +1081,20 @@ We consider the following regularizers:
 
 
 
-
-\subsubsection{Isotropic Total Variation (ITV)}
-
-It is the sum of the gradient magnitude at each voxel \cite{rudin1992nonlinear,sidky2012convex,chambolle2011first}
+1. Isotropic Total Variation (ITV): It is the sum of the gradient
+magnitude at each voxel \cite{rudin1992nonlinear,sidky2012convex,chambolle2011first}
 i.e. 
 \begin{equation}
-h_{\text{ITV}}(x)=\sigma\Vert x\Vert_{\text{TV}}=\sigma\sum_{i}\Vert\nabla x_{i}\Vert_{2}\label{eq:h-ITV}
+h_{\text{ITV}}(x)=g_{\text{ITV}}(Kx)=\sigma\Vert x\Vert_{\text{TV}}=\sigma\sum_{i}\Vert\nabla x_{i}\Vert_{2}\label{eq:h-ITV}
 \end{equation}
  where $\nabla x_{i}=\left[\begin{smallmatrix}\nabla x_{i}^{1} & \nabla x_{i}^{2}\end{smallmatrix}\right]^{T}$
-is the discrete gradient at voxel $i$ containing the horizontal forward
-different $\nabla x_{i}^{1}$ and the vertical forward difference
-$\nabla x_{i}^{2}$. It can be represented in the form of Eq. \ref{eq:full-problem}
+is the discrete gradient at voxel $i$ containing the horizontal forward different $\nabla x_{i}^{1}$ and
+the vertical forward difference $\nabla x_{i}^{2}$. It can be represented in the form of Eq. \ref{eq:full-problem} 
 \[
 h_{\text{ITV}}(x)=g_{\text{ITV}}(Kx)
 \]
-by defining the matrix $K=D\in\mathbb{R}^{2n\times n}$ to be the
-forward difference matrix that produces the discrete gradient $\nabla x\in\mathbb{R}^{2n}$
+ by defining the matrix $K=D\in\mathbb{R}^{2n\times n}$ to be the
+forward difference matrix that produces the discrete gradient $\nabla x\in\mathbb{R}^{2n}$ 
 \[
 \nabla x=\begin{bmatrix}\nabla x_{i}\\
 \vdots\\
@@ -1136,16 +1113,13 @@ g_{\text{ITV}}(u)=\sigma\sum_{i}\Vert u_{i}\Vert_{2}
 Intuitively it projects back the vector $u_{i}$ to be on the Euclidean
 ball of radius $\sigma$.
 
-
-\subsubsection{Anisotropic Total Variation (ATV)}
-
-It is a simplification of ITV \cite{sidky2008image,chambolle2010introduction},
-and is defined as 
+2. Anisotropic Total Variation (ATV): It is a simplification of ITV
+\cite{sidky2008image}, and is defined as 
 \begin{equation}
 h_{\text{ATV}}(x)=\sigma\Vert\nabla x\Vert_{1}\label{eq:h-ATV}
 \end{equation}
  which is the $\ell_{1}$ norm of the gradient $\nabla x$ of the
-volume. It can be written in the form 
+volume. It can be written in the form of Eq. \ref{eq:full-problem}
 \[
 h_{\text{ATV}}(x)=g_{\text{ATV}}(Kx)
 \]
@@ -1160,13 +1134,10 @@ The proximal operator $\prox_{\lambda g_{\text{ATV}}}(u)$ is \cite{esser2010gene
  which is the soft thresholding function \cite{sidky2012convex},
 where the max and product are component-wise operations.
 
-
-\subsubsection{Sum of Absolute Differences (SAD)}
-
-It is an extension to the ATV by adding more forward differences around
-each voxel \cite{gregson2012stochastic}. In particular, it sums the
-differences of the voxels in the $3\times3$ neighborhood around each
-voxel 
+3. Sum of Absolute Differences (SAD): It is an extension to the ATV
+by adding more forward differences around each voxel \cite{gregson2012stochastic}.
+In particular, it sums the differences of the voxels in the $3\times3$
+neighborhood around each voxel 
 \begin{equation}
 h_{\text{SAD}}(x)=\sigma\sum_{i}\sum_{k\in\mathcal{N}(i)}\vert x_{i}-x_{k}\vert\label{eq:h-SAD}
 \end{equation}
@@ -1178,14 +1149,14 @@ h_{\text{SAD}}(x)=g_{\text{SAD}}(Kx)
  by defining $K\in\mathbb{R}^{8n\times n}$ that computes the 8 forward
 differences in the $3\times3$ neighborhood and defining for $u\in\mathbb{R}^{8n}$
 \[
-g_{\text{SAD}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}
+g_{\text{SAD}}(u)=\sigma\Vert u\Vert_{1}=\sigma\sum_{i}\Vert u_{i}\Vert_{1}.
 \]
- where $u_{i}\in\mathbb{R}^{8}$. The proximal operator $\prox_{\lambda g_{\text{ATV}}}(u)$
-is similar to the ATV case: 
+ The proximal operator $\prox_{\lambda g_{\text{ATV}}}(u)$ is similar
+to the ATV case: 
 \begin{equation}
 \prox_{\lambda g_{\text{ITV}}}(u_{i})=\sign(u_{i})\odot\max(0,\vert u_{i}\vert-\sigma).\label{eq:SAD-prox}
 \end{equation}
-The SAD prior has been shown \cite{gregson2012stochastic} to produce
+ The SAD prior has been shown \cite{gregson2012stochastic} to produce
 excellent results in stochastic tomography reconstruction.
 
 
@@ -1194,35 +1165,7 @@ excellent results in stochastic tomography reconstruction.
 
 \subsection{Datasets and Implementation Details}
 
-We present experiments on two simulated phantoms and one real dataset,
-see Fig. \ref{fig:Phantoms}. The phantoms are: the modified 2D Shepp-Logan
-head phantom \cite{toft1996radon}; and a 2D slice of the NCAT phantom
-\cite{segars2002study}. The phantoms were generated at a resolution
-of $512\times512$ pixels, and ground truth sinograms were generated
-in ASTRA using a fan beam geometry with $888$ detectors, isotropic
-pixels of 1 mm, isotropic detectors of $1.0239$ mm, and source-to-detector
-distance of $949.075$ mm. We assumed Poisson measurement noise with
-emitted intensity count $I_{0}=10^{5}$ to generate the noisy projections
-used.
-
-The real dataset is a 2D slice of a 3D cone beam scan of a mouse from
-the Exxim Cobra software %
-\footnote{available from http://www.exxim-cc.com/ %
-}. The data contains 194 projections (over 194 degrees) of a fan beam
-geometry with 512 detectors of size 0.16176 mm, source-to-detector
-distance of 529.29 mm, source-to-isocenter distance of 395.73 mm,
-and reconstructed volume of $512\times512$ pixels of isotropic size
-0.12 mm. We ran 500 iterations of BSSART with $\alpha=0.1$ to generate
-the \emph{ground truth} volume, but we note that results on this dataset
-should be taken with a grain of salt. We measure performance in terms
-of SNR (signal-to-noise ratio) defined as 
-\[
-\mbox{SNR}(x,\hat{x})=10\log\frac{\sum_{j}\hat{x}_{j}^{2}}{\sum_{j}\left(x_{j}-\hat{x}_{j}\right)^{2}}
-\]
- where $x\in\mathbb{R}^{n}$ is the current estimate of the volume
-and $\hat{x}\in\mathbb{R}^{n}$ is the ground truth volume.
-
-\begin{figure*}
+\begin{figure}
 \center\subfloat[Modified Shepp-Logan]{%
 \begin{minipage}[t]{0.33\textwidth}%
 \includegraphics[width=1\textwidth]{plots/phantom-ph_mod-sl-512}%
@@ -1242,10 +1185,36 @@ and $\hat{x}\in\mathbb{R}^{n}$ is the ground truth volume.
 
 
 
-\protect\caption{The three datasets used. (c) shows the \emph{ground truth} converged
+\protect\caption{The datasets used. (c)  shows the \emph{ground truth} converged
 result from the projections. \label{fig:Phantoms}}
-\end{figure*}
+\end{figure}
 
+
+We present experiments on two simulated phantoms and one real dataset,
+see Fig. \ref{fig:Phantoms}. The phantoms are: the modified 2D Shepp-Logan head phantom \cite{toft1996radon};
+and a 2D slice of the NCAT phantom \cite{segars2002study}. The phantoms
+were generated at a resolution of $512\times512$ pixels, and ground
+truth sinograms were generated in ASTRA using a fan beam geometry
+with $888$ detectors, isotropic pixels of 1 mm, isotropic detectors
+of $1.0239$ mm, and source-to-detector distance of $949.075$ mm. We assumed Poisson measurement noise with emitted intensity count
+$I_{0}=10^{5}$ to generate the noisy projections used.
+
+The real dataset is a 2D slice of a 3D cone beam scan of a mouse from
+the Exxim Cobra software %
+\footnote{available from http://www.exxim-cc.com/ %
+}. The data contains 194 projections (over 194 degrees) of a fan beam
+geometry with 512 detectors of size 0.16176 mm, source-to-detector
+distance of 529.29 mm, source-to-isocenter distance of 395.73 mm,
+and reconstructed volume of $512\times512$ pixels of isotropic size
+0.12 mm. We ran 500 iterations of BSSART with $\alpha=0.1$ to generate
+the \emph{ground truth} volume, but we note that results on this dataset
+should be taken with a grain of salt. We measure performance in terms
+of SNR (signal-to-noise ratio) defined as 
+\[
+\mbox{SNR}(x,\hat{x})=10\log\frac{\sum_{j}\hat{x}_{j}^{2}}{\sum_{j}\left(x_{j}-\hat{x}_{j}\right)^{2}}
+\]
+ where $x\in\mathbb{R}^{n}$ is the current estimate of the volume
+and $\hat{x}\in\mathbb{R}^{n}$ is the ground truth volume.
 
 We clip the reconstruction estimate $x$ at the end of each inner
 iteration (i.e. after each update step) using this function 
@@ -1265,21 +1234,110 @@ GHz with 64 GB RAM.
 
 \subsection{Iterative Algorithms Comparison\label{sub:Iterative-Algorithms-Comparison}}
 
+\begin{figure*}
+\center\subfloat[Modified Shepp-Logan]{%
+\begin{minipage}[t]{0.33\textwidth}%
+\includegraphics[width=1\textwidth]{plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-np_15-p_fan-snr}
+
+\includegraphics[width=1\textwidth]{plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-np_30-p_fan-snr}
+
+\includegraphics[width=1\textwidth]{plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-np_90-p_fan-snr}%
+\end{minipage}
+
+}\subfloat[NCAT]{%
+\begin{minipage}[t]{0.33\textwidth}%
+\includegraphics[width=1\textwidth]{plots/per_iter-ph_ncat-512_nt_poisson-nl_100000\lyxdot 000-np_15-p_fan-snr}
+
+\includegraphics[width=1\textwidth]{plots/per_iter-ph_ncat-512_nt_poisson-nl_100000\lyxdot 000-np_30-p_fan-snr}
+
+{\small{}\includegraphics[width=1\textwidth]{plots/per_iter-ph_ncat-512_nt_poisson-nl_100000\lyxdot 000-np_90-p_fan-snr}}%
+\end{minipage}
+
+}\subfloat[Mouse]{%
+\begin{minipage}[t]{0.33\textwidth}%
+\includegraphics[width=1\textwidth]{plots/per_iter-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-np_15-p_mouse-snr}
+
+\includegraphics[width=1\textwidth]{plots/per_iter-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-np_30-p_mouse-snr}
+
+\includegraphics[width=1\textwidth]{plots/per_iter-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-np_90-p_mouse-snr}%
+\end{minipage}
+
+}
+
+
+
+\protect\caption{\textbf{Iterative Algorithms Comparison}. Plots show SNR per iteration.
+Solid lines have $\alpha=1$, dashed lines have $\alpha=1.99$, and
+dotted lines have $\alpha=0.1$. \label{fig:SNR-per-iteration-iterative}}
+\end{figure*}
+ 
+
+\begin{figure}
+\center\subfloat[Modified Shepp-Logan]{%
+\begin{minipage}[t]{0.33\textwidth}%
+\includegraphics[width=1\textwidth]{plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-np_90-p_fan_t1-snr}%
+\end{minipage}
+
+}\subfloat[NCAT]{%
+\begin{minipage}[t]{0.33\textwidth}%
+\includegraphics[width=1\textwidth]{plots/per_iter-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-np_90-p_mouse_t1-snr}%
+\end{minipage}
+
+}\subfloat[Mouse]{%
+\begin{minipage}[t]{0.33\textwidth}%
+\includegraphics[width=1\textwidth]{plots/per_iter-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-np_90-p_mouse_t1-snr}%
+\end{minipage}
+
+}
+
+
+
+\protect\caption{\textbf{Running Time Comparison}. Curves show SNR per running time
+for 90 projections . Compare with Fig. \ref{fig:SNR-per-iteration-iterative}
+(bottom row). \label{fig:SNR-per-time-iterative}}
+\end{figure}
+
+
+\begin{figure}
+\center\subfloat[Modified Shepp-Logan]{%
+\begin{minipage}[t]{0.33\textwidth}%
+\includegraphics[width=1\textwidth]{plots/max-snr-per_num_proj-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-it_30-p_fan-snr}%
+\end{minipage}
+
+}\subfloat[NCAT]{%
+\begin{minipage}[t]{0.33\textwidth}%
+\includegraphics[width=1\textwidth]{plots/max-snr-per_num_proj-ph_ncat-512_nt_poisson-nl_100000\lyxdot 000-it_30-p_fan-snr}%
+\end{minipage}
+
+}\subfloat[Mouse]{%
+\begin{minipage}[t]{0.33\textwidth}%
+\includegraphics[width=1\textwidth]{plots/max-snr-per_num_proj-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-it_30-p_mouse-snr}%
+\end{minipage}
+
+}
+
+
+
+\protect\caption{\textbf{Effect of the number of projections}. Plots show the maximum
+SNR achieved over 30 iterations per number of projections used. \label{fig:SNR-per-num-proj-iterative}}
+\end{figure}
+
+
 We first compare the different iterative algorithms presented in Sec.
-\ref{sec:Iterative-Algorithms} on the three datasets. We set the
-number of subsets in OS-SQS to the number of projections to have a
-fair comparison with SART, since we noticed that increasing the number
-of subsets increases the convergence rate. We compare different values
-of $\alpha$, namely 0.1, 1, and 1.99. We compare convergence per
-iteration since all methods are roughly equal in runtime, as each
-outer iteration contains (roughly) one forward and one backward projection.
-This is confirmed in Fig. \ref{fig:SNR-per-time-iterative}. Note
-that our implementation is not optimized for any of the methods, and
-the processing time is just an indication. We initialize all methods
-with uniform volume $x^{(0)}=\mathbf{0}_{n}$.
+\ref{sec:Iterative-Algorithms} on the datasets. We set the number
+of subsets in OS-SQS to the number of projections to have a fair comparison
+with SART, since we noticed that increasing the number of subsets
+increases the convergence rate. We compare different values of $\alpha$,
+namely 0.1, 1, and 1.99. We compare convergence per iteration since
+all methods are roughly equal in runtime, as each outer iteration
+contains (roughly) one forward and one backward projection. This is
+confirmed in Fig. \ref{fig:SNR-per-time-iterative}. Note that our
+implementation is not optimized for any of the methods, and the processing
+time is just an indication. We initialize all methods with uniform
+volume $x^{(0)}=\mathbf{0}_{n}$.
 
 Fig. \ref{fig:SNR-per-iteration-iterative} shows the SNR per iteration
-for 15, 30, 90 projections for 30 iterations, while Fig. \ref{fig:SNR-per-num-proj-iterative}
+for 15, 30, 90  projections for 30 iterations. Fig. \ref{fig:SNR-per-num-proj-iterative}
 shows the the maximum SNR over 30 iterations for different number
 of equally distributed projections from 15 to 180. From the figures,
 we make the following conclusions:
@@ -1319,89 +1377,6 @@ fewer projections. Thus we focus next on using regularizers in the
 proximal framework with SART, ART, OS-SQS, and BICAV and fewer projections,
 namely 30 projections.
 \end{itemize}
-\begin{figure*}
-\subfloat[Modified Shepp-Logan]{%
-\begin{minipage}[t]{0.33\textwidth}%
-\includegraphics[width=1\textwidth]{plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-np_15-p_fan-snr}
-
-\includegraphics[width=1\textwidth]{plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-np_30-p_fan-snr}
-
-\includegraphics[width=1\textwidth]{plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-np_90-p_fan-snr}%
-\end{minipage}
-
-}\subfloat[NCAT]{%
-\begin{minipage}[t]{0.33\textwidth}%
-\includegraphics[width=1\textwidth]{plots/per_iter-ph_ncat-512_nt_poisson-nl_100000\lyxdot 000-np_15-p_fan-snr}
-
-\includegraphics[width=1\textwidth]{plots/per_iter-ph_ncat-512_nt_poisson-nl_100000\lyxdot 000-np_30-p_fan-snr}
-
-{\small{}{\small{}\includegraphics[width=1\textwidth]{plots/per_iter-ph_ncat-512_nt_poisson-nl_100000\lyxdot 000-np_90-p_fan-snr}}}%
-\end{minipage}
-
-}\subfloat[Mouse]{%
-\begin{minipage}[t]{0.33\textwidth}%
-\includegraphics[width=1\textwidth]{plots/per_iter-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-np_15-p_mouse-snr}
-
-\includegraphics[width=1\textwidth]{plots/per_iter-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-np_30-p_mouse-snr}
-
-\includegraphics[width=1\textwidth]{plots/per_iter-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-np_90-p_mouse-snr}%
-\end{minipage}
-
-}
-
-\protect\caption{\textbf{Iterative Algorithms Comparison}. Plots show SNR per iteration.
-Solid lines have $\alpha=1$, dashed lines have $\alpha=1.99$, and
-dotted lines have $\alpha=0.1$. \label{fig:SNR-per-iteration-iterative}}
-\end{figure*}
- 
-
-\begin{figure*}
-\subfloat[Modified Shepp-Logan]{%
-\begin{minipage}[t]{0.33\textwidth}%
-\includegraphics[width=1\textwidth]{plots/per_iter-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-np_90-p_fan_t1-snr}%
-\end{minipage}
-
-}\subfloat[NCAT]{%
-\begin{minipage}[t]{0.33\textwidth}%
-\includegraphics[width=1\textwidth]{plots/per_iter-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-np_90-p_mouse_t1-snr}%
-\end{minipage}
-
-}\subfloat[Mouse]{%
-\begin{minipage}[t]{0.33\textwidth}%
-\includegraphics[width=1\textwidth]{plots/per_iter-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-np_90-p_mouse_t1-snr}%
-\end{minipage}
-
-}
-
-\protect\caption{\textbf{Running Time Comparison}. Curves show SNR per running time
-for 90 projections. Compare with Fig. \ref{fig:SNR-per-iteration-iterative}
-(bottom row). \label{fig:SNR-per-time-iterative}}
-\end{figure*}
-
-
-\begin{figure*}
-\subfloat[Modified Shepp-Logan]{%
-\begin{minipage}[t]{0.33\textwidth}%
-\includegraphics[width=1\textwidth]{plots/max-snr-per_num_proj-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-it_30-p_fan-snr}%
-\end{minipage}
-
-}\subfloat[NCAT]{%
-\begin{minipage}[t]{0.33\textwidth}%
-\includegraphics[width=1\textwidth]{plots/max-snr-per_num_proj-ph_ncat-512_nt_poisson-nl_100000\lyxdot 000-it_30-p_fan-snr}%
-\end{minipage}
-
-}\subfloat[Mouse]{%
-\begin{minipage}[t]{0.33\textwidth}%
-\includegraphics[width=1\textwidth]{plots/max-snr-per_num_proj-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-it_30-p_mouse-snr}%
-\end{minipage}
-
-}
-
-\protect\caption{\textbf{Effect of the number of projections}. Plots show the maximum
-SNR achieved over 30 iterations per number of projections used. \label{fig:SNR-per-num-proj-iterative}}
-\end{figure*}
-
-
 
 \subsection{Poisson Model Mapping Functions Comparison\label{sub:Poisson-Mapping-Functions-Comparison}}
 
@@ -1470,8 +1445,8 @@ We compare the different data terms and regularizers defined in Sec.
 \ref{sec:Proximal-Framework}. We solve the tomography proximal operator
 (step 3 in Alg. \ref{alg:LADMM-algorithm}) using 2 iterations of
 the SART proximal operator (from Table \ref{tab:Prox-Operators}),
-using $\alpha=1.99$ with for 15 and 30 projections  (see Sec. \ref{sub:Iterative-Algorithms-Comparison}).
-We use $\sigma=0.05$ and $\rho=25$ for 15 projections; $\sigma=0.1$
+using $\alpha=1.99$ with for 15 and 30 projections  (see Sec.
+\ref{sub:Iterative-Algorithms-Comparison}). We use $\sigma=0.05$ and $\rho=25$ for 15 projections; $\sigma=0.1$
 and $\rho=50$ for 30 projections; and set $\mu=\nicefrac{1}{\rho\Vert K\Vert^{2}}$.
 We initialize all methods with uniform volume $x^{(0)}=\mathbf{0}_{n}$.
 We estimated the matrix norm $\Vert K\Vert$ using the power method.
@@ -1484,21 +1459,19 @@ than the unregularized iterative methods in Sec. \ref{sub:Iterative-Algorithms-C
 This is expected since adding a powerful regularizer constrains the
 reconstruction to better resemble the ground truth.
 \item The Poisson noise model $f_{\text{P}}(\cdot)$ is better than the
-Gaussian noise model $f_{\text{G}}(\cdot)$ for the three datasets,
-specially with more projections. This is consistent with the noise
-model used to generate the noisy simulated sinograms, and with the
-physical noise model in the real dataset.
+Gaussian noise model $f_{\text{G}}(\cdot)$ for the datasets, specially
+with more projections. This is consistent with the noise model used
+to generate the noisy simulated sinograms, and with the physical noise
+model in the real dataset.
 \item With more projections, more regularization (higher $\sigma$) produces
 better results while for fewer projections less regularization is
 sufficient . This is expected because using more projections adds
 more constraints (rows in the projection matrix $A$) that need better
 regularization to get good results.
-\item The SAD regularizer is better for all datasets. ATV is better (or
-similar) on the synthetic datasets, while ITV is better on the mouse
-dataset.
+\item The SAD regularizer is better for all datasets. 
 \end{itemize}
-\begin{figure*}
-\subfloat[Modified Shepp-Logan]{%
+\begin{figure}
+\center\subfloat[Modified Shepp-Logan]{%
 \begin{minipage}[t]{0.33\textwidth}%
 \includegraphics[width=1\textwidth]{plots/sart-prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-np_15-p_fan-snr}
 
@@ -1521,13 +1494,15 @@ dataset.
 
 }
 
+
+
 \protect\caption{\textbf{Data Terms and Regularizers Comparison}. Plots show SNR per
-iteration for the Gaussian (\emph{solid} curves) and Poisson (\emph{dashed}
+iteration  for the Gaussian (\emph{solid} curves) and Poisson (\emph{dashed}
 curves)noise models with ITV (\emph{blue}), ATV (\emph{red}), and
 SAD (\emph{green}) regularizers. The \emph{black} curve shows the
 results for SART. See Sec. \ref{sub:Data-Terms-and-Regularizers-Comparison}.
 \label{fig:SNR-per-iter-data-term-and-reg-sart-prox}}
-\end{figure*}
+\end{figure}
 
 
 
@@ -1557,8 +1532,8 @@ to the proximal operator $u-x^{(t)}$, where the scaling between the
 two terms has to be adjusted properly. That is the reason $\mu$ had
 to be carefully tuned to get better results.
 \end{itemize}
-\begin{figure*}
-\subfloat[Modified Shepp-Logan]{%
+\begin{figure}
+\center\subfloat[Modified Shepp-Logan]{%
 \begin{minipage}[t]{0.33\textwidth}%
 \includegraphics[width=1\textwidth]{plots/prox-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-np_15-p_fan-snr}
 
@@ -1581,11 +1556,13 @@ to be carefully tuned to get better results.
 
 }
 
+
+
 \protect\caption{\textbf{TRex Proximal Operators Comparison}. Plots show SNR per iteration
-for the Gaussian (\emph{solid} curves) and Poisson (\emph{dashed}
+ for the Gaussian (\emph{solid} curves) and Poisson (\emph{dashed}
 curves) noise models with SAD regularizer. See Sec. \ref{sub:Proximal-Operators-Comparison}.
 \label{fig:SNR-per-iter-prox-operator-comparison}}
-\end{figure*}
+\end{figure}
 
 
 
@@ -1599,31 +1576,30 @@ subsets with momentum. We don't compare to the method of Nien \etal
 is closely matched by the OS-MOM method and is quite similar.
 
 The ADMM-PCG minimizes a combination of a WLS data term and regularization
-term: 
+term 
 \[
 \min_{x}\frac{1}{2}\Vert p-Ax\Vert_{W}^{2}+\lambda\sum_{r=1}^{n}\kappa_{r}\Vert Rx_{r}\Vert_{1}
 \]
  where $\kappa_{r}\in\mathbb{R}$ are spatial weights that govern
 the spatial resolution in the reconstruction and $Rx_{r}\in\mathbb{R}^{d}$
-is the vector of wavelet decomposition at voxel $x_{r}$. It uses
-2 iterations of PCG to solve the proximal operator of the data term,
-as opposed to our framework that uses SART, ART, ... etc. We run the
-Matlab code available online from the author as part of the IRT toolbox
+is the vector of wavelet decomposition at voxel $x_{r}$. It uses 2 iterations of PCG to solve the proximal operator of the
+data term, as opposed to our framework that uses SART, ART, ... etc.
+We run the Matlab code available online from the author as part of
+the IRT toolbox%
 \footnote{available from http://web.eecs.umich.edu/\textasciitilde{}fessler/code/
 %
 }. The default procedure for choosing the parameters didn't work well
 with our datasets, so we had to manually tweak the parameters, \cite{ramani2012splitting}.
-We set $\nu=2\times10^{5}$, $\lambda=10^{-3}$, and $\mu=10^{-4}$
-for 15 projections $\mu=10^{-3}$ for 30 projections. We use the Wavelet
-decomposition basis with the $\ell_{1}$ norm regularizer.
+We set $\nu=2\times10^{5}$, $\lambda=10^{-3}$, and $\mu=10^{-4}$ for 15 projections and $\mu=10^{-3}$
+for 30 projections. We use the Wavelet decomposition basis with the
+$\ell_{1}$ norm regularizer.
 
-The OS-Mom also minimizes a WLS data term and regularization term:
+The OS-Mom also minimizes a WLS data term and regularization term 
 \[
 \min_{x}\frac{1}{2}\Vert p-Ax\Vert_{W}^{2}+\beta\sum_{r=1}^{n}\psi(\nabla x_{r})
 \]
  where $\psi(\cdot)$ is an edge preserving potential function and
-$\nabla x_{r}\in\mathbb{R}^{2}$ is the gradient at voxel $x_{r}$.
-We implemented the Momentum 2 method (Table IV in \cite{kim2015combining})
+$\nabla x_{r}\in\mathbb{R}^{2}$ is the gradient at voxel $x_{r}$. We implemented the Momentum 2 method (Table IV in \cite{kim2015combining})
 within the IRT toolbox. We use the settings from the paper for the
 regularizer i.e. the Fair potential 
 \[
@@ -1631,11 +1607,11 @@ regularizer i.e. the Fair potential
 \]
 with $\delta=10$, $a=0.0558$, and $b=1.6395$, and bit reversal
 for subset ordering. We tweaked $\beta$ and $M$ \cite{kim2015combining}
-to get good performance. We set $\beta=0.05$ and $M=5$ subsets for
-15 projections and $\beta=0.1$ and $M=10$ subsets for 30 projections.
-We use relaxation with parameter $10^{-3}$ to help the convergence.
-We also compare to plain OS method without momentum with the same
-WLS data term and regularizer as OS-Mom.
+to get good performance. We set $\beta=0.05$ and $M=5$ subsets for 15 projections and
+$\beta=0.1$ and $M=10$ subsets for 30 projections. We use relaxation
+with parameter $10^{-3}$ to help the convergence. We also compare
+to plain OS method without momentum with the same WLS data term and
+regularizer as OS-Mom.
 
 Fig. \ref{fig:SNR-per-iter-state-of-art-comp} shows a comparison
 with these two algorithm. The TRex uses the SART proximal operator
@@ -1662,8 +1638,8 @@ and not very sensitive to the choice of parameters. Note that for
 NCAT and Mouse, using TRex, we get SNR with 15 projections that equals
 the SNR we get with 30 projections using plain SART.
 \end{itemize}
-\begin{figure*}
-\subfloat[Modified Shepp-Logan]{%
+\begin{figure}
+\center\subfloat[Modified Shepp-Logan]{%
 \begin{minipage}[t]{0.33\textwidth}%
 \includegraphics[width=1\textwidth]{plots/sota-comp-per_iter-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-np_15-p_fan-snr}
 
@@ -1677,7 +1653,8 @@ the SNR we get with 30 projections using plain SART.
 \includegraphics[width=1\textwidth]{plots/sota-comp-per_iter-ph_ncat-512_nt_poisson-nl_100000\lyxdot 000-np_30-p_fan-snr}%
 \end{minipage}
 
-}\subfloat[Mouse]{%
+}\\
+\subfloat[Mouse]{%
 \begin{minipage}[t]{0.33\textwidth}%
 \includegraphics[width=1\textwidth]{plots/sota-comp-per_iter-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-np_15-p_mouse-snr}
 
@@ -1690,17 +1667,17 @@ the SNR we get with 30 projections using plain SART.
 The TRex framework uses SART with Poisson model and SAD regularizer.
 The dotted curve shows the baseline plain SART (from Sec. \ref{sub:Iterative-Algorithms-Comparison}).
 See Sec. \ref{sub:Comparison-to-State-of-Art}. \label{fig:SNR-per-iter-state-of-art-comp}}
-\end{figure*}
+\end{figure}
 
 
 \begin{figure*}
-\subfloat[Modified Shepp-Logan]{\includegraphics[width=1\textwidth]{plots/sota-comp-recon-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-np_30-p_fan-rec}
+\center\subfloat[Modified Shepp-Logan]{\includegraphics[width=1\textwidth]{plots/sota-comp-recon-ph_mod-sl-512_nt_poisson-nl_100000\lyxdot 000-np_30-p_fan-rec}
 
 }\\
-\subfloat[NCAT]{\includegraphics[width=1\textwidth]{plots/sota-comp-recon-ph_ncat-512_nt_poisson-nl_100000\lyxdot 000-np_30-p_fan-rec}
+\subfloat[NCAT]{\includegraphics[width=0.8\textwidth]{plots/sota-comp-recon-ph_ncat-512_nt_poisson-nl_100000\lyxdot 000-np_30-p_fan-rec}
 
 }\\
-\subfloat[Mouse]{\includegraphics[width=1\textwidth]{plots/sota-comp-recon-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-np_30-p_mouse-rec}
+\subfloat[Mouse]{\includegraphics[width=0.8\textwidth]{plots/sota-comp-recon-ph_mouse-512_nt_gauss-nl_0\lyxdot 000-np_30-p_mouse-rec}
 
 }
 
@@ -1737,11 +1714,11 @@ the nature of the measurement noise \cite{xu2014quantifying}; and
 to other famous packages such as RTK \cite{mory2012ecg}.
 
 
-\section{Acknowledgments}
+\section*{Acknowledgments}
 
 This work was supported by KAUST baseline and research center funding.
 
-{\small{}\bibliographystyle{ieeetr}
+\bibliographystyle{ieeetr}
 \addcontentsline{toc}{section}{\refname}\bibliography{papers}
-}
+
 \end{document}
