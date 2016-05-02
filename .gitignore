@@ -4,7 +4,8 @@
 *.orig
 *.rej
 .nfs*
-
+.*.sdf
+.*.lyx#
 /python/build/*
 /python/finalbuild/*
 /python/dist/*
