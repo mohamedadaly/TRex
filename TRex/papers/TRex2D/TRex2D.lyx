@@ -119,16 +119,8 @@
 \begin_body
 
 \begin_layout Title
-\begin_inset Branch Long
-status open
-
-\begin_layout Standard
-A Robust X-Ray Tomography Reconstruction Proximal Framework
-\end_layout
-
-\end_inset
-
-
+TRex: A Tomography Reconstruction Proximal Framework for Robust Sparse View
+ X-Ray Applications
 \end_layout
 
 \begin_layout Author
@@ -181,20 +173,6 @@ status collapsed
 
 \backslash
 thanks{P Wonka is with the Visual Computing Center, KAUST, KSA}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Branch Short
-status collapsed
-
-\begin_layout Title
-TRex: A Tomography Reconstruction Proximal Framework for Robust Sparse View
- X-Ray Applications
 \end_layout
 
 \end_inset
