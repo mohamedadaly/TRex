@@ -55,7 +55,8 @@ CSirtAlgorithm::CSirtAlgorithm(CProjector2D* _pProjector,
 							   CFloat32ProjectionData2D* _pSinogram, 
 							   CFloat32VolumeData2D* _pReconstruction)
 {
-	CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction);
+	//CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction);
+	CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction);
 }
 
 //----------------------------------------------------------------------------------------

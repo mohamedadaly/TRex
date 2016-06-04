@@ -38,7 +38,7 @@ $Id$
 #include "SartProxOperatorAlgorithm.h"
 #include "BicavAlgorithm.h"
 #include "BicavProxOperatorAlgorithm.h"
-#include "BlockSimplifiedSartAlgorithm.h"
+//#include "BlockSimplifiedSartAlgorithm.h"
 #include "OrderedSubsetSQSAlgorithm.h"
 #include "OrderedSubsetSQSProxOperatorAlgorithm.h"
 #include "ArtProxOperatorAlgorithm.h"
@@ -107,12 +107,12 @@ typedef TYPELIST_30(
 	AlgorithmTypeList;
 #else
 
-typedef TYPELIST_14(
+typedef TYPELIST_13(
 			CArtAlgorithm,
 			CArtProxOperatorAlgorithm,
 			CBicavAlgorithm,
 			CBicavProxOperatorAlgorithm,
-			CBlockSimplifiedSartAlgorithm,
+			//CBlockSimplifiedSartAlgorithm,
 			COrderedSubsetSQSAlgorithm,
 			COrderedSubsetSQSProxOperatorAlgorithm,
 			CSartAlgorithm,
