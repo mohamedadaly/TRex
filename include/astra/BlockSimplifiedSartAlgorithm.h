@@ -159,7 +159,7 @@ public:
                    CFloat32ProjectionData2D* _pSinogram, 
                    CFloat32VolumeData2D* _pReconstruction);
 
-    CBlockSimplifiedSartAlgorithm::CBlockSimplifiedSartAlgorithm(CProjector2D* _pProjector, 
+    CBlockSimplifiedSartAlgorithm(CProjector2D* _pProjector, 
                                CFloat32ProjectionData2D* _pSinogram, 
                                CFloat32VolumeData2D* _pReconstruction,
                                int* _piProjectionOrder, 
