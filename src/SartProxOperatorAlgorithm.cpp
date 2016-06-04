@@ -89,7 +89,7 @@ CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm(CProjector2D* _pProjector
 							   CFloat32VolumeData2D* _pReconstruction) 
 {
 	_clear();
-	CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction);
+	CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction);
 	//initialize(_pProjector, _pSinogram, _pReconstruction);
 }
 
@@ -102,7 +102,7 @@ CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm(CProjector2D* _pProjector
 							   int _iProjectionCount)
 {
 	_clear();
-	CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction, 
+	CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction, 
 		_piProjectionOrder, _iProjectionCount);
 	//initialize(_pProjector, _pSinogram, _pReconstruction, _piProjectionOrder, _iProjectionCount);
 }

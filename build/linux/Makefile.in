@@ -101,9 +101,12 @@ BASE_OBJECTS=\
 	src/ReconstructionAlgorithm2D.lo \
 	src/ReconstructionAlgorithm3D.lo \
 	src/ArtAlgorithm.lo \
+	src/ArtProxOperatorAlgorithm.lo \
 	src/AstraObjectFactory.lo \
 	src/AstraObjectManager.lo \
 	src/BackProjectionAlgorithm.lo \
+	src/BicavAlgorithm.lo \
+	src/BicavProxOperatorAlgorithm.lo \
 	src/CglsAlgorithm.lo \
 	src/CompositeGeometryManager.lo \
 	src/ConeProjectionGeometry3D.lo \
@@ -131,6 +134,8 @@ BASE_OBJECTS=\
 	src/GeometryUtil3D.lo \
 	src/Globals.lo \
 	src/Logging.lo \
+	src/OrderedSubsetSQSAlgorithm.lo \
+	src/OrderedSubsetSQSProxOperatorAlgorithm.lo \
 	src/ParallelBeamBlobKernelProjector2D.lo \
 	src/ParallelBeamLinearKernelProjector2D.lo \
 	src/ParallelBeamLineKernelProjector2D.lo \
@@ -144,6 +149,7 @@ BASE_OBJECTS=\
 	src/Projector2D.lo \
 	src/Projector3D.lo \
 	src/SartAlgorithm.lo \
+	src/SartProxOperatorAlgorithm.lo \
 	src/SirtAlgorithm.lo \
 	src/SparseMatrixProjectionGeometry2D.lo \
 	src/SparseMatrixProjector2D.lo \

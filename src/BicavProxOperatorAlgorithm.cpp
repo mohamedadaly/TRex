@@ -88,7 +88,7 @@ CBicavProxOperatorAlgorithm::CBicavProxOperatorAlgorithm(CProjector2D* _pProject
 							   CFloat32VolumeData2D* _pReconstruction) 
 {
 	_clear();
-	CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm(_pProjector, _pSinogram, _pReconstruction);
+	CSartProxOperatorAlgorithm(_pProjector, _pSinogram, _pReconstruction);
 	//initialize(_pProjector, _pSinogram, _pReconstruction);
 }
 
@@ -101,7 +101,7 @@ CBicavProxOperatorAlgorithm::CBicavProxOperatorAlgorithm(CProjector2D* _pProject
 							   int _iProjectionCount)
 {
 	_clear();
-	CSartProxOperatorAlgorithm::CSartProxOperatorAlgorithm(_pProjector, _pSinogram, _pReconstruction, 
+	CSartProxOperatorAlgorithm(_pProjector, _pSinogram, _pReconstruction, 
 		_piProjectionOrder, _iProjectionCount);
 	//initialize(_pProjector, _pSinogram, _pReconstruction, _piProjectionOrder, _iProjectionCount);
 }

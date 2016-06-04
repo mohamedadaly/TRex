@@ -70,7 +70,7 @@ COrderedSubsetSQSAlgorithm::COrderedSubsetSQSAlgorithm(CProjector2D* _pProjector
                                CFloat32ProjectionData2D* _pSinogram, 
                                CFloat32VolumeData2D* _pReconstruction) 
 {
-    CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction);
+    CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction);
 }
 
 //----------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ COrderedSubsetSQSAlgorithm::COrderedSubsetSQSAlgorithm(CProjector2D* _pProjector
                                int* _piProjectionOrder, 
                                int _iProjectionCount)
 {
-    CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction,
+    CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction,
         _piProjectionOrder, _iProjectionCount);
 }
 
