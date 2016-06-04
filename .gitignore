@@ -31,7 +31,9 @@
 /build/linux/src/*
 /build/linux/matlab/*
 
-lib/*
+lib/include/boost
+lib/win32
+lib/x64
 *.opensdf
 bin/*
 *.sdf
