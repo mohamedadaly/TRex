@@ -30,11 +30,15 @@ $Id$
 
 #include <boost/lexical_cast.hpp>
 
+#include "astra/AstraObjectFactory.h"
 #include "astra/AstraObjectManager.h"
 #include "astra/DataProjectorPolicies.h"
 #include "astra/Logging.h"
 #include "astra/Float32VolumeData3DMemory.h"
-
+#include "astra/ArtProxOperatorAlgorithm.h"
+#include "astra/BicavProxOperatorAlgorithm.h"
+#include "astra/SartProxOperatorAlgorithm.h"
+#include "astra/OrderedSubsetSQSProxOperatorAlgorithm.h"
 
 using namespace std;
 
@@ -105,7 +109,7 @@ void CTRexPriorATV::Kt(const CFloat32VolumeData3D* pKx,
 
 	// Init
 	pX->setData(0.f);
-	float32* pDataOut = pX->getData;
+	float32* pDataOut = pX->getData();
 	CFloat32VolumeData2D* pSlice;
 	const float32* pDataIn;
 	
@@ -177,6 +181,19 @@ float32 CTRexPriorATV::norm(float32 sigma)
 	return 8.f * sigma * sigma;
 }
 
+
+// ----------------------------------------------------------------------------
+void CTRexDataLS::init() 
+{
+
+}
+void CTRexDataLS::prox(const CFloat32VolumeData2D* pU, CFloat32VolumeData2D* pX)
+{
+
+}
+
+// ----------------------------------------------------------------------------
+
 #include "astra/Projector2DImpl.inl"
 
 // type of the algorithm, needed to register with CAlgorithmFactory
@@ -187,20 +204,27 @@ std::string CTRexAlgorithm::type = "TREX";
 // Clear - Constructors
 void CTRexAlgorithm::_clear()
 {
-	//CReconstructionAlgorithm2D::_clear();
-	CSartAlgorithm::_clear();
-	m_fLambda = 1.0f;
-	m_pC = NULL;
-	m_pY = NULL;
-	m_pW = NULL;
+	CReconstructionAlgorithm2D::_clear();
+	//CSartAlgorithm::_clear();
+	m_fSigma = 1.f;
+	m_fRho = 100.f;
+	m_fMu = -1.f;
+	m_fWlsRoot = 1;
+	m_iInnterIter = 2;
+	m_pPrior = NULL;
+	m_pData = NULL;
+	m_pProxMetrics = NULL;
+	m_pProxInput = NULL;
+	//m_pDataProxOperator = NULL;
+	//m_pTomoProxOperatorConfig = NULL;
 }
 
 //---------------------------------------------------------------------------------------
 // Clear - Public
 void CTRexAlgorithm::clear()
 {
-	//CReconstructionAlgorithm2D::clear();
-	CSartAlgorithm::clear();
+	CReconstructionAlgorithm2D::clear();
+	//CSartAlgorithm::clear();
 	//if (m_piProjectionOrder) {
 	//	delete[] m_piProjectionOrder;
 	//	m_piProjectionOrder = NULL;
@@ -209,8 +233,15 @@ void CTRexAlgorithm::clear()
 	//m_iCurrentProjection = 0;
 	//m_bIsInitialized = false;
 	//m_iIterationCount = 0;
-	ASTRA_DELETE(m_pY);
-	ASTRA_DELETE(m_pC);
+	ASTRA_DELETE(m_pPrior);
+	ASTRA_DELETE(m_pData);
+	ASTRA_DELETE(m_pProxInput);
+	ASTRA_DELETE(m_pProxMetrics);
+	//CData2DManager::getSingleton().remove(m_iProxMetricsId);
+	//CData2DManager::getSingleton().remove(m_iProxInputId);
+	//ASTRA_DELETE(m_pDataProxOperator);
+	//ASTRA_DELETE(m_pTomoProxOperatorConfig);
+	
 }
 
 //----------------------------------------------------------------------------------------
@@ -227,22 +258,7 @@ CTRexAlgorithm::CTRexAlgorithm(CProjector2D* _pProjector,
 							   CFloat32VolumeData2D* _pReconstruction) 
 {
 	_clear();
-	CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction);
 	//initialize(_pProjector, _pSinogram, _pReconstruction);
-}
-
-//----------------------------------------------------------------------------------------
-// Constructor
-CTRexAlgorithm::CTRexAlgorithm(CProjector2D* _pProjector, 
-							   CFloat32ProjectionData2D* _pSinogram, 
-							   CFloat32VolumeData2D* _pReconstruction,
-							   int* _piProjectionOrder, 
-							   int _iProjectionCount)
-{
-	_clear();
-	CSartAlgorithm::CSartAlgorithm(_pProjector, _pSinogram, _pReconstruction, 
-		_piProjectionOrder, _iProjectionCount);
-	//initialize(_pProjector, _pSinogram, _pReconstruction, _piProjectionOrder, _iProjectionCount);
 }
 
 //----------------------------------------------------------------------------------------
@@ -257,78 +273,123 @@ CTRexAlgorithm::~CTRexAlgorithm()
 bool CTRexAlgorithm::initialize(const Config& _cfg)
 {
 	assert(_cfg.self);
-	ConfigStackCheck<CAlgorithm> CC("SartProxOperator", this, _cfg);
+	ConfigStackCheck<CAlgorithm> CC("TRexAlgorithm", this, _cfg);
 	
 	// if already initialized, clear first
 	if (m_bIsInitialized) {
 		clear();
 	}
 
-	// initialization of parent class
-	if (!CSartAlgorithm::initialize(_cfg)) {
+	// initialization of parent class which reads SART's options
+	if (!CReconstructionAlgorithm2D::initialize(_cfg)) {
 		return false;
 	}
 
-	//// projection order
-	//m_iCurrentProjection = 0;
-	//m_iProjectionCount = m_pProjector->getProjectionGeometry()->getProjectionAngleCount();
-	//string projOrder = _cfg.self.getOption("ProjectionOrder", "sequential");
-	//CC.markOptionParsed("ProjectionOrder");
-	//if (projOrder == "sequential") {
-	//	m_piProjectionOrder = new int[m_iProjectionCount];
-	//	for (int i = 0; i < m_iProjectionCount; i++) {
-	//		m_piProjectionOrder[i] = i;
-	//	}
-	//} else if (projOrder == "random") {
-	//	m_piProjectionOrder = new int[m_iProjectionCount];
-	//	for (int i = 0; i < m_iProjectionCount; i++) {
-	//		m_piProjectionOrder[i] = i;
-	//	}
-	//	for (int i = 0; i < m_iProjectionCount-1; i++) {
-	//		int k = (rand() % (m_iProjectionCount - i));
-	//		int t = m_piProjectionOrder[i];
-	//		m_piProjectionOrder[i] = m_piProjectionOrder[i + k];
-	//		m_piProjectionOrder[i + k] = t;
-	//	}
-	//} else if (projOrder == "custom") {
-	//	vector<float32> projOrderList = _cfg.self.getOptionNumericalArray("ProjectionOrderList");
-	//	m_piProjectionOrder = new int[projOrderList.size()];
-	//	for (int i = 0; i < m_iProjectionCount; i++) {
-	//		m_piProjectionOrder[i] = static_cast<int>(projOrderList[i]);
-	//	}
-	//	CC.markOptionParsed("ProjectionOrderList");
-	//}
+	// Prior
+	string sPrior = _cfg.self.getOption("Prior","");
+	if (sPrior == "ATV")  {
+		m_pPrior = new CTRexPriorATV();
+	//} else if (sPrior == "ITV") {
+	//	m_pPrior = new CTRexPriorITV();
+	//} else if (sPrior == "SAD") {
+	//	m_pPrior = new CTRexPriorSAD();
+	}
+	CC.markOptionParsed("Prior");
+	ASTRA_CONFIG_CHECK(m_pPrior, "CTRexAlgorithm", 
+		"Error initializing: unimplemented prior");
 
-	// Lambda
-	m_fLambda = _cfg.self.getOptionNumerical("Lambda", m_fLambda);
-	CC.markOptionParsed("Lambda");
+	// rho, sigma, mu
+	m_fSigma = _cfg.self.getOptionNumerical("Sigma", m_fSigma);
+	CC.markOptionParsed("Sigma");
+	ASTRA_CONFIG_CHECK(m_fSigma > 0, "CTRexAlgorithm", 
+		"Error initializing: Sigma <= 0");
 
-	//// Alpha
-	//m_fAlpha = _cfg.self.getOptionNumerical("Alpha", m_fAlpha);
-	//CC.markOptionParsed("Alpha");
+	m_fRho = _cfg.self.getOptionNumerical("Rho", m_fRho);
+	CC.markOptionParsed("Rho");
+	ASTRA_CONFIG_CHECK(m_fRho > 0, "CTRexAlgorithm", 
+		"Error initializing: Rho <= 0");
 
-	//// Clear RaySum after each sweep. Defaults to true.
-	//m_bClearRayLength = _cfg.self.getOptionBool("ClearRayLength", m_bClearRayLength);
-	//CC.markOptionParsed("ClearRayLength");
+	m_fMu = _cfg.self.getOptionNumerical("Mu", m_fMu);
+	CC.markOptionParsed("Mu");
+	if (m_fMu <= 0) {
+		m_fMu = 1.f / (m_fRho * m_pPrior->norm(m_fSigma));
+	}
 
-	// Input volume
-	XMLNode node = _cfg.self.getSingleNode("ProxInputDataId");
-	ASTRA_CONFIG_CHECK(node, "SartProxOperator", "No Proximal Input tag specified.");
-	int id = boost::lexical_cast<int>(node.getContent());
-	m_pProxInput = dynamic_cast<CFloat32VolumeData2D*>(CData2DManager::getSingleton().get(id));
-	CC.markNodeParsed("ProxInputDataId");
+	// WLS root
+	m_fWlsRoot = _cfg.self.getOptionNumerical("WlsRoot", m_fWlsRoot);
+	CC.markOptionParsed("WlsRoot");
+	ASTRA_CONFIG_CHECK(m_fWlsRoot > 0, "CTRexAlgorithm", 
+		"Error initializing: WlsRoot <= 0");
 
-	// WLS weights
-	id = static_cast<int>(_cfg.self.getOptionNumerical("WlsWeightDataId", -1));
-	m_pW = dynamic_cast<CFloat32ProjectionData2D*>(CData2DManager::getSingleton().get(id));
-	CC.markOptionParsed("WlsWeightDataId");
+	// Inner iterations
+	m_iInnterIter = static_cast<int>(
+		_cfg.self.getOptionNumerical("InnerIter", m_iInnterIter));
+	CC.markOptionParsed("InnerIter");
+	ASTRA_CONFIG_CHECK(m_iInnterIter > 0, "CTRexAlgorithm", 
+		"Error initializing: InnerIter <= 0");
+	
+	// Data term
+	string sData = _cfg.self.getOption("Data","");
+	if (sData == "LS")  {
+		m_pData = new CTRexDataLS();
+	//} else if (sData == "WLS") {
+	//	m_pData = new CTRexDataWLS();
+	}
+	CC.markOptionParsed("Data");
+	ASTRA_CONFIG_CHECK(m_pData, "CTRexAlgorithm", 
+		"Error initializing: unimplemented Data term.");
 
-	// create data objects
-	//m_pTotalRayLength = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
-	//m_pTotalPixelWeight = new CFloat32VolumeData2D(m_pProjector->getVolumeGeometry());
-	//m_pDiffSinogram = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
-	m_pY = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
-	m_pC = new CFloat32ProjectionData2D(m_pProjector->getProjectionGeometry());
+	// Get the data proximal operator algorithm
+	string sProx = _cfg.self.getOption("DataProx","");
+	m_pData->m_pAlg = dynamic_cast<CReconstructionAlgorithm2D*>(
+		CAlgorithmFactory::getSingleton().create(sProx));
+	ASTRA_CONFIG_CHECK(m_pData->m_pAlg, "CTRexAlgorithm", 
+		"Error initializing: unknown DataProx.");
+	CC.markOptionParsed("DataProx");
+
+	// Get the config for the Data Prox as a copy of this config
+	m_pData->m_pCfg = new Config(_cfg);
+
+	// Compute metrics?
+	if (m_bComputeIterationMetrics) {
+		// Create a matrix for that
+		m_pProxMetrics = new CFloat32VolumeData2D();
+		// Store in manager and save Id to pass to prox solver
+		int id = CData2DManager::getSingleton().store(m_pProxMetrics);
+		m_pData->m_pCfg->self.getSingleNode("IterationMetricsId").
+			setContent(static_cast<float32>(id));
+	}
+
+	// Add ProxInput to the prox config
+	{
+		// Create object and add to manager
+		CFloat32VolumeData2D* m_pProxInput = new 
+			CFloat32VolumeData2D(m_pReconstruction->getGeometry());
+		int id = CData2DManager::getSingleton().store(m_pProxInput);
+		// Add the id to config
+		XMLNode node = _cfg.self.getSingleNode("ProxInputDataId");
+		if (node) {
+			node.setContent(static_cast<float32>(id));
+		} else {
+			m_pData->m_pCfg->self.addChildNode("ProxInputDataId", 
+				static_cast<float32>(id));
+		}
+	}
+
+	// Initialize the prox algorithm
+	m_pData->m_pAlg->initialize(*m_pData->m_pCfg);
+
+	//XMLNode node = _cfg.self.getSingleNode("ProxInputDataId");
+	//ASTRA_CONFIG_CHECK(node, "SartProxOperator", "No Proximal Input tag specified.");
+	//int id = boost::lexical_cast<int>(node.getContent());
+	//m_pProxInput = dynamic_cast<CFloat32VolumeData2D*>(CData2DManager::getSingleton().get(id));
+	//CC.markNodeParsed("ProxInputDataId");
+
+	//// WLS weights
+	//int id = static_cast<int>(_cfg.self.getOptionNumerical("WlsWeightDataId", -1));
+	//m_pW = dynamic_cast<CFloat32ProjectionData2D*>(CData2DManager::getSingleton().get(id));
+	//CC.markOptionParsed("WlsWeightDataId");
+
 
 	// success
 	m_bIsInitialized = _check();
@@ -340,8 +401,8 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 bool CTRexAlgorithm::_check()
 {
 	// check base class
-	ASTRA_CONFIG_CHECK(CSartAlgorithm::_check(), "SartProxOperator",
-		"Error in ReconstructionAlgorithm2D initialization");
+	ASTRA_CONFIG_CHECK(CReconstructionAlgorithm2D::_check(), "TRexAlgorithm",
+		"Error in TRexAlgorithm initialization");
 
 	return true;
 }
@@ -359,13 +420,13 @@ map<string,boost::any> CTRexAlgorithm::getInformation()
 // Information - Specific
 boost::any CTRexAlgorithm::getInformation(std::string _sIdentifier) 
 {
-	if (_sIdentifier == "ProjectionOrder") {
-		vector<float32> res;
-		for (int i = 0; i < m_iProjectionCount; i++) {
-			res.push_back(m_piProjectionOrder[i]);
-		}
-		return res;
-	}
+	//if (_sIdentifier == "ProjectionOrder") {
+	//	vector<float32> res;
+	//	for (int i = 0; i < m_iProjectionCount; i++) {
+	//		res.push_back(m_piProjectionOrder[i]);
+	//	}
+	//	return res;
+	//}
 	return CAlgorithm::getInformation(_sIdentifier);
 };
 
@@ -391,7 +452,9 @@ void CTRexAlgorithm::run(int _iNrIterations)
 	CFloat32VolumeData3D* pZ = new CFloat32VolumeData3DMemory(&geom);
 	CFloat32VolumeData3D* pU = new CFloat32VolumeData3DMemory(&geom);
 	CFloat32VolumeData3D* pKx = new CFloat32VolumeData3DMemory(&geom);
-	CFloat32VolumeData2D* pT = new CFloat32VolumeData2D(pX->getGeometry());
+	// alias to ProxInput
+	CFloat32VolumeData2D* pT = m_pProxInput;
+	//CFloat32VolumeData2D* pT = new CFloat32VolumeData2D(pX->getGeometry());
 
 	// Outer loop
 	for (int iIteration = 0; iIteration < _iNrIterations; ++iIteration) {
@@ -410,7 +473,9 @@ void CTRexAlgorithm::run(int _iNrIterations)
 		*pT *= -m_fRho * m_fMu;
 		// t = x - rho*mu * t
 		*pT += *pX;
-
+		// run the data proximal operator: input in pT (ProxInput) and
+		// output in pX (Reconstruction)
+		m_pData->m_pAlg->run(m_iInnterIter);
 
 		// z-step: prior
 		//
@@ -431,14 +496,18 @@ void CTRexAlgorithm::run(int _iNrIterations)
 		m_ulTimer = CPlatformDepSystemCode::getMSCount() - m_ulTimer;
 
 		// Compute metrics.
-		computeIterationMetrics(iIteration, _iNrIterations, m_pDiffSinogram);
+		computeIterationMetrics(iIteration, _iNrIterations, NULL);
+
+		// Get the inner iteration metrics
+		// clear the inner iteration metrics		
+
 	}
 
 	// Clear
 	ASTRA_DELETE(pZ);
 	ASTRA_DELETE(pU);
 	ASTRA_DELETE(pKx);
-	ASTRA_DELETE(pT);
+	//ASTRA_DELETE(pT);
 
 	//for (int i=0; i < m_pReconstruction->getSize(); ++i) {
 	//	ASTRA_INFO("voxel=%d val=%f", i, m_pReconstruction->getData()[i]);

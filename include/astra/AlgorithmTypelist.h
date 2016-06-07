@@ -45,6 +45,7 @@ $Id$
 #include "ForwardProjectionAlgorithm.h"
 #include "BackProjectionAlgorithm.h"
 #include "FilteredBackProjectionAlgorithm.h"
+#include "TRexAlgorithm.h"
 #include "CudaBackProjectionAlgorithm.h"
 #include "CudaSartAlgorithm.h"
 #include "CudaSirtAlgorithm.h"
@@ -107,12 +108,11 @@ typedef TYPELIST_30(
 	AlgorithmTypeList;
 #else
 
-typedef TYPELIST_13(
+typedef TYPELIST_14(
 			CArtAlgorithm,
 			CArtProxOperatorAlgorithm,
 			CBicavAlgorithm,
 			CBicavProxOperatorAlgorithm,
-			//CBlockSimplifiedSartAlgorithm,
 			COrderedSubsetSQSAlgorithm,
 			COrderedSubsetSQSProxOperatorAlgorithm,
 			CSartAlgorithm,
@@ -121,7 +121,8 @@ typedef TYPELIST_13(
 			CCglsAlgorithm,
 			CBackProjectionAlgorithm,
 			CForwardProjectionAlgorithm,
-			CFilteredBackProjectionAlgorithm
+			CFilteredBackProjectionAlgorithm,
+			CTRexAlgorithm
 			) AlgorithmTypeList;
 
 #endif

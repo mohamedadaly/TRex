@@ -45,11 +45,12 @@ $Id$
 
 namespace astra {
 
+// ----------------------------------------------------------------------------
 // Base class for priors
 class _AstraExport CTRexPrior {
 public:
 	CTRexPrior() {}
-	~CTRexPrior() {}
+	virtual ~CTRexPrior() {}
 
 	// Multiply the volume by the matrix K
 	virtual void K(const CFloat32VolumeData2D* pX,  
@@ -70,7 +71,9 @@ public:
 	virtual int depth() = 0;
 };
 
-class _AstraExport CTRexPriorATV : CTRexPrior {
+// Anisotropic TV
+class _AstraExport CTRexPriorATV : public CTRexPrior {
+public:
 	// Multiply the volume by the matrix K * sigma
 	virtual void K(const CFloat32VolumeData2D* pX, 
 		CFloat32VolumeData3D* pKx, float32 sigma = 1.f);
@@ -89,11 +92,53 @@ class _AstraExport CTRexPriorATV : CTRexPrior {
 	virtual int depth() { return 2; }
 };
 
-class _AstraExport CTRexPriorITV : CTRexPrior {
+// Isotropic TV
+class _AstraExport CTRexPriorITV : public CTRexPrior {
 };
 
-class _AstraExport CTRexPriorSAD : CTRexPriorATV {
+// Sum of Absolute Differences
+class _AstraExport CTRexPriorSAD : public CTRexPriorATV {
 };
+// ----------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------
+// Base class for data terms
+class _AstraExport CTRexData{
+public:
+	CReconstructionAlgorithm2D* m_pAlg;
+	Config* m_pCfg;
+
+	CTRexData() {
+		m_pAlg = NULL;
+		m_pCfg = NULL;
+	}
+
+	virtual ~CTRexData() {
+		ASTRA_DELETE(m_pAlg);
+		ASTRA_DELETE(m_pCfg);
+	}
+
+	virtual void init() = 0;
+	virtual void prox(const CFloat32VolumeData2D* pU, 
+		CFloat32VolumeData2D* pX) = 0;
+};
+
+// Least Squares data term
+class _AstraExport CTRexDataLS : public CTRexData {
+public:
+	virtual void init();
+	virtual void prox(const CFloat32VolumeData2D* pU, 
+		CFloat32VolumeData2D* pX);
+
+};
+
+// Weighted least squares
+class _AstraExport CTRexDataWLS : public CTRexData {
+public:
+
+};
+
+// ----------------------------------------------------------------------------
 
 /**
  * \brief
@@ -134,22 +179,7 @@ class _AstraExport CTRexPriorSAD : CTRexPriorATV {
  *		astra_mex_algorithm('delete'\, alg_id);\n
  * }
  */
-class _AstraExport CTRexAlgorithm : public CSartAlgorithm {
-
-public:
-	// Data Terms
-	enum DataTerm {
-		LS,
-		WLS
-	};
-
-	// Prior Terms
-	enum PriorTerm {
-		ITV,
-		ATV,
-		SAD
-	};
-
+class _AstraExport CTRexAlgorithm : public CReconstructionAlgorithm2D {
 protected:
 
     /** Initial clearing. Only to be used by constructors.
@@ -165,7 +195,7 @@ protected:
     virtual bool _check();
 
 	// Data term: LS or WLS
-	DataTerm m_Data;
+	CTRexData* m_pData;
 
 	// Prior term: ITV, ATV, SAD
 	CTRexPrior* m_pPrior;
@@ -176,9 +206,6 @@ protected:
 
 	// Regularization parameter that balances prior and data terms.
 	float32 m_fSigma;
-
-    // Initial value for the volume.
-    CFloat32VolumeData2D* m_pInit;
 
 	// Weights for WLS that multiply the sinogram and the projection matrix.
 	// Should be the sqrt of the WLS matrix.
@@ -191,8 +218,18 @@ protected:
 	// Number of inner iterations
 	int m_iInnterIter;
 
-	// The algorithm to solve the tomography proximal operator.
-	CReconstructionAlgorithm2D* m_pTomoProxOperator;
+	// Inner iteration proximal operator metrics
+	CFloat32VolumeData2D* m_pProxMetrics;
+
+
+	// ProxInput for the prox operator
+	CFloat32VolumeData2D* m_pProxInput;
+
+	//// The algorithm to solve the data term proximal operator.
+	//CReconstructionAlgorithm2D* m_pDataProxOperator;
+
+	//// Config that is passed to the tomography proximal operator.
+	//Config* m_pTomoProxOperatorConfig;
 
 public:
     
@@ -212,20 +249,6 @@ public:
     CTRexAlgorithm(CProjector2D* _pProjector, 
                    CFloat32ProjectionData2D* _pSinogram, 
                    CFloat32VolumeData2D* _pReconstruction);
-
-    /** Constructor.
-     *
-     * @param _pProjector			Projector Object.
-     * @param _pSinogram			ProjectionData2D object containing the sinogram data.
-     * @param _pReconstruction		VolumeData2D object for storing the reconstructed volume.
-     * @param _piProjectionOrder	array containing a projection order.
-     * @param _iProjectionCount		number of elements in _piProjectionOrder.
-     */
-    CTRexAlgorithm(CProjector2D* _pProjector, 
-                   CFloat32ProjectionData2D* _pSinogram, 
-                   CFloat32VolumeData2D* _pReconstruction,
-                   int* _piProjectionOrder, 
-                   int _iProjectionCount);
 
     /** Destructor.
      */
