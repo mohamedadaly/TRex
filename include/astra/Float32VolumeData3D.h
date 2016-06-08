@@ -141,7 +141,7 @@ public:
 	 *  @param _iIndex Index in the array if the data were stored completely in main memory
 	 *  @return The value stored at the location specified by _iIndex
 	 */
-	virtual float32 getVoxelValue(int _iIndex) = 0;
+	virtual float32 getVoxelValue(int _iIndex) const = 0;
 
 	/** This SLOW function stores a voxel value at a specific index in the array.
 	 *  Writing values in this way might cause a lot of unnecessary memory operations, don't
@@ -152,13 +152,16 @@ public:
 	 */
 	virtual void setVoxelValue(int _iIndex, float32 _fValue) = 0;
 
+	// Prints the contents of the matrix using ASTRA_INFO
+	virtual void printInfo(std::string _sTitle) const;
+
 	/**
 	 * Overloaded Operator: data += data (pointwise)
 	 *
 	 * @param _data r-value
 	 * @return l-value
 	 */
-	CFloat32VolumeData3D& operator+=(const CFloat32VolumeData3D& _data);
+	virtual CFloat32VolumeData3D& operator+=(const CFloat32VolumeData3D& _data);
 
 	/**
 	 * Overloaded Operator: data -= data (pointwise)
@@ -166,7 +169,7 @@ public:
 	 * @param _data r-value
 	 * @return l-value
 	 */
-	CFloat32VolumeData3D& operator-=(const CFloat32VolumeData3D& _data);
+	virtual CFloat32VolumeData3D& operator-=(const CFloat32VolumeData3D& _data);
 
 	/**
 	 * Overloaded Operator: data *= data (pointwise)
@@ -174,7 +177,7 @@ public:
 	 * @param _data r-value
 	 * @return l-value
 	 */
-	CFloat32VolumeData3D& operator*=(const CFloat32VolumeData3D& _data);
+	virtual CFloat32VolumeData3D& operator*=(const CFloat32VolumeData3D& _data);
 	
 	/**
 	 * Overloaded Operator: data *= scalar (pointwise)
@@ -182,7 +185,7 @@ public:
 	 * @param _fScalar r-value
 	 * @return l-value
 	 */
-	CFloat32VolumeData3D& operator*=(const float32& _fScalar);
+	virtual CFloat32VolumeData3D& operator*=(const float32& _fScalar);
 	
 	/**
 	 * Overloaded Operator: data /= scalar (pointwise)
@@ -190,7 +193,7 @@ public:
 	 * @param _fScalar r-value
 	 * @return l-value
 	 */
-	CFloat32VolumeData3D& operator/=(const float32& _fScalar);
+	virtual CFloat32VolumeData3D& operator/=(const float32& _fScalar);
 
 	/**
 	 * Overloaded Operator: data += scalar (pointwise)
@@ -198,7 +201,7 @@ public:
 	 * @param _fScalar r-value
 	 * @return l-value
 	 */
-	CFloat32VolumeData3D& operator+=(const float32& _fScalar);
+	virtual CFloat32VolumeData3D& operator+=(const float32& _fScalar);
 
 	/**
 	 * Overloaded Operator: data -= scalar (pointwise)
@@ -206,7 +209,7 @@ public:
 	 * @param _fScalar r-value
 	 * @return l-value
 	 */
-	CFloat32VolumeData3D& operator-=(const float32& _fScalar);
+	virtual CFloat32VolumeData3D& operator-=(const float32& _fScalar);
 
 	/**
 	 * Gives access to the geometry stored in this class

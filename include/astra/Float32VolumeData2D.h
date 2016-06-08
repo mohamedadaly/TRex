@@ -179,6 +179,9 @@ public:
 	 */
 	virtual void changeGeometry(CVolumeGeometry2D* pGeometry);
 
+	// Prints the contents of the matrix using ASTRA_INFO
+	virtual void printInfo(std::string _sTitle) const;
+
 protected:
 
 	/** The projection geometry for this data.

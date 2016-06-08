@@ -39,7 +39,7 @@ $Id$
 #include "Projector2D.h"
 #include "Float32ProjectionData2D.h"
 #include "Float32VolumeData2D.h"
-#include "Float32VolumeData3D.h"
+#include "Float32VolumeData3DMemory.h"
 
 #include "DataProjector.h"
 
@@ -49,23 +49,25 @@ namespace astra {
 // Base class for priors
 class _AstraExport CTRexPrior {
 public:
-	CTRexPrior() {}
+	float32 m_fSigma;
+	CTRexPrior() : m_fSigma(1.f) {}	
+	CTRexPrior(float32 _fSigma) : m_fSigma(_fSigma) {}	
 	virtual ~CTRexPrior() {}
 
 	// Multiply the volume by the matrix K
 	virtual void K(const CFloat32VolumeData2D* pX,  
-		CFloat32VolumeData3D* pKx, float32 sigma) = 0;
+		CFloat32VolumeData3DMemory* pKx) = 0;
 
 	// Multiply the volume by the transpose of K
-	virtual void Kt(const CFloat32VolumeData3D* pKx, 
-		CFloat32VolumeData2D* pX, float32 sigma) = 0;
+	virtual void Kt(const CFloat32VolumeData3DMemory* pKx, 
+		CFloat32VolumeData2D* pX) = 0;
 
 	// Apply the proximal operator on the input u (of size Kx).
-	virtual void prox(const CFloat32VolumeData3D* pU, float32 rho,
-		CFloat32VolumeData3D* pV) = 0;
+	virtual void prox(const CFloat32VolumeData3DMemory* pU, float32 rho,
+		CFloat32VolumeData3DMemory* pV) = 0;
 
 	// Return the squared norm of K ||K||^2_2
-	virtual float32 norm(float32 sigma = 1.f) = 0;
+	virtual float32 norm() = 0;
 
 	// Return the depth of the object returned by applying K
 	virtual int depth() = 0;
@@ -74,26 +76,48 @@ public:
 // Anisotropic TV
 class _AstraExport CTRexPriorATV : public CTRexPrior {
 public:
+	CTRexPriorATV() : CTRexPrior() {}
+	CTRexPriorATV(float _fSigma) : CTRexPrior(_fSigma) {}
+
 	// Multiply the volume by the matrix K * sigma
 	virtual void K(const CFloat32VolumeData2D* pX, 
-		CFloat32VolumeData3D* pKx, float32 sigma = 1.f);
+		CFloat32VolumeData3DMemory* pKx);
 
 	// Multiply the volume by the transpose of K * sigma
-	virtual void Kt(const CFloat32VolumeData3D* pKx, 
-		CFloat32VolumeData2D* pX, float32 sigma = 1.f);
+	virtual void Kt(const CFloat32VolumeData3DMemory* pKx, 
+		CFloat32VolumeData2D* pX);
 
 	// Apply the proximal operator on the input u (of size Kx).
-	virtual void prox(const CFloat32VolumeData3D* pU, float32 rho,
-		CFloat32VolumeData3D* pV);
+	virtual void prox(const CFloat32VolumeData3DMemory* pU, float32 rho,
+		CFloat32VolumeData3DMemory* pV);
 
 	// Return the squared norm of K ||K||^2_2
-	virtual float32 norm(float32 sigma = 1.f);
+	virtual float32 norm();
 
 	virtual int depth() { return 2; }
 };
 
 // Isotropic TV
 class _AstraExport CTRexPriorITV : public CTRexPrior {
+	CTRexPriorITV() : CTRexPrior() {}
+	CTRexPriorITV(float _fSigma) : CTRexPrior(_fSigma) {}
+
+	// Multiply the volume by the matrix K * sigma
+	virtual void K(const CFloat32VolumeData2D* pX, 
+		CFloat32VolumeData3DMemory* pKx);
+
+	// Multiply the volume by the transpose of K * sigma
+	virtual void Kt(const CFloat32VolumeData3DMemory* pKx, 
+		CFloat32VolumeData2D* pX);
+
+	// Apply the proximal operator on the input u (of size Kx).
+	virtual void prox(const CFloat32VolumeData3DMemory* pU, float32 rho,
+		CFloat32VolumeData3DMemory* pV);
+
+	// Return the squared norm of K ||K||^2_2
+	virtual float32 norm();
+
+	virtual int depth() { return 2; }
 };
 
 // Sum of Absolute Differences

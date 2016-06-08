@@ -50,7 +50,8 @@ XMLDocument::XMLDocument()
 //-----------------------------------------------------------------------------	
 XMLDocument::~XMLDocument() 
 {
-	delete fDOMDocument;
+	ASTRA_DELETE(fDOMDocument);
+	//delete fDOMDocument;
 	//parser->release();
 }
 
@@ -59,7 +60,7 @@ XMLDocument* XMLDocument::readFromFile(string filename)
 { 
 	// create the document
 	XMLDocument* res = new XMLDocument();
-    res->fDOMDocument = new xml_document<>();
+	res->fDOMDocument = new xml_document<>();
 
 	std::ifstream file(filename.c_str());
 	std::stringstream reader;
@@ -71,6 +72,29 @@ XMLDocument* XMLDocument::readFromFile(string filename)
 	// return the document
 	return res;
 
+}
+
+// Clone the document
+// TODO: make more efficient.
+XMLDocument* XMLDocument::clone()
+{
+	XMLDocument* res = new XMLDocument();
+	res->fDOMDocument = new xml_document<>();
+
+	// Convert to string
+	std::stringstream ss;
+	ss << *fDOMDocument;
+
+	// Parse into result
+	res->fDOMDocument->parse<0>(
+		res->fDOMDocument->allocate_string(ss.str().c_str()));
+	//std::string str = toString();
+	//res->fDOMDocument->parse<0>(
+	//	res->fDOMDocument->allocate_string(toString().c_str()));
+
+	//res->fBuf = ss.str();
+	//res->fDOMDocument->parse<0>((char*)res->fBuf.c_str());
+	return res;
 }
 
 //-----------------------------------------------------------------------------

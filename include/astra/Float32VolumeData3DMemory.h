@@ -113,6 +113,10 @@ public:
 	 */
 	bool initialize(CVolumeGeometry3D* _pGeometry);
 
+	/** copies data to the volume pointwise.
+	 */
+	void copyData(const float32* _pfData);
+
 	/** Initialization. Initializes an instance of the CFloat32VolumeData3DMemory class with initialization of the data.
 	 *
 	 * Memory is allocated for the data block and the contents of the memory pointed to by 
@@ -197,7 +201,7 @@ public:
 	 *  @param _iIndex Index in the array if the data were stored completely in main memory
 	 *  @return The value the location specified by _iIndex
 	 */
-	virtual float32 getVoxelValue(int _iIndex);
+	virtual float32 getVoxelValue(int _iIndex) const;
 
 	/** This SLOW function stores a voxel value at a specific index in the array.
 	 *  Writing values in this way might cause a lot of unnecessary memory operations, don't
@@ -214,7 +218,63 @@ public:
 	 * @param _dataIn r-value
 	 * @return l-value
 	 */
-	CFloat32VolumeData3DMemory& operator=(const CFloat32VolumeData3DMemory& _dataIn);
+	virtual CFloat32VolumeData3DMemory& operator=(const CFloat32VolumeData3DMemory& _dataIn);
+
+/**
+	 * Overloaded Operator: data += data (pointwise)
+	 *
+	 * @param _data r-value
+	 * @return l-value
+	 */
+	virtual CFloat32VolumeData3DMemory& operator+=(const CFloat32VolumeData3DMemory& _data);
+
+	/**
+	 * Overloaded Operator: data -= data (pointwise)
+	 *
+	 * @param _data r-value
+	 * @return l-value
+	 */
+	virtual CFloat32VolumeData3DMemory& operator-=(const CFloat32VolumeData3DMemory& _data);
+
+	/**
+	 * Overloaded Operator: data *= data (pointwise)
+	 *
+	 * @param _data r-value
+	 * @return l-value
+	 */
+	virtual CFloat32VolumeData3DMemory& operator*=(const CFloat32VolumeData3DMemory& _data);
+	
+	/**
+	 * Overloaded Operator: data *= scalar (pointwise)
+	 *
+	 * @param _fScalar r-value
+	 * @return l-value
+	 */
+	virtual CFloat32VolumeData3DMemory& operator*=(const float32& _fScalar);
+	
+	/**
+	 * Overloaded Operator: data /= scalar (pointwise)
+	 *
+	 * @param _fScalar r-value
+	 * @return l-value
+	 */
+	virtual CFloat32VolumeData3DMemory& operator/=(const float32& _fScalar);
+
+	/**
+	 * Overloaded Operator: data += scalar (pointwise)
+	 *
+	 * @param _fScalar r-value
+	 * @return l-value
+	 */
+	virtual CFloat32VolumeData3DMemory& operator+=(const float32& _fScalar);
+
+	/**
+	 * Overloaded Operator: data -= scalar (pointwise)
+	 *
+	 * @param _fScalar r-value
+	 * @return l-value
+	 */
+	virtual CFloat32VolumeData3DMemory& operator-=(const float32& _fScalar);
 };
 
 //----------------------------------------------------------------------------------------

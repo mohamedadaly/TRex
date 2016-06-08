@@ -27,6 +27,7 @@ $Id$
 */
 
 #include "astra/Float32VolumeData2D.h"
+#include "astra/Logging.h"
 
 namespace astra
 {
@@ -151,5 +152,16 @@ void CFloat32VolumeData2D::changeGeometry(CVolumeGeometry2D* _pGeometry)
 	m_pGeometry = _pGeometry->clone();
 }
 
+void CFloat32VolumeData2D::printInfo(std::string _sTitle) const
+{
+	ASTRA_INFO("%s", _sTitle.c_str());
+	for (int i = 0; i < m_iHeight; ++i) {
+		stringstream ss;
+		for (int j = 0; j < m_iWidth; ++j) {
+			ss << m_pfData[i * m_iWidth + j] << "\t";
+		}
+		ASTRA_INFO("%s", ss.str().c_str());
+	}
+}
 
 } // end namespace astra

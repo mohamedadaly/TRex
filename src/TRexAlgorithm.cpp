@@ -28,6 +28,7 @@ $Id$
 
 #include "astra/TRexAlgorithm.h"
 
+#include <iostream>
 #include <boost/lexical_cast.hpp>
 
 #include "astra/AstraObjectFactory.h"
@@ -49,7 +50,7 @@ namespace astra {
 // ---------------------------------------------------------------------------
 
 void CTRexPriorATV::K(const CFloat32VolumeData2D* pX, 
-					  CFloat32VolumeData3D* pKx, float32 sigma) 
+					  CFloat32VolumeData3DMemory* pKx) 
 {
 	// Forward discrete difference in 2D
 	//
@@ -62,46 +63,49 @@ void CTRexPriorATV::K(const CFloat32VolumeData2D* pX,
 	int cols = pX->getWidth();
 
 	// Init
-	CFloat32VolumeData2D* pSlice;
-	float32* pDataOut;
+	float32* pDataOut = pKx->getData();
 	const float32* pDataIn = pX->getDataConst();
 
 	// Compute horizontal difference in first slice
-	pSlice = pKx->fetchSliceZ(0);
-	pSlice->setData(0.f);
-	pDataOut = pSlice->getData();	
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols - 1; ++j) {
 			// The data is written in row-major order
-			int indx = i * cols + j;			
-			pDataOut[indx] = pDataIn[indx + 1] - pDataIn[indx];
+			int iindx = i * cols + j;			
+			// first slice
+			int oindx = iindx;
+			pDataOut[oindx] = pDataIn[iindx + 1] - pDataIn[iindx];
 		}
 	}
-	pKx->returnSliceZ(0, pSlice);
 
 	// Compute vertical difference in second slice
-	pSlice = pKx->fetchSliceZ(1);
-	pSlice->setData(0.f);
-	pDataOut = pSlice->getData();	
 	for (int i = 0; i < rows - 1; ++i) {
 		for (int j = 0; j < cols; ++j) {
-			int indx = i * cols + j;			
-			pDataOut[indx] = pDataIn[indx + cols] - pDataIn[indx];
+			int iindx = i * cols + j;		
+			// second slice
+			int oindx = iindx + rows * cols; 
+			pDataOut[oindx] = pDataIn[iindx + cols] - pDataIn[iindx];
 		}
 	}
-	pKx->returnSliceZ(1, pSlice);
+
+	//pKx->printInfo("Kx before");
 
 	// Multiply by sigma
-	if (sigma != 1.f) {
-		*pKx *= sigma;
+	if (m_fSigma != 1.f) {
+		*pKx *= m_fSigma;
 	}
+
+	//ASTRA_INFO("Sigma: %f", sigma);
+	//pX->printInfo("X");
+	//pKx->printInfo("Kx after");
 }
 
-void CTRexPriorATV::Kt(const CFloat32VolumeData3D* pKx, 
-					   CFloat32VolumeData2D* pX, float32 sigma)
+void CTRexPriorATV::Kt(const CFloat32VolumeData3DMemory* pKx, 
+					   CFloat32VolumeData2D* pX)
 {
 	// Negative divergence in 2D (transpose of forward difference)
 	//
+	ASTRA_ASSERT(pKx);
+	ASTRA_ASSERT(pX);
 	ASTRA_ASSERT(pKx->getHeight() == pX->getHeight() &&
 		pKx->getWidth() == pX->getWidth() &&
 		pKx->getDepth() == this->depth());
@@ -110,75 +114,216 @@ void CTRexPriorATV::Kt(const CFloat32VolumeData3D* pKx,
 	// Init
 	pX->setData(0.f);
 	float32* pDataOut = pX->getData();
-	CFloat32VolumeData2D* pSlice;
-	const float32* pDataIn;
+	const float32* pDataIn = pKx->getDataConst();
 	
 	int rows = pX->getHeight();
 	int cols = pX->getWidth();
 
-	// First slice: hirozontal difference. -ve in place and +ve to the left
+	// First slice: horizontal difference. -ve in place and +ve to the left
 	//
-	pSlice = pKx->fetchSliceZ(0);
-	pDataIn = pSlice->getDataConst();
-	// subtract the slice first
-	*pX -= *pSlice;
 	for (int i = 0; i < rows; ++i) {
-		for (int j = 1; j < cols; ++j) {
-			int indx = i * cols + j;
-			// add the value on the left
-			pDataOut[indx] += pDataIn[indx - 1];
+		for (int j = 0; j < cols; ++j) {
+			int oindx = i * cols + j;
+			// first slice
+			int iindx = oindx;
+			//ASTRA_ASSERT(indx < pX->getSize());
+			//ASTRA_ASSERT(indx-1 >= 0 && indx-1 < pSlice->getSize());
+			if (j > 0)
+				// add the value on the left and subtract in place
+				pDataOut[oindx] += pDataIn[iindx - 1] - pDataIn[iindx];
+			else
+				pDataOut[oindx] -= pDataIn[iindx];
 		}
 	}
 
 	// Second slice: vertical difference. -ve in place and +ve to the top
 	//
-	pSlice = pKx->fetchSliceZ(1);
-	pDataIn = pSlice->getDataConst();
-	// subtract the slice first
-	*pX -= *pSlice;
-	for (int i = 1; i < rows; ++i) {
+	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
-			int indx = i * cols + j;
-			// add the value on the top
-			pDataOut[indx] += pDataIn[indx - cols];
+			int oindx = i * cols + j;
+			// second slice
+			int iindx = oindx + cols*rows;
+			//ASTRA_ASSERT(indx < pX->getSize());
+			//ASTRA_ASSERT(indx-cols >= 0 && indx-cols < pSlice->getSize());
+			if (i > 0)
+				// add the value on the top and subtract in place
+				pDataOut[oindx] += pDataIn[iindx - cols] - pDataIn[iindx];
+			else
+				pDataOut[oindx] -= pDataIn[iindx];
 		}
 	}
+	//pX->printInfo("X before");
 
 	// Multiply by sigma
-	if (sigma != 1.f) {
-		*pX *= sigma;
+	if (m_fSigma != 1.f) {
+		*pX *= m_fSigma;
 	}
+
+	//pKx->printInfo("Kx");
+	//pX->printInfo("X after");
 }
 
-void CTRexPriorATV::prox(const CFloat32VolumeData3D* pU, float32 rho,
-						 CFloat32VolumeData3D* pV)
+void CTRexPriorATV::prox(const CFloat32VolumeData3DMemory* pU, float32 rho,
+						 CFloat32VolumeData3DMemory* pV)
 {
 	ASTRA_ASSERT(pU->getDepth() == pV->getDepth() &&
 		pU->getSize() == pV->getSize());
 
-	// loop on slices
-	for (int k = 0; k < pU->getDepth(); ++k) {
-		// Get  slice
-		CFloat32VolumeData2D* pSliceIn = pU->fetchSliceZ(k);
-		CFloat32VolumeData2D* pSliceOut = pV->fetchSliceZ(k);
-		const float32* pDataIn = pSliceIn->getDataConst();
-		float32* pDataOut = pSliceOut->getData();
-		int sz = pSliceIn->getSize();
-
-		// loop on slice
-		for (int i = 0; i < sz; ++i) {
-			pDataOut[i] = max(0.f, pDataIn[i] - rho) - 
-				max(0.f, -pDataIn[i] - rho);
-		}
-		// Put back slice
-		pV->returnSliceZ(k, pSliceOut);
+	const float32* pDataIn = pU->getDataConst();
+	float32* pDataOut = pV->getData();
+	// loop on values
+	int sz = pU->getSize();
+	for (int i = 0; i < sz; ++i) {
+		pDataOut[i] = max(0.f, pDataIn[i] - rho) - 
+			max(0.f, -pDataIn[i] - rho);
 	}
 
+	//pU->printInfo("U");
+	//pV->printInfo("V");
 }
 
-float32 CTRexPriorATV::norm(float32 sigma)
+float32 CTRexPriorATV::norm()
 {
-	return 8.f * sigma * sigma;
+	return 8.f * m_fSigma * m_fSigma;
+}
+
+
+void CTRexPriorITV::K(const CFloat32VolumeData2D* pX, 
+					  CFloat32VolumeData3DMemory* pKx) 
+{
+	// Forward discrete difference in 2D
+	//
+	// assert the size of Kx (width, height, 2)
+	ASTRA_ASSERT(pKx->getHeight() == pX->getHeight() &&
+		pKx->getWidth() == pX->getWidth() &&
+		pKx->getDepth() == this->depth());
+
+	int rows = pX->getHeight();
+	int cols = pX->getWidth();
+
+	// Init
+	float32* pDataOut = pKx->getData();
+	const float32* pDataIn = pX->getDataConst();
+
+	// Compute horizontal difference in first slice
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < cols - 1; ++j) {
+			// The data is written in row-major order
+			int iindx = i * cols + j;			
+			// first slice
+			int oindx = iindx;
+			pDataOut[oindx] = pDataIn[iindx + 1] - pDataIn[iindx];
+		}
+	}
+
+	// Compute vertical difference in second slice
+	for (int i = 0; i < rows - 1; ++i) {
+		for (int j = 0; j < cols; ++j) {
+			int iindx = i * cols + j;		
+			// second slice
+			int oindx = iindx + rows * cols; 
+			pDataOut[oindx] = pDataIn[iindx + cols] - pDataIn[iindx];
+		}
+	}
+
+	//pKx->printInfo("Kx before");
+
+	// Multiply by sigma
+	if (m_fSigma != 1.f) {
+		*pKx *= m_fSigma;
+	}
+
+	//ASTRA_INFO("Sigma: %f", sigma);
+	//pX->printInfo("X");
+	//pKx->printInfo("Kx after");
+}
+
+void CTRexPriorITV::Kt(const CFloat32VolumeData3DMemory* pKx, 
+					   CFloat32VolumeData2D* pX)
+{
+	// Negative divergence in 2D (transpose of forward difference)
+	//
+	ASTRA_ASSERT(pKx);
+	ASTRA_ASSERT(pX);
+	ASTRA_ASSERT(pKx->getHeight() == pX->getHeight() &&
+		pKx->getWidth() == pX->getWidth() &&
+		pKx->getDepth() == this->depth());
+
+
+	// Init
+	pX->setData(0.f);
+	float32* pDataOut = pX->getData();
+	const float32* pDataIn = pKx->getDataConst();
+	
+	int rows = pX->getHeight();
+	int cols = pX->getWidth();
+
+	// First slice: horizontal difference. -ve in place and +ve to the left
+	//
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < cols; ++j) {
+			int oindx = i * cols + j;
+			// first slice
+			int iindx = oindx;
+			//ASTRA_ASSERT(indx < pX->getSize());
+			//ASTRA_ASSERT(indx-1 >= 0 && indx-1 < pSlice->getSize());
+			if (j > 0)
+				// add the value on the left and subtract in place
+				pDataOut[oindx] += pDataIn[iindx - 1] - pDataIn[iindx];
+			else
+				pDataOut[oindx] -= pDataIn[iindx];
+		}
+	}
+
+	// Second slice: vertical difference. -ve in place and +ve to the top
+	//
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < cols; ++j) {
+			int oindx = i * cols + j;
+			// second slice
+			int iindx = oindx + cols*rows;
+			//ASTRA_ASSERT(indx < pX->getSize());
+			//ASTRA_ASSERT(indx-cols >= 0 && indx-cols < pSlice->getSize());
+			if (i > 0)
+				// add the value on the top and subtract in place
+				pDataOut[oindx] += pDataIn[iindx - cols] - pDataIn[iindx];
+			else
+				pDataOut[oindx] -= pDataIn[iindx];
+		}
+	}
+	//pX->printInfo("X before");
+
+	// Multiply by sigma
+	if (m_fSigma != 1.f) {
+		*pX *= m_fSigma;
+	}
+
+	//pKx->printInfo("Kx");
+	//pX->printInfo("X after");
+}
+
+void CTRexPriorITV::prox(const CFloat32VolumeData3DMemory* pU, float32 rho,
+						 CFloat32VolumeData3DMemory* pV)
+{
+	ASTRA_ASSERT(pU->getDepth() == pV->getDepth() &&
+		pU->getSize() == pV->getSize());
+
+	const float32* pDataIn = pU->getDataConst();
+	float32* pDataOut = pV->getData();
+	// loop on values
+	int sz = pU->getSize();
+	for (int i = 0; i < sz; ++i) {
+		pDataOut[i] = max(0.f, pDataIn[i] - rho) - 
+			max(0.f, -pDataIn[i] - rho);
+	}
+
+	//pU->printInfo("U");
+	//pV->printInfo("V");
+}
+
+float32 CTRexPriorITV::norm()
+{
+	return 8.f * m_fSigma * m_fSigma;
 }
 
 
@@ -235,10 +380,16 @@ void CTRexAlgorithm::clear()
 	//m_iIterationCount = 0;
 	ASTRA_DELETE(m_pPrior);
 	ASTRA_DELETE(m_pData);
-	ASTRA_DELETE(m_pProxInput);
-	ASTRA_DELETE(m_pProxMetrics);
-	//CData2DManager::getSingleton().remove(m_iProxMetricsId);
-	//CData2DManager::getSingleton().remove(m_iProxInputId);
+	//ASTRA_DELETE(m_pProxInput);
+	//ASTRA_DELETE(m_pProxMetrics);
+
+	// Delete these from the data manager since they are stored there
+	CData2DManager::getSingleton().remove(
+		CData2DManager::getSingleton().getIndex(m_pProxInput));
+	m_pProxInput = NULL;
+	CData2DManager::getSingleton().remove(
+		CData2DManager::getSingleton().getIndex(m_pProxMetrics));
+	m_pProxMetrics = NULL;
 	//ASTRA_DELETE(m_pDataProxOperator);
 	//ASTRA_DELETE(m_pTomoProxOperatorConfig);
 	
@@ -285,10 +436,16 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 		return false;
 	}
 
+	// Sigma
+	m_fSigma = _cfg.self.getOptionNumerical("Sigma", m_fSigma);
+	CC.markOptionParsed("Sigma");
+	ASTRA_CONFIG_CHECK(m_fSigma > 0, "CTRexAlgorithm", 
+		"Error initializing: Sigma <= 0");
+
 	// Prior
 	string sPrior = _cfg.self.getOption("Prior","");
 	if (sPrior == "ATV")  {
-		m_pPrior = new CTRexPriorATV();
+		m_pPrior = new CTRexPriorATV(m_fSigma);
 	//} else if (sPrior == "ITV") {
 	//	m_pPrior = new CTRexPriorITV();
 	//} else if (sPrior == "SAD") {
@@ -298,12 +455,7 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 	ASTRA_CONFIG_CHECK(m_pPrior, "CTRexAlgorithm", 
 		"Error initializing: unimplemented prior");
 
-	// rho, sigma, mu
-	m_fSigma = _cfg.self.getOptionNumerical("Sigma", m_fSigma);
-	CC.markOptionParsed("Sigma");
-	ASTRA_CONFIG_CHECK(m_fSigma > 0, "CTRexAlgorithm", 
-		"Error initializing: Sigma <= 0");
-
+	// Rho and Mu
 	m_fRho = _cfg.self.getOptionNumerical("Rho", m_fRho);
 	CC.markOptionParsed("Rho");
 	ASTRA_CONFIG_CHECK(m_fRho > 0, "CTRexAlgorithm", 
@@ -312,8 +464,10 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 	m_fMu = _cfg.self.getOptionNumerical("Mu", m_fMu);
 	CC.markOptionParsed("Mu");
 	if (m_fMu <= 0) {
-		m_fMu = 1.f / (m_fRho * m_pPrior->norm(m_fSigma));
+		m_fMu = 1.f / (m_fRho * m_pPrior->norm());
 	}
+
+
 
 	// WLS root
 	m_fWlsRoot = _cfg.self.getOptionNumerical("WlsRoot", m_fWlsRoot);
@@ -323,10 +477,21 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 
 	// Inner iterations
 	m_iInnterIter = static_cast<int>(
-		_cfg.self.getOptionNumerical("InnerIter", m_iInnterIter));
+		_cfg.self.getOptionNumerical("InnerIter", 
+									 static_cast<float32>(m_iInnterIter)));
 	CC.markOptionParsed("InnerIter");
 	ASTRA_CONFIG_CHECK(m_iInnterIter > 0, "CTRexAlgorithm", 
 		"Error initializing: InnerIter <= 0");
+
+	//// Debugging
+	//Config c = Config(_cfg);
+	//ASTRA_INFO("%s\n", c.self.toString().c_str());
+	//c.self.removeOption("Alpha");
+	//c.self.addOption("Alpha", 1.234);
+	//c.self.removeChildNode("ProxInputDataId");
+	//c.self.addChildNode("ProxInputDataId", 1234);
+	//ASTRA_INFO("%s\n", c.self.toString().c_str());
+	//return false;
 	
 	// Data term
 	string sData = _cfg.self.getOption("Data","");
@@ -349,6 +514,7 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 
 	// Get the config for the Data Prox as a copy of this config
 	m_pData->m_pCfg = new Config(_cfg);
+	//ASTRA_INFO("%s\n", m_pData->m_pCfg->self.toString().c_str());
 
 	// Compute metrics?
 	if (m_bComputeIterationMetrics) {
@@ -356,34 +522,30 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 		m_pProxMetrics = new CFloat32VolumeData2D();
 		// Store in manager and save Id to pass to prox solver
 		int id = CData2DManager::getSingleton().store(m_pProxMetrics);
-		m_pData->m_pCfg->self.getSingleNode("IterationMetricsId").
-			setContent(static_cast<float32>(id));
+		// Remove the old value and add a new one
+		m_pData->m_pCfg->self.removeOption("IterationMetricsId");
+		m_pData->m_pCfg->self.addOption("IterationMetricsId", 
+			static_cast<float32>(id));
 	}
 
 	// Add ProxInput to the prox config
 	{
 		// Create object and add to manager
-		CFloat32VolumeData2D* m_pProxInput = new 
+		m_pProxInput = new 
 			CFloat32VolumeData2D(m_pReconstruction->getGeometry());
 		int id = CData2DManager::getSingleton().store(m_pProxInput);
 		// Add the id to config
-		XMLNode node = _cfg.self.getSingleNode("ProxInputDataId");
-		if (node) {
-			node.setContent(static_cast<float32>(id));
-		} else {
-			m_pData->m_pCfg->self.addChildNode("ProxInputDataId", 
-				static_cast<float32>(id));
-		}
+		m_pData->m_pCfg->self.removeChildNode("ProxInputDataId");
+		m_pData->m_pCfg->self.addChildNode("ProxInputDataId", 
+			static_cast<float32>(id));
 	}
+
+	// Set Lambda to Mu
+	m_pData->m_pCfg->self.removeOption("Lambda");
+	m_pData->m_pCfg->self.addOption("Lambda", m_fMu);
 
 	// Initialize the prox algorithm
 	m_pData->m_pAlg->initialize(*m_pData->m_pCfg);
-
-	//XMLNode node = _cfg.self.getSingleNode("ProxInputDataId");
-	//ASTRA_CONFIG_CHECK(node, "SartProxOperator", "No Proximal Input tag specified.");
-	//int id = boost::lexical_cast<int>(node.getContent());
-	//m_pProxInput = dynamic_cast<CFloat32VolumeData2D*>(CData2DManager::getSingleton().get(id));
-	//CC.markNodeParsed("ProxInputDataId");
 
 	//// WLS weights
 	//int id = static_cast<int>(_cfg.self.getOptionNumerical("WlsWeightDataId", -1));
@@ -445,30 +607,38 @@ void CTRexAlgorithm::run(int _iNrIterations)
 	}
 	// alias
 	CFloat32VolumeData2D* pX = m_pReconstruction;
+	ASTRA_ASSERT(pX);
 
 	// Initialiazation
 	CVolumeGeometry3D geom(m_pReconstruction->getWidth(), 
 		m_pReconstruction->getHeight(), m_pPrior->depth());
-	CFloat32VolumeData3D* pZ = new CFloat32VolumeData3DMemory(&geom);
-	CFloat32VolumeData3D* pU = new CFloat32VolumeData3DMemory(&geom);
-	CFloat32VolumeData3D* pKx = new CFloat32VolumeData3DMemory(&geom);
+	CFloat32VolumeData3DMemory* pZ = new CFloat32VolumeData3DMemory(&geom);
+	CFloat32VolumeData3DMemory* pU = new CFloat32VolumeData3DMemory(&geom);
+	CFloat32VolumeData3DMemory* pKx = new CFloat32VolumeData3DMemory(&geom);
 	// alias to ProxInput
 	CFloat32VolumeData2D* pT = m_pProxInput;
+	ASTRA_ASSERT(pT);
 	//CFloat32VolumeData2D* pT = new CFloat32VolumeData2D(pX->getGeometry());
+
+	// Initialize
+	m_pPrior->K(pX, pZ);
+	m_pPrior->K(pX, pU);
 
 	// Outer loop
 	for (int iIteration = 0; iIteration < _iNrIterations; ++iIteration) {
 		// start timer
 		m_ulTimer = CPlatformDepSystemCode::getMSCount();
+		ASTRA_INFO("Iteration: %d", iIteration);
 
 		// x-step: data term
 		//
+		ASTRA_INFO("X-step");
 		// Kx - z + u
-		m_pPrior->K(pX, pKx, m_fSigma);
+		m_pPrior->K(pX, pKx);
 		*pKx -= *pZ;
 		*pKx += *pU;
 		// t = Kt * Kx
-		m_pPrior->Kt(pKx, pT, m_fSigma);
+		m_pPrior->Kt(pKx, pT);
 		// t = -rho*mu*t
 		*pT *= -m_fRho * m_fMu;
 		// t = x - rho*mu * t
@@ -476,21 +646,35 @@ void CTRexAlgorithm::run(int _iNrIterations)
 		// run the data proximal operator: input in pT (ProxInput) and
 		// output in pX (Reconstruction)
 		m_pData->m_pAlg->run(m_iInnterIter);
+		// Clamp
+		if (m_bUseMinConstraint)
+			pX->clampMin(m_fMinValue);
+		//pX->printInfo("X");
 
 		// z-step: prior
 		//
+		ASTRA_INFO("Z-step");
 		// Kx + u
-		m_pPrior->K(pX, pKx, m_fSigma);
+		//pZ->printInfo("Z before");
+		m_pPrior->K(pX, pKx);
 		*pKx += *pU;
 		// z = prox(Kx + u)
 		m_pPrior->prox(pKx, m_fSigma / m_fRho, pZ);
+		//pZ->printInfo("Z");
 
 		// u-step: dual variable
 		//
+		ASTRA_INFO("U-step");
 		// u = u + Kx - z
-		m_pPrior->K(pX, pKx, m_fSigma);
-		*pU += *pKx;
+		//pU->printInfo("U before");
+		//pU->opera *pKx;
+		//pU->operator=(*pKx);
+		pU->copyData(pKx->getDataConst());
 		*pU -= *pZ;
+		//m_pPrior->K(pX, pKx, m_fSigma);
+		//*pU += *pKx;
+		//*pU -= *pZ;
+		//pU->printInfo("U");
 
 		// end timer
 		m_ulTimer = CPlatformDepSystemCode::getMSCount() - m_ulTimer;

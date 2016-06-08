@@ -27,6 +27,7 @@ $Id$
 */
 
 #include "astra/Float32VolumeData3D.h"
+#include "astra/Logging.h"
 
 namespace astra
 {
@@ -274,5 +275,19 @@ void CFloat32VolumeData3D::changeGeometry(CVolumeGeometry3D* _pGeometry)
 	m_pGeometry = _pGeometry->clone();
 }
 
+void CFloat32VolumeData3D::printInfo(std::string _sTitle) const
+{
+	ASTRA_INFO("%s", _sTitle.c_str());
+	for (int k=0; k < m_iDepth; ++k) {
+		ASTRA_INFO(" Slice %d",k);
+		for (int i = 0; i < m_iHeight; ++i) {
+			stringstream ss;
+			for (int j = 0; j < m_iWidth; ++j) {
+				ss << getVoxelValue(k*m_iHeight*m_iWidth + i * m_iWidth+ j) << "\t";
+			}
+			ASTRA_INFO("%s", ss.str().c_str());
+		}
+	}
+}
 
 } // end namespace astra

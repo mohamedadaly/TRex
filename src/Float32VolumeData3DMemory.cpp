@@ -202,7 +202,7 @@ void CFloat32VolumeData3DMemory::returnSliceY(int _iRowIndex, CFloat32VolumeData
 
 //----------------------------------------------------------------------------------------
 // Returns a specific value
-float32 CFloat32VolumeData3DMemory::getVoxelValue(int _iIndex)
+float32 CFloat32VolumeData3DMemory::getVoxelValue(int _iIndex) const
 {
 	return m_pfData[_iIndex];
 }
@@ -215,11 +215,101 @@ void CFloat32VolumeData3DMemory::setVoxelValue(int _iIndex, float32 _fValue)
 }
 //----------------------------------------------------------------------------------------
 
-CFloat32VolumeData3DMemory& CFloat32VolumeData3DMemory::operator=(const CFloat32VolumeData3DMemory& _dataIn)
+CFloat32VolumeData3DMemory& CFloat32VolumeData3DMemory::operator=(const CFloat32VolumeData3DMemory& _data)
 {
-	memcpy(m_pfData, _dataIn.m_pfData, sizeof(float32) * _dataIn.m_pGeometry->getGridTotCount());
+	ASTRA_ASSERT(m_iWidth == _data.m_iWidth &&
+		m_iHeight == _data.m_iHeight &&
+		m_iDepth == _data.m_iDepth);
+	memcpy(m_pfData, _data.m_pfData, sizeof(float32) * _data.m_iSize);
+	assert(0);
 
 	return *this;
+}
+
+CFloat32VolumeData3DMemory& CFloat32VolumeData3DMemory::operator+=(const CFloat32VolumeData3DMemory& _data)
+{
+	ASTRA_ASSERT(m_iWidth == _data.m_iWidth &&
+		m_iHeight == _data.m_iHeight &&
+		m_iDepth == _data.m_iDepth);
+
+	const float32* _pData = _data.getDataConst();
+	for (int i = 0; i < m_iSize; ++i) {
+		m_pfData[i] += _pData[i];
+	}
+	return *this;
+}
+
+CFloat32VolumeData3DMemory& CFloat32VolumeData3DMemory::operator-=(const CFloat32VolumeData3DMemory& _data)
+{
+	ASTRA_ASSERT(m_iWidth == _data.m_iWidth &&
+		m_iHeight == _data.m_iHeight &&
+		m_iDepth == _data.m_iDepth);
+
+	const float32* _pData = _data.getDataConst();
+	for (int i = 0; i < m_iSize; ++i) {
+		m_pfData[i] -= _pData[i];
+	}
+	return *this;
+}
+
+CFloat32VolumeData3DMemory& CFloat32VolumeData3DMemory::operator*=(const CFloat32VolumeData3DMemory& _data)
+{
+	ASTRA_ASSERT(m_iWidth == _data.m_iWidth &&
+		m_iHeight == _data.m_iHeight &&
+		m_iDepth == _data.m_iDepth);
+
+	const float32* _pData = _data.getDataConst();
+	for (int i = 0; i < m_iSize; ++i) {
+		m_pfData[i] *= _pData[i];
+	}
+	return *this;
+}
+	
+CFloat32VolumeData3DMemory& CFloat32VolumeData3DMemory::operator*=(const float32& _fScalar)
+{
+	for (int i = 0; i < m_iSize; ++i) {
+		m_pfData[i] *= _fScalar;
+	}
+	return *this;
+}
+	
+CFloat32VolumeData3DMemory& CFloat32VolumeData3DMemory::operator/=(const float32& _fScalar)
+{
+	for (int i = 0; i < m_iSize; ++i) {
+		m_pfData[i] /= _fScalar;
+	}
+	return *this;
+}
+
+CFloat32VolumeData3DMemory& CFloat32VolumeData3DMemory::operator+=(const float32& _fScalar)
+{
+	for (int i = 0; i < m_iSize; ++i) {
+		m_pfData[i] += _fScalar;
+	}
+	return *this;
+}
+
+CFloat32VolumeData3DMemory& CFloat32VolumeData3DMemory::operator-=(const float32& _fScalar)
+{
+	for (int i = 0; i < m_iSize; ++i) {
+		m_pfData[i] -= _fScalar;
+	}
+	return *this;
+}
+
+void CFloat32VolumeData3DMemory::copyData(const float32* _pfData)
+{
+	// basic checks
+	ASTRA_ASSERT(m_bInitialized);
+	ASTRA_ASSERT(_pfData != NULL);
+	ASTRA_ASSERT(m_pfData != NULL);
+	ASTRA_ASSERT(m_iSize > 0);
+
+	// copy data
+	size_t i;
+	for (i = 0; i < m_iSize; ++i) {
+		m_pfData[i] = _pfData[i];
+	}
 }
 
 } // end namespace astra

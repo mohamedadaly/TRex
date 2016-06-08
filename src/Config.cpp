@@ -54,15 +54,25 @@ Config::Config() : self()
 // not so default constructor
 Config::Config(XMLNode _self)
 {
+	// shallow copy of existing XMLNode
 	self = _self;
 	_doc = 0;
+}
+
+// copy constructor
+Config::Config(const Config& _cfg)
+{
+	// Deep copy of another config, by cloning its _doc
+	_doc = _cfg._doc->clone();
+	self = _doc->getRootNode();
 }
 
 //-----------------------------------------------------------------------------
 Config::~Config()
 {
-	delete _doc;
-	_doc = 0;
+	ASTRA_DELETE(_doc);
+	//delete _doc;
+	//_doc = 0;
 }
 
 //-----------------------------------------------------------------------------

@@ -1003,6 +1003,9 @@ namespace rapidxml
         //! \return Pointer to found sibling, or 0 if not found.
         xml_node<Ch> *next_sibling(const Ch *name = 0, std::size_t name_size = 0, bool case_sensitive = true) const
         {
+			if (!this->m_parent) {
+				cout << "name: " << this->name() << " value: " << this->value() << endl;
+			}
             assert(this->m_parent);     // Cannot query for siblings if node has no parent
             if (name)
             {

@@ -488,6 +488,35 @@ void XMLNode::addOption(string _sName, float32 _sText)
 	node.addAttribute("key", _sName);
 	node.addAttribute("value", _sText);
 }
+
 //-----------------------------------------------------------------------------	
+// Remove an option (if exists)
+void XMLNode::removeOption(string _sName) 
+{
+	xml_node<> *iter;
+	for (iter = fDOMElement->first_node("Option"); iter; iter = iter->next_sibling("Option")) {
+		xml_attribute<> *attr = iter->first_attribute("key");
+		if (attr && _sName == attr->value()) {
+			fDOMElement->remove_node(iter);
+			break;
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------	
+// Remove a child node (if exists)
+void XMLNode::removeChildNode(string _sName) 
+{
+	xml_node<> *iter;
+	for (iter = fDOMElement->first_node(_sName.c_str()); iter; 
+		 iter = iter->next_sibling(_sName.c_str())) {
+		fDOMElement->remove_node(iter);
+		break;
+	}
+}
+
+
+//-----------------------------------------------------------------------------	
+
 
 

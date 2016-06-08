@@ -7,8 +7,8 @@
 % Contact: astra@uantwerpen.be
 % Website: http://sf.net/projects/astra-toolbox
 % -----------------------------------------------------------------------
-% addpath matlab/tools/
-% addpath bin/x64/Release/
+addpath matlab/tools/
+addpath bin/x64/Release/
 colormap gray
 
 vol_geom = astra_create_vol_geom(256, 256);
@@ -286,11 +286,11 @@ alg_params = struct('iter',10, 'alpha',2, 'min_val',0, 'precon',0, ...
 % Set up the parameters for a reconstruction algorithm using the CPU
 % The main difference with the configuration of a GPU algorithm is the
 % extra ProjectorId setting.
-cfg = astra_struct('OS-SQS-PROX');
+cfg = astra_struct('TREX');
 cfg.ReconstructionDataId = rec_id;
 cfg.ProjectionDataId = sinogram_id;
 cfg.ProjectorId = proj_id;
-cfg.ProxInputDataId = prox_in_id;
+% cfg.ProxInputDataId = prox_in_id;
 cfg.option.UseMinConstraint = 1;
 cfg.option.MinConstraintValue = 0;
 cfg.option.UseMaxConstraint = 0;

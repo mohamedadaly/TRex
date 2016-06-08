@@ -313,6 +313,17 @@ public:
 	 */ 
 	void addOption(string _sKey, float32 _fValue);	
 
+	/** Removes a child option node: &lt;Option key="&lt;_sKey&gt;" value="&lt;_sValue&gt;"/>
+	 *
+	 * @param _sKey option key
+	 */ 
+	void removeOption(string _sName) ;
+
+	/** Removes a child node: &lt;Option key="&lt;_sKey&gt;" value="&lt;_sValue&gt;"/>
+	 *
+	 * @param _sKey option key
+	 */ 
+	void removeChildNode(string _sName) ;
 	
 	/** Print to String
 	 */

@@ -45,6 +45,7 @@ struct _AstraExport Config {
 
 	Config();
 	Config(XMLNode _self);
+	Config(const Config& _cfg);
 	~Config();
 
 	void initialize(std::string rootname);

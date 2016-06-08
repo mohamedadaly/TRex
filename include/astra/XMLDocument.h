@@ -86,7 +86,13 @@ public:
 	 */
 	void saveToFile(string sFilename);
 
-	/** convert and XML DOM tree to a string
+	/** Returns a clone of the document by deep copying the whole tree
+	 *
+	 * @return the new XMLDocument clone
+	 */
+	XMLDocument* clone();
+
+	/** convert an XML DOM tree to a string
 	 */
 	std::string toString();
 
