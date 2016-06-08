@@ -98,30 +98,20 @@ public:
 };
 
 // Isotropic TV
-class _AstraExport CTRexPriorITV : public CTRexPrior {
-	CTRexPriorITV() : CTRexPrior() {}
-	CTRexPriorITV(float _fSigma) : CTRexPrior(_fSigma) {}
-
-	// Multiply the volume by the matrix K * sigma
-	virtual void K(const CFloat32VolumeData2D* pX, 
-		CFloat32VolumeData3DMemory* pKx);
-
-	// Multiply the volume by the transpose of K * sigma
-	virtual void Kt(const CFloat32VolumeData3DMemory* pKx, 
-		CFloat32VolumeData2D* pX);
+class _AstraExport CTRexPriorITV : public CTRexPriorATV {
+public:
+	CTRexPriorITV() : CTRexPriorATV() {}
+	CTRexPriorITV(float _fSigma) : CTRexPriorATV(_fSigma) {}
 
 	// Apply the proximal operator on the input u (of size Kx).
 	virtual void prox(const CFloat32VolumeData3DMemory* pU, float32 rho,
 		CFloat32VolumeData3DMemory* pV);
 
-	// Return the squared norm of K ||K||^2_2
-	virtual float32 norm();
-
-	virtual int depth() { return 2; }
 };
 
 // Sum of Absolute Differences
 class _AstraExport CTRexPriorSAD : public CTRexPriorATV {
+public:
 };
 // ----------------------------------------------------------------------------
 

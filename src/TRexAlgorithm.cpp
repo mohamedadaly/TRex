@@ -187,145 +187,56 @@ float32 CTRexPriorATV::norm()
 	return 8.f * m_fSigma * m_fSigma;
 }
 
-
-void CTRexPriorITV::K(const CFloat32VolumeData2D* pX, 
-					  CFloat32VolumeData3DMemory* pKx) 
-{
-	// Forward discrete difference in 2D
-	//
-	// assert the size of Kx (width, height, 2)
-	ASTRA_ASSERT(pKx->getHeight() == pX->getHeight() &&
-		pKx->getWidth() == pX->getWidth() &&
-		pKx->getDepth() == this->depth());
-
-	int rows = pX->getHeight();
-	int cols = pX->getWidth();
-
-	// Init
-	float32* pDataOut = pKx->getData();
-	const float32* pDataIn = pX->getDataConst();
-
-	// Compute horizontal difference in first slice
-	for (int i = 0; i < rows; ++i) {
-		for (int j = 0; j < cols - 1; ++j) {
-			// The data is written in row-major order
-			int iindx = i * cols + j;			
-			// first slice
-			int oindx = iindx;
-			pDataOut[oindx] = pDataIn[iindx + 1] - pDataIn[iindx];
-		}
-	}
-
-	// Compute vertical difference in second slice
-	for (int i = 0; i < rows - 1; ++i) {
-		for (int j = 0; j < cols; ++j) {
-			int iindx = i * cols + j;		
-			// second slice
-			int oindx = iindx + rows * cols; 
-			pDataOut[oindx] = pDataIn[iindx + cols] - pDataIn[iindx];
-		}
-	}
-
-	//pKx->printInfo("Kx before");
-
-	// Multiply by sigma
-	if (m_fSigma != 1.f) {
-		*pKx *= m_fSigma;
-	}
-
-	//ASTRA_INFO("Sigma: %f", sigma);
-	//pX->printInfo("X");
-	//pKx->printInfo("Kx after");
-}
-
-void CTRexPriorITV::Kt(const CFloat32VolumeData3DMemory* pKx, 
-					   CFloat32VolumeData2D* pX)
-{
-	// Negative divergence in 2D (transpose of forward difference)
-	//
-	ASTRA_ASSERT(pKx);
-	ASTRA_ASSERT(pX);
-	ASTRA_ASSERT(pKx->getHeight() == pX->getHeight() &&
-		pKx->getWidth() == pX->getWidth() &&
-		pKx->getDepth() == this->depth());
-
-
-	// Init
-	pX->setData(0.f);
-	float32* pDataOut = pX->getData();
-	const float32* pDataIn = pKx->getDataConst();
-	
-	int rows = pX->getHeight();
-	int cols = pX->getWidth();
-
-	// First slice: horizontal difference. -ve in place and +ve to the left
-	//
-	for (int i = 0; i < rows; ++i) {
-		for (int j = 0; j < cols; ++j) {
-			int oindx = i * cols + j;
-			// first slice
-			int iindx = oindx;
-			//ASTRA_ASSERT(indx < pX->getSize());
-			//ASTRA_ASSERT(indx-1 >= 0 && indx-1 < pSlice->getSize());
-			if (j > 0)
-				// add the value on the left and subtract in place
-				pDataOut[oindx] += pDataIn[iindx - 1] - pDataIn[iindx];
-			else
-				pDataOut[oindx] -= pDataIn[iindx];
-		}
-	}
-
-	// Second slice: vertical difference. -ve in place and +ve to the top
-	//
-	for (int i = 0; i < rows; ++i) {
-		for (int j = 0; j < cols; ++j) {
-			int oindx = i * cols + j;
-			// second slice
-			int iindx = oindx + cols*rows;
-			//ASTRA_ASSERT(indx < pX->getSize());
-			//ASTRA_ASSERT(indx-cols >= 0 && indx-cols < pSlice->getSize());
-			if (i > 0)
-				// add the value on the top and subtract in place
-				pDataOut[oindx] += pDataIn[iindx - cols] - pDataIn[iindx];
-			else
-				pDataOut[oindx] -= pDataIn[iindx];
-		}
-	}
-	//pX->printInfo("X before");
-
-	// Multiply by sigma
-	if (m_fSigma != 1.f) {
-		*pX *= m_fSigma;
-	}
-
-	//pKx->printInfo("Kx");
-	//pX->printInfo("X after");
-}
-
 void CTRexPriorITV::prox(const CFloat32VolumeData3DMemory* pU, float32 rho,
 						 CFloat32VolumeData3DMemory* pV)
 {
+	//ASTRA_INFO("Depth: %d & %d", pU->getSize(), pV->getSize());
 	ASTRA_ASSERT(pU->getDepth() == pV->getDepth() &&
+		pU->getDepth() == this->depth() &&
 		pU->getSize() == pV->getSize());
+
+	int rows = pU->getHeight();
+	int cols = pU->getWidth();
+	int depth = pU->getDepth();
 
 	const float32* pDataIn = pU->getDataConst();
 	float32* pDataOut = pV->getData();
-	// loop on values
-	int sz = pU->getSize();
-	for (int i = 0; i < sz; ++i) {
-		pDataOut[i] = max(0.f, pDataIn[i] - rho) - 
-			max(0.f, -pDataIn[i] - rho);
+
+	// Compute norm across third dimension
+	CVolumeGeometry2D geo(cols, rows);
+	CFloat32VolumeData2D* pNorm = new CFloat32VolumeData2D(&geo);
+	float32* pNormData = pNorm->getData();
+
+	int offset = rows * cols;
+	#pragma omp for
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < cols; ++j) {
+			int indx = i * cols + j;
+			float32 val = pDataIn[indx] * pDataIn[indx] +
+				pDataIn[indx + offset] * pDataIn[indx + offset];
+			pNormData[indx] = sqrtf(val);
+		}
 	}
+
+	// Compute output: V = U - U*rho / max(rho, norm)
+	for (int k = 0; k < this->depth(); ++k) {
+		offset = k * rows * cols;
+		for (int i = 0; i < rows; ++i) {
+			for (int j = 0; j < cols; ++j) {
+				int indx2 = i * cols + j;
+				int indx3 = indx2 + offset;
+				pDataOut[indx3] = pDataIn[indx3] -
+					(rho * pDataIn[indx3] / max(rho, pNormData[indx2]));
+			}
+		}
+	}
+
+	// clear
+	ASTRA_DELETE(pNorm);
 
 	//pU->printInfo("U");
 	//pV->printInfo("V");
 }
-
-float32 CTRexPriorITV::norm()
-{
-	return 8.f * m_fSigma * m_fSigma;
-}
-
 
 // ----------------------------------------------------------------------------
 void CTRexDataLS::init() 
@@ -446,10 +357,10 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 	string sPrior = _cfg.self.getOption("Prior","");
 	if (sPrior == "ATV")  {
 		m_pPrior = new CTRexPriorATV(m_fSigma);
-	//} else if (sPrior == "ITV") {
-	//	m_pPrior = new CTRexPriorITV();
+	} else if (sPrior == "ITV") {
+		m_pPrior = new CTRexPriorITV(m_fSigma);
 	//} else if (sPrior == "SAD") {
-	//	m_pPrior = new CTRexPriorSAD();
+	//	m_pPrior = new CTRexPriorSAD(m_fSigma);
 	}
 	CC.markOptionParsed("Prior");
 	ASTRA_CONFIG_CHECK(m_pPrior, "CTRexAlgorithm", 
