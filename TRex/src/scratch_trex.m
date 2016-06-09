@@ -10,7 +10,7 @@
 addpath matlab/tools/
 addpath bin/x64/Release/
 % colormap gray
-N = 128;
+N = 256;
 
 vol_geom = astra_create_vol_geom(N, N);
 proj_geom = astra_create_proj_geom('parallel', 1.0, 384, ...
@@ -115,7 +115,7 @@ cfg.option.Mu = -1;
 cfg.option.Sigma = 0.05;
 cfg.option.WlsRoot = 1;
 cfg.option.Data = 'LS';
-cfg.option.Prior = 'ITV'; % 'ATV'
+cfg.option.Prior = 'SAD'; 'ITV'; % 'ATV'
 cfg.option.DataProx = 'SART-PROX';
 cfg.option.InnerIter = 2;
 cfg.option.ComputeIterationMetrics = 1;
@@ -172,7 +172,7 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
 %
 alg = 'admm';
 alg_params = struct('iter',2, 'sigma',.05, 'rho',25, 'mu',[], ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
-  'theta',1, 'init_fbp',0, 'data','l2', 'prior','itv', ...
+  'theta',1, 'init_fbp',0, 'data','l2', 'prior','sad', ...
   'sigma_with_data', 0, 'prox','astra', 'prox_name','SART-PROX',...
   'prox_params', struct('iter',2, ...
       'option',struct('UseMinConstraint',1, 'MinConstraintValue',0, ...

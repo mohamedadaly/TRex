@@ -238,14 +238,156 @@ void CTRexPriorITV::prox(const CFloat32VolumeData3DMemory* pU, float32 rho,
 	//pV->printInfo("V");
 }
 
-// ----------------------------------------------------------------------------
-void CTRexDataLS::init() 
+void CTRexPriorSAD::K(const CFloat32VolumeData2D* pX, 
+					  CFloat32VolumeData3DMemory* pKx) 
 {
+	// Forward discrete difference in 2D in 8 directions
+	//
+	// assert the size of Kx (width, height, 8)
+	ASTRA_ASSERT(pKx->getHeight() == pX->getHeight() &&
+		pKx->getWidth() == pX->getWidth() &&
+		pKx->getDepth() == this->depth());
 
+	int r = pX->getHeight();
+	int c = pX->getWidth();
+
+	// Init
+	pKx->setData(0.f);
+	float32* pDataOut = pKx->getData();
+	const float32* pDataIn = pX->getDataConst();
+
+	// Differences in this order
+	//                     6     7     8
+	//                     5     x     1
+	//                     4     3     2
+	//                   1    2    3   4     5     6   7  8
+	int32 iStart[] =	{0,	  0,   0,   0,   0,    1,  1, 1   };
+	int32 iEnd[] =		{r,   r-1, r-1, r-1, r,    r,  r, r   };
+	int32 jStart[] =	{0,   0,   0,   1,   1,    1,  0, 0   };
+	int32 jEnd[] =		{c-1, c-1, c,   c,   c,    c,  c, c-1 };
+	int32 off[] =       {1,   c+1, c, c-1,  -1, -c-1, -c, -c+1};
+
+	// Compute horizontal difference in first slice
+	for (int k = 0; k < pKx->getDepth(); ++k) {
+		for (int i = iStart[k]; i < iEnd[k]; ++i) {
+			for (int j = jStart[k]; j < jEnd[k]; ++j) {
+				// The data is written in row-major order
+				int iindx = i * c + j;			
+				// k th slice
+				int oindx = iindx + k * r*c;
+				// Put the value in the correct slice
+				pDataOut[oindx] = pDataIn[iindx + off[k]] - pDataIn[iindx];
+			}
+		}
+	}
+
+	//pKx->printInfo("Kx before");
+
+	// Multiply by sigma
+	if (m_fSigma != 1.f) {
+		*pKx *= m_fSigma;
+	}
+
+	//ASTRA_INFO("Sigma: %f", sigma);
+	//pX->printInfo("X");
+	//pKx->printInfo("Kx after");
 }
-void CTRexDataLS::prox(const CFloat32VolumeData2D* pU, CFloat32VolumeData2D* pX)
-{
 
+void CTRexPriorSAD::Kt(const CFloat32VolumeData3DMemory* pKx, 
+					   CFloat32VolumeData2D* pX)
+{
+	// Negative divergence in 2D (transpose of forward difference)
+	//
+	ASTRA_ASSERT(pKx);
+	ASTRA_ASSERT(pX);
+	ASTRA_ASSERT(pKx->getHeight() == pX->getHeight() &&
+		pKx->getWidth() == pX->getWidth() &&
+		pKx->getDepth() == this->depth());
+
+
+	// Init
+	pX->setData(0.f);
+	float32* pDataOut = pX->getData();
+	const float32* pDataIn = pKx->getDataConst();
+	
+	int rows = pX->getHeight();
+	int cols = pX->getWidth();
+
+	// Compute the sum across the slices
+	//
+	for (int k = 0; k < pKx->getDepth(); ++k) {
+		int offset = k * rows * cols;
+		for (int i = 0; i < rows; ++i) {
+			for (int j = 0; j < cols; ++j) {
+				int oindx = i * cols + j;
+				int iindx = oindx + offset;
+				pDataOut[oindx] += pDataIn[iindx];
+			}
+		}
+	}
+	// Multiply by -2
+	*pX *= -2.f;
+
+	// Multiply by sigma
+	if (m_fSigma != 1.f) {
+		*pX *= m_fSigma;
+	}
+
+	//pKx->printInfo("Kx");
+	//pX->printInfo("X after");
+}
+
+float32 CTRexPriorSAD::norm()
+{
+	return 24.f * m_fSigma * m_fSigma;
+}
+
+// ----------------------------------------------------------------------------
+bool CTRexDataLS::init(const Config& cfg, CVolumeGeometry2D* geom,
+					   float32 fLambda)
+{
+	ASTRA_ASSERT(geom);
+
+	// copy config
+	m_pCfg = new Config(cfg);
+	ASTRA_ASSERT(m_pCfg);
+
+	// Get the data proximal operator algorithm
+	string sProx = m_pCfg->self.getOption("DataProx","");
+	m_pAlg = dynamic_cast<CReconstructionAlgorithm2D*>(
+		CAlgorithmFactory::getSingleton().create(sProx));
+	ASTRA_CONFIG_CHECK(m_pAlg, "CTRexAlgorithm", 
+		"Error initializing: unknown DataProx.");
+	
+
+	// Compute metrics?
+	m_pCfg->self.removeOption("IterationMetricsId");
+	//if (m_bComputeIterationMetrics) {
+	//	// Create a matrix for that
+	//	m_pProxMetrics = new CFloat32VolumeData2D();
+	//	// Store in manager and save Id to pass to prox solver
+	//	id = CData2DManager::getSingleton().store(m_pProxMetrics);
+	//	// Remove the old value and add a new one
+	//	m_pData->m_pCfg->self.removeOption("IterationMetricsId");
+	//	m_pData->m_pCfg->self.addOption("IterationMetricsId", 
+	//		static_cast<float32>(id));
+	//}
+
+	// Add ProxInput to the prox config
+	// Create object and add to manager
+	m_pProxInput = new CFloat32VolumeData2D(&geom);
+	int id = CData2DManager::getSingleton().store(m_pProxInput);
+	// Add the id to config
+	m_pCfg->self.removeChildNode("ProxInputDataId");
+	m_pCfg->self.addChildNode("ProxInputDataId", 
+		static_cast<float32>(id));
+
+	// Set Lambda to Mu
+	m_pCfg->self.removeOption("Lambda");
+	m_pCfg->self.addOption("Lambda", fLambda);
+
+	// Initialize the prox algorithm
+	m_pAlg->initialize(*m_pCfg);
 }
 
 // ----------------------------------------------------------------------------
@@ -270,7 +412,7 @@ void CTRexAlgorithm::_clear()
 	m_pPrior = NULL;
 	m_pData = NULL;
 	m_pProxMetrics = NULL;
-	m_pProxInput = NULL;
+	//m_pProxInput = NULL;
 	//m_pDataProxOperator = NULL;
 	//m_pTomoProxOperatorConfig = NULL;
 }
@@ -295,9 +437,9 @@ void CTRexAlgorithm::clear()
 	//ASTRA_DELETE(m_pProxMetrics);
 
 	// Delete these from the data manager since they are stored there
-	CData2DManager::getSingleton().remove(
-		CData2DManager::getSingleton().getIndex(m_pProxInput));
-	m_pProxInput = NULL;
+	//CData2DManager::getSingleton().remove(
+	//	CData2DManager::getSingleton().getIndex(m_pProxInput));
+	//m_pProxInput = NULL;
 	CData2DManager::getSingleton().remove(
 		CData2DManager::getSingleton().getIndex(m_pProxMetrics));
 	m_pProxMetrics = NULL;
@@ -347,6 +489,8 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 		return false;
 	}
 
+	int id;
+
 	// Sigma
 	m_fSigma = _cfg.self.getOptionNumerical("Sigma", m_fSigma);
 	CC.markOptionParsed("Sigma");
@@ -359,8 +503,8 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 		m_pPrior = new CTRexPriorATV(m_fSigma);
 	} else if (sPrior == "ITV") {
 		m_pPrior = new CTRexPriorITV(m_fSigma);
-	//} else if (sPrior == "SAD") {
-	//	m_pPrior = new CTRexPriorSAD(m_fSigma);
+	} else if (sPrior == "SAD") {
+		m_pPrior = new CTRexPriorSAD(m_fSigma);
 	}
 	CC.markOptionParsed("Prior");
 	ASTRA_CONFIG_CHECK(m_pPrior, "CTRexAlgorithm", 
@@ -376,9 +520,7 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 	CC.markOptionParsed("Mu");
 	if (m_fMu <= 0) {
 		m_fMu = 1.f / (m_fRho * m_pPrior->norm());
-	}
-
-
+	}	
 
 	// WLS root
 	m_fWlsRoot = _cfg.self.getOptionNumerical("WlsRoot", m_fWlsRoot);
@@ -404,6 +546,14 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 	//ASTRA_INFO("%s\n", c.self.toString().c_str());
 	//return false;
 	
+	// WLS weights
+	id = static_cast<int>(_cfg.self.getOptionNumerical("WlsWeightDataId", -1));
+	m_pW = dynamic_cast<CFloat32ProjectionData2D*>(
+		CData2DManager::getSingleton().get(id));
+	CC.markOptionParsed("WlsWeightDataId");
+	//ASTRA_CONFIG_CHECK(m_pW, "CTRexAlgorithm", 
+	//	"Error initializing: unknown DataProx.");
+
 	// Data term
 	string sData = _cfg.self.getOption("Data","");
 	if (sData == "LS")  {
@@ -415,54 +565,50 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 	ASTRA_CONFIG_CHECK(m_pData, "CTRexAlgorithm", 
 		"Error initializing: unimplemented Data term.");
 
+	// Init the data term
+	m_pData->init(_cfg, m_pReconstruction->getGeometry(), m_fMu);
+
+	// -> Moved to Data class
 	// Get the data proximal operator algorithm
-	string sProx = _cfg.self.getOption("DataProx","");
-	m_pData->m_pAlg = dynamic_cast<CReconstructionAlgorithm2D*>(
-		CAlgorithmFactory::getSingleton().create(sProx));
-	ASTRA_CONFIG_CHECK(m_pData->m_pAlg, "CTRexAlgorithm", 
-		"Error initializing: unknown DataProx.");
-	CC.markOptionParsed("DataProx");
+	//string sProx = _cfg.self.getOption("DataProx","");
+	//m_pData->m_pAlg = dynamic_cast<CReconstructionAlgorithm2D*>(
+	//	CAlgorithmFactory::getSingleton().create(sProx));
+	//ASTRA_CONFIG_CHECK(m_pData->m_pAlg, "CTRexAlgorithm", 
+	//	"Error initializing: unknown DataProx.");
+	//CC.markOptionParsed("DataProx");
 
-	// Get the config for the Data Prox as a copy of this config
-	m_pData->m_pCfg = new Config(_cfg);
-	//ASTRA_INFO("%s\n", m_pData->m_pCfg->self.toString().c_str());
+	//// Get the config for the Data Prox as a copy of this config
+	//m_pData->m_pCfg = new Config(_cfg);
+	////ASTRA_INFO("%s\n", m_pData->m_pCfg->self.toString().c_str());
 
-	// Compute metrics?
-	if (m_bComputeIterationMetrics) {
-		// Create a matrix for that
-		m_pProxMetrics = new CFloat32VolumeData2D();
-		// Store in manager and save Id to pass to prox solver
-		int id = CData2DManager::getSingleton().store(m_pProxMetrics);
-		// Remove the old value and add a new one
-		m_pData->m_pCfg->self.removeOption("IterationMetricsId");
-		m_pData->m_pCfg->self.addOption("IterationMetricsId", 
-			static_cast<float32>(id));
-	}
+	//// Compute metrics?
+	//if (m_bComputeIterationMetrics) {
+	//	// Create a matrix for that
+	//	m_pProxMetrics = new CFloat32VolumeData2D();
+	//	// Store in manager and save Id to pass to prox solver
+	//	id = CData2DManager::getSingleton().store(m_pProxMetrics);
+	//	// Remove the old value and add a new one
+	//	m_pData->m_pCfg->self.removeOption("IterationMetricsId");
+	//	m_pData->m_pCfg->self.addOption("IterationMetricsId", 
+	//		static_cast<float32>(id));
+	//}
 
-	// Add ProxInput to the prox config
-	{
-		// Create object and add to manager
-		m_pProxInput = new 
-			CFloat32VolumeData2D(m_pReconstruction->getGeometry());
-		int id = CData2DManager::getSingleton().store(m_pProxInput);
-		// Add the id to config
-		m_pData->m_pCfg->self.removeChildNode("ProxInputDataId");
-		m_pData->m_pCfg->self.addChildNode("ProxInputDataId", 
-			static_cast<float32>(id));
-	}
+	//// Add ProxInput to the prox config
+	//// Create object and add to manager
+	//m_pProxInput = new 
+	//	CFloat32VolumeData2D(m_pReconstruction->getGeometry());
+	//id = CData2DManager::getSingleton().store(m_pProxInput);
+	//// Add the id to config
+	//m_pData->m_pCfg->self.removeChildNode("ProxInputDataId");
+	//m_pData->m_pCfg->self.addChildNode("ProxInputDataId", 
+	//	static_cast<float32>(id));
 
-	// Set Lambda to Mu
-	m_pData->m_pCfg->self.removeOption("Lambda");
-	m_pData->m_pCfg->self.addOption("Lambda", m_fMu);
+	//// Set Lambda to Mu
+	//m_pData->m_pCfg->self.removeOption("Lambda");
+	//m_pData->m_pCfg->self.addOption("Lambda", m_fMu);
 
-	// Initialize the prox algorithm
-	m_pData->m_pAlg->initialize(*m_pData->m_pCfg);
-
-	//// WLS weights
-	//int id = static_cast<int>(_cfg.self.getOptionNumerical("WlsWeightDataId", -1));
-	//m_pW = dynamic_cast<CFloat32ProjectionData2D*>(CData2DManager::getSingleton().get(id));
-	//CC.markOptionParsed("WlsWeightDataId");
-
+	//// Initialize the prox algorithm
+	//m_pData->m_pAlg->initialize(*m_pData->m_pCfg);
 
 	// success
 	m_bIsInitialized = _check();
@@ -527,7 +673,7 @@ void CTRexAlgorithm::run(int _iNrIterations)
 	CFloat32VolumeData3DMemory* pU = new CFloat32VolumeData3DMemory(&geom);
 	CFloat32VolumeData3DMemory* pKx = new CFloat32VolumeData3DMemory(&geom);
 	// alias to ProxInput
-	CFloat32VolumeData2D* pT = m_pProxInput;
+	CFloat32VolumeData2D* pT = m_pData->m_pProxInput;
 	ASTRA_ASSERT(pT);
 	//CFloat32VolumeData2D* pT = new CFloat32VolumeData2D(pX->getGeometry());
 
@@ -539,11 +685,11 @@ void CTRexAlgorithm::run(int _iNrIterations)
 	for (int iIteration = 0; iIteration < _iNrIterations; ++iIteration) {
 		// start timer
 		m_ulTimer = CPlatformDepSystemCode::getMSCount();
-		ASTRA_INFO("Iteration: %d", iIteration);
+		//ASTRA_INFO("Iteration: %d", iIteration);
 
 		// x-step: data term
 		//
-		ASTRA_INFO("X-step");
+		//ASTRA_INFO("X-step");
 		// Kx - z + u
 		m_pPrior->K(pX, pKx);
 		*pKx -= *pZ;
@@ -556,7 +702,8 @@ void CTRexAlgorithm::run(int _iNrIterations)
 		*pT += *pX;
 		// run the data proximal operator: input in pT (ProxInput) and
 		// output in pX (Reconstruction)
-		m_pData->m_pAlg->run(m_iInnterIter);
+		//m_pData->m_pAlg->run(m_iInnterIter);
+		m_pData->prox(m_iInnterIter);
 		// Clamp
 		if (m_bUseMinConstraint)
 			pX->clampMin(m_fMinValue);
@@ -564,7 +711,7 @@ void CTRexAlgorithm::run(int _iNrIterations)
 
 		// z-step: prior
 		//
-		ASTRA_INFO("Z-step");
+		//ASTRA_INFO("Z-step");
 		// Kx + u
 		//pZ->printInfo("Z before");
 		m_pPrior->K(pX, pKx);
@@ -575,7 +722,7 @@ void CTRexAlgorithm::run(int _iNrIterations)
 
 		// u-step: dual variable
 		//
-		ASTRA_INFO("U-step");
+		//ASTRA_INFO("U-step");
 		// u = u + Kx - z
 		//pU->printInfo("U before");
 		//pU->opera *pKx;

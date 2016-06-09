@@ -40,6 +40,7 @@ $Id$
 #include "Float32ProjectionData2D.h"
 #include "Float32VolumeData2D.h"
 #include "Float32VolumeData3DMemory.h"
+#include "AstraObjectManager.h"
 
 #include "DataProjector.h"
 
@@ -112,6 +113,22 @@ public:
 // Sum of Absolute Differences
 class _AstraExport CTRexPriorSAD : public CTRexPriorATV {
 public:
+	CTRexPriorSAD() : CTRexPriorATV() {}
+	CTRexPriorSAD(float _fSigma) : CTRexPriorATV(_fSigma) {}
+
+	// Multiply the volume by the matrix K * sigma
+	virtual void K(const CFloat32VolumeData2D* pX, 
+		CFloat32VolumeData3DMemory* pKx);
+
+	// Multiply the volume by the transpose of K * sigma
+	virtual void Kt(const CFloat32VolumeData3DMemory* pKx, 
+		CFloat32VolumeData2D* pX);
+
+	// Return the squared norm of K ||K||^2_2
+	virtual float32 norm();
+
+	virtual int depth() { return 8; }
+
 };
 // ----------------------------------------------------------------------------
 
@@ -121,29 +138,40 @@ class _AstraExport CTRexData{
 public:
 	CReconstructionAlgorithm2D* m_pAlg;
 	Config* m_pCfg;
+	// ProxInput for the prox operator
+	CFloat32VolumeData2D* m_pProxInput;
+
+
 
 	CTRexData() {
 		m_pAlg = NULL;
 		m_pCfg = NULL;
+		m_pProxInput = NULL;
 	}
 
 	virtual ~CTRexData() {
 		ASTRA_DELETE(m_pAlg);
 		ASTRA_DELETE(m_pCfg);
+		CData2DManager::getSingleton().remove(
+			CData2DManager::getSingleton().getIndex(m_pProxInput));
+		m_pProxInput = NULL;
 	}
 
-	virtual void init() = 0;
-	virtual void prox(const CFloat32VolumeData2D* pU, 
-		CFloat32VolumeData2D* pX) = 0;
+	virtual bool init(const Config& cfg, CVolumeGeometry2D* geom,
+					   float32 fLambda) = 0;
+	virtual void prox(int32 iter) 
+	{
+		ASTRA_ASSERT(m_pAlg);
+		// run for the required iterations
+		m_pAlg->run(iter);
+	}
 };
 
 // Least Squares data term
 class _AstraExport CTRexDataLS : public CTRexData {
 public:
-	virtual void init();
-	virtual void prox(const CFloat32VolumeData2D* pU, 
-		CFloat32VolumeData2D* pX);
-
+	virtual bool init(const Config& cfg, CVolumeGeometry2D* geom,
+					   float32 fLambda);
 };
 
 // Weighted least squares
@@ -234,10 +262,6 @@ protected:
 
 	// Inner iteration proximal operator metrics
 	CFloat32VolumeData2D* m_pProxMetrics;
-
-
-	// ProxInput for the prox operator
-	CFloat32VolumeData2D* m_pProxInput;
 
 	//// The algorithm to solve the data term proximal operator.
 	//CReconstructionAlgorithm2D* m_pDataProxOperator;
