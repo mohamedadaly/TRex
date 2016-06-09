@@ -114,7 +114,7 @@ cfg.option.Rho = 25;
 cfg.option.Mu = -1;
 cfg.option.Sigma = 0.05;
 cfg.option.WlsRoot = 1;
-cfg.option.Data = 'LS';
+cfg.option.Data = 'WLS';
 cfg.option.Prior = 'SAD'; 'ITV'; % 'ATV'
 cfg.option.DataProx = 'SART-PROX';
 cfg.option.InnerIter = 2;
@@ -127,8 +127,8 @@ cfg.option.ClearReconstruction = 1;
 % cfg.option.UseBSSART = 0;
 % cfg.option.ProjectionOrder = 'sequential'; 'random';
 % cfg.option.ProjectionOrderList = subset_start(30)-1;
-astra_mex_data2d('set', wi_id, (wi.^(1/2))); %ones(size(wi)));
-cfg.option.WlsWeightDataId = -1; wi_id;
+astra_mex_data2d('set', wi_id, wi); %(wi.^(1/2))); %ones(size(wi)));
+cfg.option.WlsWeightDataId =  wi_id;
 % cfg.option.ProjectionOrder = 'random';
 
 % Available algorithms:
@@ -172,8 +172,9 @@ in_params = struct('vol_geom',vol_geom, 'proj_geom',proj_geom, ...
 %
 alg = 'admm';
 alg_params = struct('iter',2, 'sigma',.05, 'rho',25, 'mu',[], ...1/(8*rho), ... 40&3 (no fbp) 100&5 (fbp)
-  'theta',1, 'init_fbp',0, 'data','l2', 'prior','sad', ...
+  'theta',1, 'init_fbp',0, 'data','wls', 'prior','sad', ...
   'sigma_with_data', 0, 'prox','astra', 'prox_name','SART-PROX',...
+  'wls_rt',1, ...
   'prox_params', struct('iter',2, ...
       'option',struct('UseMinConstraint',1, 'MinConstraintValue',0, ...
         'UseMaxConstraint',0, 'MaxConstraintValue',1, ...

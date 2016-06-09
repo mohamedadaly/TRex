@@ -158,26 +158,58 @@ public:
 	}
 
 	virtual bool init(const Config& cfg, CVolumeGeometry2D* geom,
-					   float32 fLambda) = 0;
+					   float32 fLambda) 
+	{
+		// parse
+		if (!parse(cfg, geom, fLambda))
+			return false;
+		// Init
+		ASTRA_ASSERT(m_pAlg);
+		ASTRA_ASSERT(m_pCfg);
+		// Initialize the prox algorithm
+		return m_pAlg->initialize(*m_pCfg);
+
+	}
 	virtual void prox(int32 iter) 
 	{
 		ASTRA_ASSERT(m_pAlg);
 		// run for the required iterations
 		m_pAlg->run(iter);
 	}
+protected:
+	virtual bool parse(const Config& cfg, CVolumeGeometry2D* geom,
+					   float32 fLambda) = 0;
+
 };
 
 // Least Squares data term
 class _AstraExport CTRexDataLS : public CTRexData {
-public:
-	virtual bool init(const Config& cfg, CVolumeGeometry2D* geom,
+protected:
+	virtual bool parse(const Config& cfg, CVolumeGeometry2D* geom,
 					   float32 fLambda);
 };
 
 // Weighted least squares
-class _AstraExport CTRexDataWLS : public CTRexData {
+class _AstraExport CTRexDataWLS : public CTRexDataLS {
 public:
+	CTRexDataWLS() 
+	{
+		m_pW = NULL;
+		m_iWlsRoot = 1;
+		ASTRA_INFO("WlsRoot const = %d", m_iWlsRoot);
+	}
+protected:
+	// Weights for WLS that multiply the sinogram and the projection matrix.
+	// They are processed here during init to have the correct form e.g. sqrt
+	// if WlsRoot = 1.
+	CFloat32ProjectionData2D* m_pW;
 
+	// WLS nth root to apply before feeding to the prox operator for WLS data 
+	// term
+	int m_iWlsRoot;
+
+	virtual bool parse(const Config& cfg, CVolumeGeometry2D* geom,
+					   float32 fLambda);
 };
 
 // ----------------------------------------------------------------------------
@@ -248,14 +280,6 @@ protected:
 
 	// Regularization parameter that balances prior and data terms.
 	float32 m_fSigma;
-
-	// Weights for WLS that multiply the sinogram and the projection matrix.
-	// Should be the sqrt of the WLS matrix.
-	CFloat32ProjectionData2D* m_pW;
-
-	// WLS nth root to apply before feeding to the prox operator for WLS data 
-	// term
-	float32 m_fWlsRoot;
 
 	// Number of inner iterations
 	int m_iInnterIter;

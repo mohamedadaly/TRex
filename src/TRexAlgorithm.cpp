@@ -343,7 +343,7 @@ float32 CTRexPriorSAD::norm()
 }
 
 // ----------------------------------------------------------------------------
-bool CTRexDataLS::init(const Config& cfg, CVolumeGeometry2D* geom,
+bool CTRexDataLS::parse(const Config& cfg, CVolumeGeometry2D* geom,
 					   float32 fLambda)
 {
 	ASTRA_ASSERT(geom);
@@ -358,10 +358,11 @@ bool CTRexDataLS::init(const Config& cfg, CVolumeGeometry2D* geom,
 		CAlgorithmFactory::getSingleton().create(sProx));
 	ASTRA_CONFIG_CHECK(m_pAlg, "CTRexAlgorithm", 
 		"Error initializing: unknown DataProx.");
-	
 
-	// Compute metrics?
+	// Turning it off for now.
+	// TODO: check.
 	m_pCfg->self.removeOption("IterationMetricsId");
+	m_pCfg->self.removeOption("ComputeIterationMetrics");
 	//if (m_bComputeIterationMetrics) {
 	//	// Create a matrix for that
 	//	m_pProxMetrics = new CFloat32VolumeData2D();
@@ -375,19 +376,51 @@ bool CTRexDataLS::init(const Config& cfg, CVolumeGeometry2D* geom,
 
 	// Add ProxInput to the prox config
 	// Create object and add to manager
-	m_pProxInput = new CFloat32VolumeData2D(&geom);
+	m_pProxInput = new CFloat32VolumeData2D(geom);
 	int id = CData2DManager::getSingleton().store(m_pProxInput);
 	// Add the id to config
 	m_pCfg->self.removeChildNode("ProxInputDataId");
 	m_pCfg->self.addChildNode("ProxInputDataId", 
 		static_cast<float32>(id));
 
-	// Set Lambda to Mu
+	// Set Lambda
 	m_pCfg->self.removeOption("Lambda");
 	m_pCfg->self.addOption("Lambda", fLambda);
 
-	// Initialize the prox algorithm
-	m_pAlg->initialize(*m_pCfg);
+	return true;
+}
+
+bool CTRexDataWLS::parse(const Config& cfg, CVolumeGeometry2D* geom,
+					   float32 fLambda)
+{
+	// Call the parent function to parse the common stuff.
+	if (!CTRexDataLS::parse(cfg, geom, fLambda))
+		return false;
+
+	// WLS root
+	m_iWlsRoot = static_cast<int>(
+		m_pCfg->self.getOptionNumerical("WlsRoot", m_iWlsRoot));
+	//CC.markOptionParsed("WlsRoot");
+	ASTRA_CONFIG_CHECK(m_iWlsRoot > 0, "CTRexAlgorithm", 
+		"Error initializing: WlsRoot <= 0");
+
+	// WLS weights
+	int32 id = static_cast<int>(
+		m_pCfg->self.getOptionNumerical("WlsWeightDataId", -1));
+	m_pW = dynamic_cast<CFloat32ProjectionData2D*>(
+		CData2DManager::getSingleton().get(id));
+	ASTRA_CONFIG_CHECK(m_pW, "CTRexAlgorithm", 
+		"Error initializing: Invalid WlsWeightDataId");	
+	//CC.markOptionParsed("WlsWeightDataId");
+	//ASTRA_CONFIG_CHECK(m_pW, "CTRexAlgorithm", 
+	//	"Error initializing: unknown DataProx.");
+
+	// Put in the correct form by taking sqrt of W
+	for (int i = m_iWlsRoot; i > 0; --i) {
+		m_pW->sqrt();
+	}
+
+	return true;
 }
 
 // ----------------------------------------------------------------------------
@@ -407,7 +440,7 @@ void CTRexAlgorithm::_clear()
 	m_fSigma = 1.f;
 	m_fRho = 100.f;
 	m_fMu = -1.f;
-	m_fWlsRoot = 1;
+	//m_fWlsRoot = 1;
 	m_iInnterIter = 2;
 	m_pPrior = NULL;
 	m_pData = NULL;
@@ -522,12 +555,6 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 		m_fMu = 1.f / (m_fRho * m_pPrior->norm());
 	}	
 
-	// WLS root
-	m_fWlsRoot = _cfg.self.getOptionNumerical("WlsRoot", m_fWlsRoot);
-	CC.markOptionParsed("WlsRoot");
-	ASTRA_CONFIG_CHECK(m_fWlsRoot > 0, "CTRexAlgorithm", 
-		"Error initializing: WlsRoot <= 0");
-
 	// Inner iterations
 	m_iInnterIter = static_cast<int>(
 		_cfg.self.getOptionNumerical("InnerIter", 
@@ -545,28 +572,22 @@ bool CTRexAlgorithm::initialize(const Config& _cfg)
 	//c.self.addChildNode("ProxInputDataId", 1234);
 	//ASTRA_INFO("%s\n", c.self.toString().c_str());
 	//return false;
-	
-	// WLS weights
-	id = static_cast<int>(_cfg.self.getOptionNumerical("WlsWeightDataId", -1));
-	m_pW = dynamic_cast<CFloat32ProjectionData2D*>(
-		CData2DManager::getSingleton().get(id));
-	CC.markOptionParsed("WlsWeightDataId");
-	//ASTRA_CONFIG_CHECK(m_pW, "CTRexAlgorithm", 
-	//	"Error initializing: unknown DataProx.");
 
 	// Data term
 	string sData = _cfg.self.getOption("Data","");
 	if (sData == "LS")  {
 		m_pData = new CTRexDataLS();
-	//} else if (sData == "WLS") {
-	//	m_pData = new CTRexDataWLS();
+	} else if (sData == "WLS") {
+		m_pData = new CTRexDataWLS();
 	}
 	CC.markOptionParsed("Data");
 	ASTRA_CONFIG_CHECK(m_pData, "CTRexAlgorithm", 
 		"Error initializing: unimplemented Data term.");
 
-	// Init the data term
-	m_pData->init(_cfg, m_pReconstruction->getGeometry(), m_fMu);
+	// Parse the input and init the data term
+	ASTRA_CONFIG_CHECK(
+		m_pData->init(_cfg, m_pReconstruction->getGeometry(), m_fMu),
+		"CTRexAlgorithm", "Error initializing: Data term");
 
 	// -> Moved to Data class
 	// Get the data proximal operator algorithm
