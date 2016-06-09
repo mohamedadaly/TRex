@@ -348,6 +348,9 @@
     <ClCompile Include="src\TRexAlgorithm.cpp">
       <Filter>Algorithms\source</Filter>
     </ClCompile>
+    <ClCompile Include="src\TRexAlgorithmTerms.cpp">
+      <Filter>Algorithms\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\astra\Algorithm.h">
@@ -723,6 +726,9 @@
       <Filter>Algorithms\headers</Filter>
     </ClInclude>
     <ClInclude Include="include\astra\TRexAlgorithm.h">
+      <Filter>Algorithms\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\astra\TRexAlgorithmTerms.h">
       <Filter>Algorithms\headers</Filter>
     </ClInclude>
   </ItemGroup>

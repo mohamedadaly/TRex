@@ -561,6 +561,7 @@
     <ClCompile Include="src\SparseMatrixProjectionGeometry2D.cpp" />
     <ClCompile Include="src\SparseMatrixProjector2D.cpp" />
     <ClCompile Include="src\TRexAlgorithm.cpp" />
+    <ClCompile Include="src\TRexAlgorithmTerms.cpp" />
     <ClCompile Include="src\Utilities.cpp" />
     <ClCompile Include="src\VolumeGeometry2D.cpp" />
     <ClCompile Include="src\VolumeGeometry3D.cpp" />
@@ -685,6 +686,7 @@
     <ClInclude Include="include\astra\SparseMatrixProjectionGeometry2D.h" />
     <ClInclude Include="include\astra\SparseMatrixProjector2D.h" />
     <ClInclude Include="include\astra\TRexAlgorithm.h" />
+    <ClInclude Include="include\astra\TRexAlgorithmTerms.h" />
     <ClInclude Include="include\astra\TypeList.h" />
     <ClInclude Include="include\astra\Utilities.h" />
     <ClInclude Include="include\astra\Vector3D.h" />

@@ -33,9 +33,8 @@ $Id$
 #include "Config.h"
 
 #include "Algorithm.h"
-//#include "ReconstructionAlgorithm2D.h"
-#include "SartAlgorithm.h"
-
+#include "ReconstructionAlgorithm2D.h"
+#include "TRexAlgorithmTerms.h"
 #include "Projector2D.h"
 #include "Float32ProjectionData2D.h"
 #include "Float32VolumeData2D.h"
@@ -45,173 +44,6 @@ $Id$
 #include "DataProjector.h"
 
 namespace astra {
-
-// ----------------------------------------------------------------------------
-// Base class for priors
-class _AstraExport CTRexPrior {
-public:
-	float32 m_fSigma;
-	CTRexPrior() : m_fSigma(1.f) {}	
-	CTRexPrior(float32 _fSigma) : m_fSigma(_fSigma) {}	
-	virtual ~CTRexPrior() {}
-
-	// Multiply the volume by the matrix K
-	virtual void K(const CFloat32VolumeData2D* pX,  
-		CFloat32VolumeData3DMemory* pKx) = 0;
-
-	// Multiply the volume by the transpose of K
-	virtual void Kt(const CFloat32VolumeData3DMemory* pKx, 
-		CFloat32VolumeData2D* pX) = 0;
-
-	// Apply the proximal operator on the input u (of size Kx).
-	virtual void prox(const CFloat32VolumeData3DMemory* pU, float32 rho,
-		CFloat32VolumeData3DMemory* pV) = 0;
-
-	// Return the squared norm of K ||K||^2_2
-	virtual float32 norm() = 0;
-
-	// Return the depth of the object returned by applying K
-	virtual int depth() = 0;
-};
-
-// Anisotropic TV
-class _AstraExport CTRexPriorATV : public CTRexPrior {
-public:
-	CTRexPriorATV() : CTRexPrior() {}
-	CTRexPriorATV(float _fSigma) : CTRexPrior(_fSigma) {}
-
-	// Multiply the volume by the matrix K * sigma
-	virtual void K(const CFloat32VolumeData2D* pX, 
-		CFloat32VolumeData3DMemory* pKx);
-
-	// Multiply the volume by the transpose of K * sigma
-	virtual void Kt(const CFloat32VolumeData3DMemory* pKx, 
-		CFloat32VolumeData2D* pX);
-
-	// Apply the proximal operator on the input u (of size Kx).
-	virtual void prox(const CFloat32VolumeData3DMemory* pU, float32 rho,
-		CFloat32VolumeData3DMemory* pV);
-
-	// Return the squared norm of K ||K||^2_2
-	virtual float32 norm();
-
-	virtual int depth() { return 2; }
-};
-
-// Isotropic TV
-class _AstraExport CTRexPriorITV : public CTRexPriorATV {
-public:
-	CTRexPriorITV() : CTRexPriorATV() {}
-	CTRexPriorITV(float _fSigma) : CTRexPriorATV(_fSigma) {}
-
-	// Apply the proximal operator on the input u (of size Kx).
-	virtual void prox(const CFloat32VolumeData3DMemory* pU, float32 rho,
-		CFloat32VolumeData3DMemory* pV);
-
-};
-
-// Sum of Absolute Differences
-class _AstraExport CTRexPriorSAD : public CTRexPriorATV {
-public:
-	CTRexPriorSAD() : CTRexPriorATV() {}
-	CTRexPriorSAD(float _fSigma) : CTRexPriorATV(_fSigma) {}
-
-	// Multiply the volume by the matrix K * sigma
-	virtual void K(const CFloat32VolumeData2D* pX, 
-		CFloat32VolumeData3DMemory* pKx);
-
-	// Multiply the volume by the transpose of K * sigma
-	virtual void Kt(const CFloat32VolumeData3DMemory* pKx, 
-		CFloat32VolumeData2D* pX);
-
-	// Return the squared norm of K ||K||^2_2
-	virtual float32 norm();
-
-	virtual int depth() { return 8; }
-
-};
-// ----------------------------------------------------------------------------
-
-// ----------------------------------------------------------------------------
-// Base class for data terms
-class _AstraExport CTRexData{
-public:
-	CReconstructionAlgorithm2D* m_pAlg;
-	Config* m_pCfg;
-	// ProxInput for the prox operator
-	CFloat32VolumeData2D* m_pProxInput;
-
-
-
-	CTRexData() {
-		m_pAlg = NULL;
-		m_pCfg = NULL;
-		m_pProxInput = NULL;
-	}
-
-	virtual ~CTRexData() {
-		ASTRA_DELETE(m_pAlg);
-		ASTRA_DELETE(m_pCfg);
-		CData2DManager::getSingleton().remove(
-			CData2DManager::getSingleton().getIndex(m_pProxInput));
-		m_pProxInput = NULL;
-	}
-
-	virtual bool init(const Config& cfg, CVolumeGeometry2D* geom,
-					   float32 fLambda) 
-	{
-		// parse
-		if (!parse(cfg, geom, fLambda))
-			return false;
-		// Init
-		ASTRA_ASSERT(m_pAlg);
-		ASTRA_ASSERT(m_pCfg);
-		// Initialize the prox algorithm
-		return m_pAlg->initialize(*m_pCfg);
-
-	}
-	virtual void prox(int32 iter) 
-	{
-		ASTRA_ASSERT(m_pAlg);
-		// run for the required iterations
-		m_pAlg->run(iter);
-	}
-protected:
-	virtual bool parse(const Config& cfg, CVolumeGeometry2D* geom,
-					   float32 fLambda) = 0;
-
-};
-
-// Least Squares data term
-class _AstraExport CTRexDataLS : public CTRexData {
-protected:
-	virtual bool parse(const Config& cfg, CVolumeGeometry2D* geom,
-					   float32 fLambda);
-};
-
-// Weighted least squares
-class _AstraExport CTRexDataWLS : public CTRexDataLS {
-public:
-	CTRexDataWLS() 
-	{
-		m_pW = NULL;
-		m_iWlsRoot = 1;
-		ASTRA_INFO("WlsRoot const = %d", m_iWlsRoot);
-	}
-protected:
-	// Weights for WLS that multiply the sinogram and the projection matrix.
-	// They are processed here during init to have the correct form e.g. sqrt
-	// if WlsRoot = 1.
-	CFloat32ProjectionData2D* m_pW;
-
-	// WLS nth root to apply before feeding to the prox operator for WLS data 
-	// term
-	int m_iWlsRoot;
-
-	virtual bool parse(const Config& cfg, CVolumeGeometry2D* geom,
-					   float32 fLambda);
-};
-
 // ----------------------------------------------------------------------------
 
 /**
@@ -283,15 +115,6 @@ protected:
 
 	// Number of inner iterations
 	int m_iInnterIter;
-
-	// Inner iteration proximal operator metrics
-	CFloat32VolumeData2D* m_pProxMetrics;
-
-	//// The algorithm to solve the data term proximal operator.
-	//CReconstructionAlgorithm2D* m_pDataProxOperator;
-
-	//// Config that is passed to the tomography proximal operator.
-	//Config* m_pTomoProxOperatorConfig;
 
 public:
     
