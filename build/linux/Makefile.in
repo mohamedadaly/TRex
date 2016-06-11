@@ -154,6 +154,8 @@ BASE_OBJECTS=\
 	src/SparseMatrixProjectionGeometry2D.lo \
 	src/SparseMatrixProjector2D.lo \
 	src/SparseMatrix.lo \
+	src/TRexAlgorithm.lo \
+	src/TRexAlgorithmTerms.lo \
 	src/Utilities.lo \
 	src/VolumeGeometry2D.lo \
 	src/VolumeGeometry3D.lo \
