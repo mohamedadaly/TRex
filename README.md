@@ -21,8 +21,8 @@ Gaussian noise (Least Squares) and Poisson noise (Weighted Least Squares):
 * Adds implementation of Linearized Altenating Direciton Method of Multipliers (ADMM) for two data terms
   * Least Squares (LS)
   * Weighted Least Squares (WLS)  
-  and three priors
-  * Anisoptropic Total Variation (ATV) 
+ and three priors
+  * Anisotropic Total Variation (ATV) 
   * Isotropic Total Variaiton (ITV)
   * Sum of Absolute Differences (SAD)
 
