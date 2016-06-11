@@ -42,3 +42,5 @@ sl.mat
 *.asv
 lasso_comp.eps
 *.lyx#
+*.pdb
+astra_vc11.v11.suo
