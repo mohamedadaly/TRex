@@ -40,11 +40,11 @@ P = scipy.io.loadmat('phantom.mat')['phantom256']
 sinogram_id, sinogram = astra.create_sino(P, proj_id)
 
 import pylab
-pylab.gray()
-pylab.figure(1)
-pylab.imshow(P)
-pylab.figure(2)
-pylab.imshow(sinogram)
+#pylab.gray()
+#pylab.figure(1)
+#pylab.imshow(P)
+#pylab.figure(2)
+#pylab.imshow(sinogram)
 
 # Create a data object for the reconstruction
 rec_id = astra.data2d.create('-vol', vol_geom)
@@ -52,10 +52,12 @@ rec_id = astra.data2d.create('-vol', vol_geom)
 # Set up the parameters for a reconstruction algorithm using the CPU
 # The main difference with the configuration of a GPU algorithm is the
 # extra ProjectorId setting.
-cfg = astra.astra_dict('SIRT')
+cfg = astra.astra_dict('TREX')
 cfg['ReconstructionDataId'] = rec_id
 cfg['ProjectionDataId'] = sinogram_id
 cfg['ProjectorId'] = proj_id
+cfg['option'] = {'Prior':'ITV', 'Data':'LS', 'Rho':25, 'Sigma':.01, 
+    'DataProx':'SART-PROX', 'InnerIter':2}
 
 # Available algorithms:
 # ART, SART, SIRT, CGLS, FBP
@@ -66,7 +68,7 @@ alg_id = astra.algorithm.create(cfg)
 
 # Run 20 iterations of the algorithm
 # This will have a runtime in the order of 10 seconds.
-astra.algorithm.run(alg_id, 20)
+astra.algorithm.run(alg_id, 10)
 
 # Get the result
 rec = astra.data2d.get(rec_id)
